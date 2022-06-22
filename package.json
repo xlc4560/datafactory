@@ -27,6 +27,8 @@
     "vue-router": "4.0.15"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
     "@pinia/testing": "0.0.12",
     "@playwright/experimental-ct-vue": "1.22.2",
     "@playwright/test": "1.22.2",
