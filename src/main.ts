@@ -13,3 +13,5 @@ app.use(router);
 app.use(head);
 
 app.mount('#app');
+
+const a = 1232;
