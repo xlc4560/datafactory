@@ -13,6 +13,4 @@ export interface AppRouteRecordRaw extends Omit<RouteRecordRaw, 'meta'> {
   fullPath?: string;
 }
 
-const a = 11;
-
 export type AppRouteModule = AppRouteRecordRaw;

@@ -26,6 +26,9 @@ module.exports = {
     'security/detect-non-literal-regexp': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    'security/detect-unsafe-regex': 'off',
+    '@typescript-eslint/ban-types': 'off',
   },
   globals: {
     defineProps: 'readonly',
