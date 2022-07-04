@@ -6,6 +6,7 @@
 - 在`src/utils/axios`中新建 axios 拦截器代码
 - 在`src/layout`中新建项目外部模板（顶栏和右边菜单栏）
 - 在`vite.config.ts`中新增 proxy，便于前后端联调
+- 新增 antd ui 框架并实现懒加载（需在 vite.config.ts 中添加插件实现）
 
 ## 项目分组
 
@@ -30,3 +31,11 @@
 2. 当功能开发完成后将代码从自己的分支合并到对应组的分支上
 3. 组员合并代码时，需要提交 merge 请求，组长审核后合并
 4. master 分支受保护，不能提交代码到 master 分支
+
+## 开发相关
+
+1. 在 `src/router/modules`中新增文件，即可默认将页面添加到路由中，具体实现代码可以查看`src/router/index.ts`
+2. 在`src/pages`中新增自己要开发的页面
+3. 在代码中尽可能拆分组件，并且使用`setup`语法糖，简单的例子参考`src/pages/test.vue`
+4. 使用 less 作为 css 预处理器，所有的 css 请用 less 来编写
+5. 项目中尽可能给每一个方法、变量都写上 type 或者是 interface
