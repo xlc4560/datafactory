@@ -5,3 +5,11 @@ export interface GetAccountInfoModel {
   phone: string;
   address: string;
 }
+export interface GetStr {
+  str: string;
+}
+export interface GetWth {
+  data: object;
+  desc: string;
+  status: number;
+}

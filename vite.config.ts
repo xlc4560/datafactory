@@ -34,10 +34,15 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // Load proxy configuration from .env
       // proxy: createProxy(VITE_PROXY),
       proxy: {
-        '/api': {
+        '/weather': {
           target: 'http://wthrcdn.etouch.cn',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/api/, ''),
+          rewrite: path => path.replace(/^\/weather/, ''),
+        },
+        '/str': {
+          target: 'http://api.uixsj.cn',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/str/, ''),
         },
       },
     },

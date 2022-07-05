@@ -1,7 +1,7 @@
-import Index from '@/pages/Index.vue';
 export default {
-  path: '/',
-  component: Index,
+  path: '/getTest',
+  component: () => import('@/layout/test.vue'),
+  name: 'index',
   meta: {
     title: 'Vite + Vue + TypeScript + Tailwind Starter Template',
   },

@@ -1,24 +1,32 @@
 <template>
-  <div class="layout-wrapper">fjsdklfjsdlkjfkl ljsfksdjflsjflksjfldjsklfjsdkfjlksdkfjsdkljfskljfldsjlfjsdjfsljfklsdjfkldsjf</div>
+  <a-layout>
+    <LayOut_Header />
+    <a-layout>
+      <LayOut_Navmenu />
+      <LayOut_Content />
+    </a-layout>
+  </a-layout>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  export default defineComponent({
-    name: 'LayoutWrapper',
-    components: {},
-    setup() {
-      const test = () => {
-        console.log('test');
-      };
-      return {
-        test,
-      };
-    },
-  });
+<script lang="ts" setup>
+  import LayOut_Header from './layoutHeader.vue';
+  import LayOut_Navmenu from './layoutNavMenu.vue';
+  import LayOut_Content from './layoutContent.vue';
 </script>
-<style lang="less" scoped>
-  .layout-wrapper {
-    width: 100%;
-    height: 100%;
+<style lang="less">
+  #components-layout-demo-top-side-2 .logo {
+    float: left;
+    margin: 16px 24px 16px 0;
+    width: 120px;
+    height: 31px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .ant-row-rtl #components-layout-demo-top-side-2 .logo {
+    float: right;
+    margin: 16px 0 16px 24px;
+  }
+
+  .site-layout-background {
+    background: #fff;
   }
 </style>
