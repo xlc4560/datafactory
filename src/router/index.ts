@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import { beforeEach } from './interceptor/beforeEach';
 const modules = import.meta.globEager('./modules/**/*.ts');
+console.log(modules);
 
 export const routeModuleList: RouteRecordRaw[] = [];
 
