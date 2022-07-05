@@ -9,6 +9,7 @@
     <sync-outlined spin />
     <smile-outlined :rotate="180" />
     <loading-outlined />
+    test20220705
   </a-space>
 </template>
 <script lang="ts" setup>
