@@ -3,6 +3,7 @@ import { ConfigEnv, UserConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import { wrapperEnv } from './build/utils';
 import pkg from './package.json';
 
@@ -32,6 +33,13 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: VITE_PORT,
       // Load proxy configuration from .env
       // proxy: createProxy(VITE_PROXY),
+      proxy: {
+        '/api': {
+          target: 'http://wthrcdn.etouch.cn',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/api/, ''),
+        },
+      },
     },
     plugins: [
       vue(),
@@ -53,6 +61,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       Components({
         dirs: ['src/components'],
         extensions: ['vue'],
+        resolvers: [AntDesignVueResolver()],
       }),
     ],
     esbuild: {
