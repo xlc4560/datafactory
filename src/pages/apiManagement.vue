@@ -28,7 +28,7 @@
         <a-button type="primary" :disabled="isDisabled">批量发布</a-button>
         <a-button type="primary" :disabled="isDisabled">批量停用</a-button>
         <a-button type="primary" :disabled="isDisabled">批量分类</a-button>
-        <a-button type="primary">人工注册</a-button>
+        <a-button type="primary" @click="route()">人工注册</a-button>
       </a-space>
     </div>
     <div class="antdTable">
@@ -64,11 +64,18 @@
   import { Form } from 'ant-design-vue';
   import axios from 'axios';
   import { usePagination } from 'vue-request';
+  import { useRouter } from 'vue-router';
   // 引入表格配置
   import { columns } from './types';
   // 引入自定义表单数据类型
   import type * as ApiType from './types';
   //   import { post } from '../utils/request';
+  const router = useRouter();
+  function route() {
+    router.push({
+      path: '/Home/DataSourceManagement/ApiRegister',
+    });
+  }
   // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
   // 声明表单绑定数据

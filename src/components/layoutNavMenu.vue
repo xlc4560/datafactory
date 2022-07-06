@@ -50,7 +50,7 @@
   const menuData = reactive<menuType[]>([
     {
       subName: '数据源管理',
-      key: '/Home/DataSourceManagement',
+      key: '/Home',
       icon: 'UserOutlined',
       children: [
         {
