@@ -22,9 +22,9 @@ declare module '@vue/runtime-core' {
     ASpace: typeof import('ant-design-vue/es')['Space'];
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu'];
     ATable: typeof import('ant-design-vue/es')['Table'];
-    LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
-    LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
-    LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
+    // LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
+    // LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
+    // LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
     RouterLink: typeof import('vue-router')['RouterLink'];
     RouterView: typeof import('vue-router')['RouterView'];
   }
