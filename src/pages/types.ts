@@ -17,6 +17,7 @@ type APIResult = {
     email: string;
   }[];
 };
+type Key = string | number;
 const columns = [
   {
     title: '接口名称',
@@ -56,4 +57,4 @@ const columns = [
   },
 ];
 export { columns };
-export type { FormState, APIParams, APIResult };
+export type { FormState, APIParams, APIResult, Key };
