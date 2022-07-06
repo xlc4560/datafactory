@@ -9,12 +9,17 @@ export default {
       path: 'DataSourceManagement',
       name: '数据源管理',
       redirect: '/Home/DataSourceManagement/ApiManagement',
-      component: () => import('../../pages/apiManagement.vue'),
+      component: () => import('../../layout/content.vue'),
       children: [
         {
           path: 'ApiManagement',
           name: '接口管理',
           component: () => import('../../pages/apiManagement.vue'),
+        },
+        {
+          path: 'ApiRegister',
+          name: '人工注册',
+          component: () => import('../../pages/contentTest.vue'),
         },
       ],
     },
