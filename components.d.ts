@@ -5,6 +5,9 @@ import '@vue/runtime-core';
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    '// LayoutContent': typeof import('./src/components/layoutContent.vue')['default'];
+    '// LayOutHeader': typeof import('./src/components/layOutHeader.vue')['default'];
+    '// LayoutNavMenu': typeof import('./src/components/layoutNavMenu.vue')['default'];
     AAvatar: typeof import('ant-design-vue/es')['Avatar'];
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb'];
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem'];
@@ -33,9 +36,9 @@ declare module '@vue/runtime-core' {
     ATabPane: typeof import('ant-design-vue/es')['TabPane'];
     ATabs: typeof import('ant-design-vue/es')['Tabs'];
     ATag: typeof import('ant-design-vue/es')['Tag'];
-    // LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
-    // LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
-    // LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
+    LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
+    LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
+    LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
     RouterLink: typeof import('vue-router')['RouterLink'];
     RouterView: typeof import('vue-router')['RouterView'];
   }

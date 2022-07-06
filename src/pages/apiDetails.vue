@@ -1,6 +1,6 @@
 <template>
   <div class="apiDetails scroll">
-    <h1 style=" font-size: 20px;text-align: center"><strong>接口详情</strong></h1>
+    <h1 style="font-size: 20px; text-align: center"><strong>接口详情</strong></h1>
     <a-card title="基本信息" size="small">
       <a-descriptions>
         <a-descriptions-item label="UserName">Zhou Maomao</a-descriptions-item>
