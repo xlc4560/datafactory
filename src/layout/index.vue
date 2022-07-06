@@ -8,9 +8,9 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-  import LayOut_Header from './layoutHeader.vue';
-  import LayOut_Navmenu from './layoutNavMenu.vue';
-  import LayOut_Content from './layoutContent.vue';
+  import LayOut_Header from '../components/layOutHeader.vue';
+  import LayOut_Navmenu from '../components/layoutNavMenu.vue';
+  import LayOut_Content from '../components/layoutContent.vue';
 </script>
 <style lang="less">
   #components-layout-demo-top-side-2 .logo {

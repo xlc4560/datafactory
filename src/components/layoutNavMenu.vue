@@ -41,11 +41,11 @@
   import { reactive, ref } from 'vue';
   // import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue';
   import { Icon } from '@/utils/icon';
-  import type { menuType } from './types';
+  import type { menuType } from '../layout/types';
   const selectedKeys2 = ref<string[]>(['/Home/DataSourceManagement/ApiManagement#/']);
   // 内敛菜单收缩标识
   // const collapsed = ref<boolean>(false);
-  const openKeys = ref<string[]>(['/Home']);
+  const openKeys = ref<string[]>(['/Home/DataSourceManagement']);
   const router = useRouter();
   const menuData = reactive<menuType[]>([
     {

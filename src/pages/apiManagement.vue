@@ -1,7 +1,7 @@
 <template>
   <!--  数据筛选部分-->
   <div class="backColor ApiManagement">
-    <a-form layout="inline" :model="formState" class="form" @finish="handleFinish" @finish-failed="handleFinishFailed">
+    <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
       <a-form-item label="接口来源:">
         <a-select v-model:value="formState.apiResource" size="middle" style="width: 200px" :options="options" placeholder="请选择" />
       </a-form-item>
@@ -12,8 +12,8 @@
         <a-input v-model:value="formState.apiName" placeholder="请输入" />
       </a-form-item>
       <a-form-item style="flex: 1">
-        <a-button type="primary" html-type="submit" style="float: right; margin: 0 10px"> 查 询 </a-button>
-        <a-button type="primary" ghost style="float: right; margin: 0 10px" @click="resetFields">重 置</a-button>
+        <a-button type="primary" html-type="submit" style="float: right; margin: 0 0 0 10px">查 询</a-button>
+        <a-button type="primary" ghost style="float: right" @click="resetFields">重 置</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -37,8 +37,10 @@
         :loading="loading"
         @change="handleTableChange"
       >
-        <template #bodyCell="{ column, text }">
-          <template v-if="column.dataIndex === 'name'">{{ text.first }} {{ text.last }}</template>
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'apiName'">
+            <a>{{ record.name.first }} {{ record.name.last }}</a>
+          </template>
         </template>
       </a-table>
     </div>
@@ -51,11 +53,13 @@
   import { Form } from 'ant-design-vue';
   import axios from 'axios';
   import { usePagination } from 'vue-request';
-  import type { FormState } from './types';
+  // 引入表格配置
+  import { columns } from './types';
+  // 引入自定义表单数据类型
+  import type { FormState, APIParams, APIResult } from './types';
   //   import { post } from '../utils/request';
-  // 内置Form用于使用相应方法
+  // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
-
   // 声明表单绑定数据
   const formState: UnwrapRef<FormState> = reactive({
     apiResource: null,
@@ -80,47 +84,13 @@
   // select框下拉数据
   const options = [...Array(25)].map((_, i) => ({ value: (i + 10).toString(36) + (i + 1) }));
 
-  // 表格配置
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: true,
-      width: '20%',
-    },
-    {
-      title: 'Gender',
-      dataIndex: 'gender',
-      filters: [
-        { text: 'Male', value: 'male' },
-        { text: 'Female', value: 'female' },
-      ],
-      width: '20%',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-    },
-  ];
-
-  type APIParams = {
-    results: number;
-    page?: number;
-    sortField?: string;
-    sortOrder?: number;
-    [key: string]: any;
-  };
-  type APIResult = {
-    results: {
-      gender: 'female' | 'male';
-      name: string;
-      email: string;
-    }[];
-  };
-
+  // 加载数据源
   const queryData = (params: APIParams) => {
     return axios.get<APIResult>('https://randomuser.me/api?noinfo', { params });
   };
+  console.log(queryData({ results: 10, page: 1 }));
+
+  //
   const {
     data: dataSource,
     run,
@@ -139,10 +109,13 @@
     total: 200,
     current: current.value,
     pageSize: pageSize.value,
+    hideOnSinglePage: true,
   }));
-
+  // 当点击分页组件时，该回调被触发
   const handleTableChange: TableProps['onChange'] = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
+    // run触发usePagination中的queryData请求
     run({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       results: pag.pageSize!,
       page: pag?.current,
       sortField: sorter.field,
@@ -158,16 +131,16 @@
     selectedRowKeys: [], // Check here to configure the default column
     loading: false,
   });
-  const hasSelected = computed(() => state.selectedRowKeys.length > 0);
+  // const hasSelected = computed(() => state.selectedRowKeys.length > 0);
 
-  const start = () => {
-    state.loading = true;
-    // ajax request after empty completing
-    setTimeout(() => {
-      state.loading = false;
-      state.selectedRowKeys = [];
-    }, 1000);
-  };
+  // const start = () => {
+  //   state.loading = true;
+  //   // ajax request after empty completing
+  //   setTimeout(() => {
+  //     state.loading = false;
+  //     state.selectedRowKeys = [];
+  //   }, 1000);
+  // };
   const onSelectChange = (selectedRowKeys: Key[]) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
     state.selectedRowKeys = selectedRowKeys;
@@ -182,9 +155,10 @@
   .ApiManagement {
     margin: 0 0 10px;
 
-    .form {
+    .formAction {
       display: flex;
-      margin: 10px;
+      margin: 20px;
+      padding: 0 10px;
     }
   }
 

@@ -33,6 +33,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: VITE_PORT,
       // Load proxy configuration from .env
       // proxy: createProxy(VITE_PROXY),
+      // 配置代理服务器
       proxy: {
         '/weather': {
           target: 'http://wthrcdn.etouch.cn',
@@ -66,6 +67,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       Components({
         dirs: ['src/components'],
         extensions: ['vue'],
+        // 配置antd按需引入
         resolvers: [AntDesignVueResolver()],
       }),
     ],
