@@ -9,6 +9,10 @@ declare module '@vue/runtime-core' {
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb'];
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem'];
     AButton: typeof import('ant-design-vue/es')['Button'];
+    ACard: typeof import('ant-design-vue/es')['Card'];
+    ADescriptions: typeof import('ant-design-vue/es')['Descriptions'];
+    ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem'];
+    ADivider: typeof import('ant-design-vue/es')['Divider'];
     AForm: typeof import('ant-design-vue/es')['Form'];
     AFormItem: typeof import('ant-design-vue/es')['FormItem'];
     AInput: typeof import('ant-design-vue/es')['Input'];
@@ -18,13 +22,18 @@ declare module '@vue/runtime-core' {
     ALayoutSider: typeof import('ant-design-vue/es')['LayoutSider'];
     AMenu: typeof import('ant-design-vue/es')['Menu'];
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem'];
+    AModal: typeof import('ant-design-vue/es')['Modal'];
     ASelect: typeof import('ant-design-vue/es')['Select'];
+    ASelectOption: typeof import('ant-design-vue/es')['SelectOption'];
     ASpace: typeof import('ant-design-vue/es')['Space'];
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu'];
     ATable: typeof import('ant-design-vue/es')['Table'];
-    // LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
-    // LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
-    // LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
+    ATabPane: typeof import('ant-design-vue/es')['TabPane'];
+    ATabs: typeof import('ant-design-vue/es')['Tabs'];
+    ATag: typeof import('ant-design-vue/es')['Tag'];
+    LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
+    LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
+    LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
     RouterLink: typeof import('vue-router')['RouterLink'];
     RouterView: typeof import('vue-router')['RouterView'];
   }
