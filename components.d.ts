@@ -31,7 +31,6 @@ declare module '@vue/runtime-core' {
     ATabPane: typeof import('ant-design-vue/es')['TabPane'];
     ATabs: typeof import('ant-design-vue/es')['Tabs'];
     ATag: typeof import('ant-design-vue/es')['Tag'];
-    Content: typeof import('./src/components/content.vue')['default'];
     LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
     LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
     LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
