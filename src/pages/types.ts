@@ -1,6 +1,6 @@
 interface FormState {
   apiResource: string | null;
-  apiStatus: string | null;
+  apiSate: number | null;
   apiName: string;
 }
 type APIParams = {
@@ -56,5 +56,15 @@ const columns = [
     ellipsis: true,
   },
 ];
+
+// 接口来源
+interface apiSource {
+  value: string;
+}
+// 接口状态
+interface apiState {
+  value: number;
+  lable: string;
+}
 export { columns };
-export type { FormState, APIParams, APIResult, Key };
+export type { FormState, APIParams, APIResult, Key, apiSource, apiState };

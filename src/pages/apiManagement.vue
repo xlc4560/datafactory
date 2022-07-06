@@ -3,10 +3,14 @@
   <div class="backColor ApiManagement">
     <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
       <a-form-item label="接口来源:">
-        <a-select v-model:value="formState.apiResource" size="middle" style="width: 200px" :options="options" placeholder="请选择" />
+        <a-select v-model:value="formState.apiResource" :allow-clear="true" size="middle" style="width: 200px" :options="apiResourceOptions" placeholder="请选择" />
       </a-form-item>
       <a-form-item label="api状态:">
-        <a-select v-model:value="formState.apiStatus" size="middle" style="width: 200px" :options="options" placeholder="请选择" />
+        <!-- :options="apiStateOptions"
+          :field-names="{ label: 'label', value: 'value' }" -->
+        <a-select v-model:value="formState.apiSate" :allow-clear="true" size="middle" style="width: 200px" placeholder="请选择">
+          <a-select-option v-for="item in apiStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item label="接口名称:">
         <a-input v-model:value="formState.apiName" placeholder="请输入" />
@@ -45,9 +49,13 @@
       </a-table>
     </div>
   </div>
+  <a-modal v-model:visible="visible" width="1200px" :closable="false" @ok="handleOk">
+    <api-details :records="records" />
+  </a-modal>
 </template>
 
 <script setup lang="ts">
+  import apiDetails from './apiDetails.vue';
   import type { UnwrapRef } from 'vue';
   import type { FormProps, TableProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
@@ -56,14 +64,14 @@
   // 引入表格配置
   import { columns } from './types';
   // 引入自定义表单数据类型
-  import type { FormState, APIParams, APIResult, Key } from './types';
+  import type * as ApiType from './types';
   //   import { post } from '../utils/request';
   // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
   // 声明表单绑定数据
-  const formState: UnwrapRef<FormState> = reactive({
+  const formState: UnwrapRef<ApiType.FormState> = reactive({
     apiResource: null,
-    apiStatus: null,
+    apiSate: null,
     apiName: '',
   });
   // 用于重置表单
@@ -82,11 +90,19 @@
     console.log(errors);
   };
   // select框下拉数据
-  const options = [...Array(25)].map((_, i) => ({ value: (i + 10).toString(36) + (i + 1) }));
+  // 接口来源
+  const apiResourceOptions: ApiType.apiSource[] = [{ value: '数据服务' }, { value: '指标管理' }, { value: '决策引擎' }, { value: '数据工厂' }];
+  // 接口状态
+  const apiStateOptions: ApiType.apiState[] = [
+    { value: 0, lable: '已停用' },
+    { value: 1, lable: '草稿' },
+    { value: 2, lable: '未发布' },
+    { value: 3, lable: '已发布' },
+  ];
 
   // 加载数据源
-  const queryData = (params: APIParams) => {
-    return axios.get<APIResult>('https://randomuser.me/api?noinfo', { params });
+  const queryData = (params: ApiType.APIParams) => {
+    return axios.get<ApiType.APIResult>('https://randomuser.me/api?noinfo', { params });
   };
   // 控制按钮是否可用
   const isDisabled = ref<boolean>(true);
@@ -130,13 +146,13 @@
   };
   // Key在上方引入
   const state = reactive<{
-    selectedRowKeys: Key[];
+    selectedRowKeys: ApiType.Key[];
     loading: boolean;
   }>({
     selectedRowKeys: [], // Check here to configure the default column
     loading: false,
   });
-  const onSelectChange = (selectedRowKeys: Key[]) => {
+  const onSelectChange = (selectedRowKeys: ApiType.Key[]) => {
     if (selectedRowKeys.length) {
       isDisabled.value = false;
     } else {
@@ -145,8 +161,17 @@
     state.selectedRowKeys = selectedRowKeys;
   };
   // 查看接口详情
+  const visible = ref<boolean>(false);
+  const records = ref<object>({});
   const apiDeatils = (record: object) => {
-    console.log(record);
+    records.value = { ...record };
+    console.log(records.value);
+
+    visible.value = true;
+  };
+  const handleOk = (e: MouseEvent) => {
+    console.log(e);
+    visible.value = false;
   };
 </script>
 
