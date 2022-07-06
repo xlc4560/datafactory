@@ -21,9 +21,9 @@
   <div class="backColor tableWarp" style="margin: 10px 0">
     <div class="tableactionGroup">
       <a-space :size="12">
-        <a-button type="primary" disabled>批量发布</a-button>
-        <a-button type="primary" disabled>批量停用</a-button>
-        <a-button type="primary" disabled>批量分类</a-button>
+        <a-button type="primary" :disabled="isDisabled">批量发布</a-button>
+        <a-button type="primary" :disabled="isDisabled">批量停用</a-button>
+        <a-button type="primary" :disabled="isDisabled">批量分类</a-button>
         <a-button type="primary">人工注册</a-button>
       </a-space>
     </div>
@@ -39,7 +39,7 @@
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'apiName'">
-            <a>{{ record.name.first }} {{ record.name.last }}</a>
+            <a @click="apiDeatils(record)">{{ record.name.first }} {{ record.name.last }}</a>
           </template>
         </template>
       </a-table>
@@ -56,7 +56,7 @@
   // 引入表格配置
   import { columns } from './types';
   // 引入自定义表单数据类型
-  import type { FormState, APIParams, APIResult } from './types';
+  import type { FormState, APIParams, APIResult, Key } from './types';
   //   import { post } from '../utils/request';
   // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
@@ -68,7 +68,7 @@
   });
   // 用于重置表单
   const { resetFields } = useForm(formState);
-  // 表单数据验证成功回调事件
+  // 表单数据验证成功回调事件（筛选数据）
   const handleFinish: FormProps['onFinish'] = () => {
     const formData = new FormData();
     formData.append('apiResource', formState.apiResource as string);
@@ -88,9 +88,10 @@
   const queryData = (params: APIParams) => {
     return axios.get<APIResult>('https://randomuser.me/api?noinfo', { params });
   };
-  console.log(queryData({ results: 10, page: 1 }));
+  // 控制按钮是否可用
+  const isDisabled = ref<boolean>(true);
 
-  //
+  // 解构usePagination返回值用于表格及分页操作
   const {
     data: dataSource,
     run,
@@ -104,6 +105,10 @@
       pageSizeKey: 'results',
     },
   });
+  // console.log(dataSource.value);
+
+  // const a = ref<string>('嗨害嗨');
+  // console.log(a.value);
 
   const pagination = computed(() => ({
     total: 200,
@@ -123,7 +128,7 @@
       ...filters,
     });
   };
-  type Key = string | number;
+  // Key在上方引入
   const state = reactive<{
     selectedRowKeys: Key[];
     loading: boolean;
@@ -131,19 +136,17 @@
     selectedRowKeys: [], // Check here to configure the default column
     loading: false,
   });
-  // const hasSelected = computed(() => state.selectedRowKeys.length > 0);
-
-  // const start = () => {
-  //   state.loading = true;
-  //   // ajax request after empty completing
-  //   setTimeout(() => {
-  //     state.loading = false;
-  //     state.selectedRowKeys = [];
-  //   }, 1000);
-  // };
   const onSelectChange = (selectedRowKeys: Key[]) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    if (selectedRowKeys.length) {
+      isDisabled.value = false;
+    } else {
+      isDisabled.value = true;
+    }
     state.selectedRowKeys = selectedRowKeys;
+  };
+  // 查看接口详情
+  const apiDeatils = (record: object) => {
+    console.log(record);
   };
 </script>
 
