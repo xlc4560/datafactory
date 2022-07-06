@@ -49,7 +49,10 @@
       </a-table>
     </div>
   </div>
-  <a-modal v-model:visible="visible" width="1200px" :closable="false" @ok="handleOk">
+  <a-modal v-model:visible="visible" width="1200px" :closable="false">
+    <template #footer>
+      <a-button key="back" @click="handleCancel">返回</a-button>
+    </template>
     <api-details :records="records" />
   </a-modal>
 </template>
@@ -166,10 +169,9 @@
   const apiDeatils = (record: object) => {
     records.value = { ...record };
     console.log(records.value);
-
     visible.value = true;
   };
-  const handleOk = (e: MouseEvent) => {
+  const handleCancel = (e: MouseEvent) => {
     console.log(e);
     visible.value = false;
   };
