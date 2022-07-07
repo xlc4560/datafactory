@@ -54,17 +54,18 @@
           </a-card>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求body" force-render>
-          <a-card size="small">
+          <a-card size="small" class="scroll" style="height: 400px">
             <pre> {{ JSON.stringify(data, null, 4) }}</pre>
           </a-card>
         </a-tab-pane>
       </a-tabs>
     </div>
-
-    <a-card title="接口返回示例" size="small">
-      <!-- style="background-color: black; color: aliceblue" -->
-      <pre> {{ JSON.stringify(columns, null, 4) }}</pre>
-    </a-card>
+    <div>
+      <a-card title="接口返回示例" size="small">
+        <!-- style="background-color: black; color: aliceblue" -->
+        <pre class="scroll" style="height: 400px"> {{ JSON.stringify(columns, null, 4) }}</pre>
+      </a-card>
+    </div>
   </div>
 </template>
 
@@ -151,7 +152,7 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
-    height: 600px;
+    height: 500px;
 
     & > * {
       margin: 10px 0;
