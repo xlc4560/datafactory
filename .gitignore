@@ -2,7 +2,7 @@
 node_modules
 dist
 dist-ssr
-
+components.d.ts
 /tests/e2e/videos/
 /tests/e2e/screenshots/
 /instrumented
