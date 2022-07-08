@@ -1,5 +1,12 @@
 # Vite + Vue 3 + Typescript + Tailwind Starter
 
+## 项目基本操作
+
+1. 安装依赖 `pnpm install`
+2. 运行项目 `pnpm run dev`
+3. 打包测试环境 `pnpm run build:test`
+4. 打包正式环境 `pnpm run build`
+
 ## todo list
 
 - 在`src/api`中集中管理项目 api
