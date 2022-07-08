@@ -1,138 +1,117 @@
 <template>
-  <div class="apiDetails scroll">
+  <div class="apiDetails scroll_apiDetails">
     <h1 style="font-size: 20px; text-align: center"><strong>接口详情</strong></h1>
-    <a-card title="基本信息" size="small">
+    <a-card :title="'接口名称:     ' + props.records.apiName" size="small">
       <a-descriptions>
-        <a-descriptions-item label="UserName">Zhou Maomao</a-descriptions-item>
-        <a-descriptions-item label="Telephone">1810000000</a-descriptions-item>
-        <a-descriptions-item label="Live">Hangzhou, Zhejiang</a-descriptions-item>
-        <a-descriptions-item label="Remark">empty</a-descriptions-item>
-        <a-descriptions-item label="Address"> No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China </a-descriptions-item>
+        <a-descriptions-item label="接口分类">Zhou Maomao</a-descriptions-item>
+        <a-descriptions-item label="请求协议">1810000000</a-descriptions-item>
+        <a-descriptions-item label="请求方式">Hangzhou, Zhejiang</a-descriptions-item>
+        <a-descriptions-item label="支持格式">empty</a-descriptions-item>
+        <a-descriptions-item label="IP端口"> District, Hangzhou, Zhejiang, China </a-descriptions-item>
+        <a-descriptions-item label="Path"> /taskApi/taskradar </a-descriptions-item>
       </a-descriptions>
     </a-card>
     <div class="tab">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="请求参数">
           <a-card size="small">
-            <a-table :columns="columns" :data-source="data" :pagination="false">
-              <template #headerCell="{ column }">
-                <template v-if="column.key === 'name'">
-                  <span>
-                    <smile-outlined />
-                    Name
-                  </span>
-                </template>
-              </template>
-
-              <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'name'">
-                  <a>
-                    {{ record.name }}
-                  </a>
-                </template>
-                <template v-else-if="column.key === 'tags'">
-                  <span>
-                    <a-tag v-for="tag in record.tags" :key="tag" :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'">
-                      {{ tag.toUpperCase() }}
-                    </a-tag>
-                  </span>
-                </template>
-                <template v-else-if="column.key === 'action'">
-                  <span>
-                    <a>Invite 一 {{ record.name }}</a>
-                    <a-divider type="vertical" />
-                    <a>Delete</a>
-                    <a-divider type="vertical" />
-                    <a class="ant-dropdown-link">
-                      More actions
-                      <down-outlined />
-                    </a>
-                  </span>
-                </template>
-              </template>
-            </a-table>
+            <a-table :columns="columns" :data-source="data" :pagination="false"> </a-table>
           </a-card>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求body" force-render>
-          <a-card size="small" class="scroll" style="height: 400px">
-            <pre> {{ JSON.stringify(data, null, 4) }}</pre>
+          <a-card size="small" class="scroll_apiDetails">
+            <JsonViewer class="scroll_apiDetails" :value="[...columns, ...columns]" :expand-depth="1" boxed copyable sort theme="light" />
           </a-card>
         </a-tab-pane>
       </a-tabs>
     </div>
-    <div>
+    <div class="apiReponseInstance">
       <a-card title="接口返回示例" size="small">
-        <!-- style="background-color: black; color: aliceblue" -->
-        <pre class="scroll" style="height: 400px"> {{ JSON.stringify(columns, null, 4) }}</pre>
+        <JsonViewer class="scroll_apiDetails" :value="[...columns, ...columns]" :expand-depth="1" boxed copyable sort theme="light" />
       </a-card>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
+  import { JsonViewer } from 'vue3-json-viewer';
+  import 'vue3-json-viewer/dist/index.css';
   const columns = [
     {
-      name: 'Name',
+      title: '参数名称',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Address',
+      title: '参数位置',
       dataIndex: 'address',
       key: 'address',
     },
     {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
+      title: '数据类型',
+      dataIndex: 'classify',
+      key: 'classify',
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: '是否必填',
+      key: 'isNecessary',
+      dataIndex: 'isNecessary',
+    },
+    {
+      title: '默认值',
+      dataIndex: 'default',
+      key: 'default',
+    },
+    {
+      title: '说明',
+      dataindex: 'descrip',
+      key: 'descrip',
     },
   ];
   const data = [
     {
       key: '1',
       name: 'John Brown',
-      age: 32,
       address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
+      classify: '数据工厂',
+      isNecessary: '是',
+      default: '0',
+      descrip: '暂无',
     },
     {
       key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
+      name: 'John Brown',
+      address: 'New York No. 1 Lake Park',
+      classify: '数据工厂',
+      isNecessary: '是',
+      default: '0',
+      descrip: '暂无',
     },
     {
       key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
+      name: 'John Brown',
+      address: 'New York No. 1 Lake Park',
+      classify: '数据工厂',
+      isNecessary: '是',
+      default: '0',
+      descrip: '暂无',
     },
   ];
-  //   const props = defineProps({
-  //     records: {
-  //       type: Object,
-  //       default: () => ({ a: 1, b: 2 }),
-  //     },
-  //   });
-  //   const { records } = toRefs(props);
+  const props = defineProps({
+    records: {
+      type: Object,
+      default: () => ({ a: 1, b: 2 }),
+    },
+  });
+  // const { records } = toRefs(props);
+  console.log(props.records);
+
   const activeKey = ref<string>('1');
 </script>
 
 <style lang="less">
   // 控制滚动条样式
-  .scroll {
+  .scroll_apiDetails {
     /* background-color: aqua; */
     overflow-x: hidden; /*禁止x轴滚动条*/
     overflow-y: auto;
@@ -152,7 +131,14 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
-    height: 500px;
+    height: 600px;
+
+    .tab,
+    .apiReponseInstance {
+      & .ant-card-body {
+        padding: 0;
+      }
+    }
 
     & > * {
       margin: 10px 0;
@@ -161,9 +147,5 @@
     & div .ant-tabs-nav {
       margin: 0;
     }
-  }
-
-  .ant-card-body {
-    padding: 10px;
   }
 </style>

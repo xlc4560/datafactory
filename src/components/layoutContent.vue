@@ -6,7 +6,7 @@
         <a-breadcrumb-item v-for="item in routeMatch" :key="item.name">{{ item.name }}</a-breadcrumb-item>
       </a-breadcrumb>
     </section>
-    <a-layout-content class="main" :style="{ margin: ['0', '24px', '24px'], minHeight: '280px' }">
+    <a-layout-content class="main" :style="{ margin: ['0', '24px', '24px'], minHeight: '80vh' }">
       <router-view />
     </a-layout-content>
   </a-layout>

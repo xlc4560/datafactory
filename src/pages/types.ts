@@ -1,9 +1,8 @@
-import { DescriptionsProps } from 'ant-design-vue';
 // 常用类型
 interface FormState {
-  apiResource: string | null;
-  apiSate: number | null;
-  apiName: string;
+  apiSource?: string;
+  apiState?: number;
+  apiName?: string;
 }
 type APIParams = {
   results: number;
@@ -32,6 +31,7 @@ interface apiSource {
 // }
 // 用于标识需要渲染到表格中的数据的类型
 interface dataSource {
+  apiId: string;
   apiName: string;
   apiDesc: string;
   apiClassify?: string;

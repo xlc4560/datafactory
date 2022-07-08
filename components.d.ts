@@ -12,9 +12,8 @@ declare module '@vue/runtime-core' {
     ACard: typeof import('ant-design-vue/es')['Card']
     ADescriptions: typeof import('ant-design-vue/es')['Descriptions']
     ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
-    ADivider: typeof import('ant-design-vue/es')['Divider']
+    ADivider: typeof import('ant-design-vue/es')['Divider'];
     ADrawer: typeof import('ant-design-vue/es')['Drawer']
-    AEmpty: typeof import('ant-design-vue/es')['Empty'];
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']

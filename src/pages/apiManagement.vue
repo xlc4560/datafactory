@@ -1,14 +1,15 @@
 <template>
   <!--  数据筛选部分-->
   <div class="backColor ApiManagement">
+    <!-- 筛选组 -->
     <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
       <a-form-item label="接口来源:">
-        <a-select v-model:value="formState.apiResource" :allow-clear="true" size="middle" style="width: 200px" :options="apiResourceOptions" placeholder="请选择" />
+        <a-select v-model:value="formState.apiSource" :allow-clear="true" size="middle" style="width: 200px" :options="apiResourceOptions" placeholder="请选择" />
       </a-form-item>
       <a-form-item label="api状态:">
         <!-- :options="apiStateOptions"
           :field-names="{ label: 'label', value: 'value' }" -->
-        <a-select v-model:value="formState.apiSate" :allow-clear="true" size="middle" style="width: 200px" placeholder="请选择">
+        <a-select v-model:value="formState.apiState" :allow-clear="true" size="middle" style="width: 200px" placeholder="请选择">
           <a-select-option v-for="item in apiStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -23,19 +24,21 @@
   </div>
   <!--  数据列表部分-->
   <div class="backColor tableWarp" style="margin: 10px 0">
+    <!-- 按钮操作组 -->
     <div class="tableactionGroup">
       <a-space :size="12">
         <a-button type="primary" :disabled="isDisabled">批量发布</a-button>
         <a-button type="primary" :disabled="isDisabled">批量停用</a-button>
         <a-button type="primary" :disabled="isDisabled">批量分类</a-button>
-        <a-button type="primary" @click="route()">人工注册</a-button>
+        <a-button type="primary" @click="goApiRegister">人工注册</a-button>
       </a-space>
     </div>
+    <!-- 表格组 -->
     <div class="antdTable">
       <a-table
         :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
         :columns="columns"
-        :row-key="record => record.apiName"
+        :row-key="record => record.apiId"
         :data-source="dataSource2"
         :pagination="pagination"
         :loading="loading"
@@ -65,10 +68,11 @@
     </div>
   </div>
   <!-- 接口详情弹窗 -->
-  <a-modal v-model:visible="modalVisible" width="1200px" :closable="false">
+  <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 20px">
     <template #footer>
       <a-button key="back" @click="handleCancel">返回</a-button>
     </template>
+    <!--  :records="records" -->
     <api-details :records="records" />
   </a-modal>
   <!-- 接口测试抽屉 -->
@@ -79,10 +83,10 @@
 
 <script setup lang="ts">
   import apiDetails from './apiDetails.vue';
-  import type { UnwrapRef } from 'vue';
   import type { FormProps, TableProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
   import axios from 'axios';
+  // 分页
   import { usePagination } from 'vue-request';
   import { useRouter } from 'vue-router';
   // 引入表格配置
@@ -90,32 +94,45 @@
   // 引入自定义表单数据类型
   import type * as ApiType from './types';
   import ApiTest from './apiTest.vue';
-  //   import { post } from '../utils/request';
+  // 网络请求
+  import * as request from '@/api/test';
+  // 路由操作
   const router = useRouter();
-  function route() {
+  // 路由跳转到人工注册页
+  const goApiRegister = () => {
     router.push({
       path: '/Home/DataSourceManagement/ApiRegister',
     });
-  }
-
+  };
   // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
   // 声明表单绑定数据
-  const formState: UnwrapRef<ApiType.FormState> = reactive({
-    apiResource: null,
-    apiSate: null,
+  const formState = reactive<ApiType.FormState>({
+    apiSource: undefined,
+    apiState: undefined,
     apiName: '',
   });
   // 用于重置表单
   const { resetFields } = useForm(formState);
-  // 表单数据验证成功回调事件（筛选数据）
+  // 表单数据验证成功回调事件（筛选数据）（筛序数据回调）
   const handleFinish: FormProps['onFinish'] = () => {
     const formData = new FormData();
-    formData.append('apiResource', formState.apiResource as string);
-    formData.append('apiStatus', formState.apiResource as string);
-    formData.append('apiName', formState.apiResource as string);
-    // const res = post('http://localhost:8080', formData);
-    // console.log(res);
+    formData.append('apiResource', formState.apiSource as string);
+    formData.append('apiStatus', formState.apiState as unknown as string);
+    formData.append('apiName', formState.apiName as string);
+    console.log({
+      apiSource: formState.apiSource,
+      apiState: formState.apiState,
+      apiName: formState.apiName,
+      pageNum: 10,
+    });
+    const res = request.GetApiList({
+      apiSource: formState.apiSource,
+      apiState: formState.apiState,
+      apiName: formState.apiName,
+      pageNum: 10,
+    });
+    console.log(res);
   };
   // 表单数据验证失败回调事件
   const handleFinishFailed: FormProps['onFinishFailed'] = errors => {
@@ -137,7 +154,7 @@
   const queryData = (params: ApiType.APIParams) => {
     return axios.get<ApiType.APIResult>('https://randomuser.me/api?noinfo', { params });
   };
-  // 控制按钮是否可用
+  // 控制按钮是否可用（操作按钮组）
   const isDisabled = ref<boolean>(true);
 
   // 解构usePagination返回值用于表格及分页操作
@@ -158,10 +175,10 @@
 
   // const a = ref<string>('嗨害嗨');
   // console.log(a);
-
   // 测试数据
   const dataSource2 = ref<ApiType.dataSource[]>([
     {
+      apiId: '01',
       apiName: '接口1',
       apiDesc: '接口描述接口描述接口描述接口描述',
       apiSource: '数据工厂',
@@ -169,6 +186,7 @@
       updateTime: '2021-12-12 12:24:25',
     },
     {
+      apiId: '02',
       apiName: '接口2',
       apiDesc: '接口描述接口描述接口描述接口描述',
       apiSource: '数据工厂',
@@ -176,6 +194,7 @@
       updateTime: '2021-12-12 12:24:26',
     },
     {
+      apiId: '03',
       apiName: '接口3',
       apiDesc: '接口描述接口描述接口描述接口描述',
       apiSource: '数据工厂',
@@ -183,6 +202,7 @@
       updateTime: '2021-12-12 12:24:27',
     },
     {
+      apiId: '04',
       apiName: '接口4',
       apiDesc: '接口描述接口描述接口描述接口描述',
       apiSource: '数据工厂',
@@ -196,10 +216,11 @@
     pageSize: pageSize.value,
     hideOnSinglePage: true,
     showQuickJumper: true,
+    showTotal: () => `共${200}条`,
   }));
   // 当点击分页组件时，该回调被触发
   const handleTableChange: TableProps['onChange'] = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
-    console.log(sorter);
+    console.log(pag, sorter, filters);
 
     // run触发usePagination中的queryData请求
     run({
@@ -221,6 +242,8 @@
   });
   // 按钮是否禁用 当页头多选框状态改变时触发
   const onSelectChange = (selectedRowKeys: ApiType.Key[]) => {
+    console.log(selectedRowKeys);
+
     if (selectedRowKeys.length) {
       isDisabled.value = false;
     } else {
@@ -254,7 +277,7 @@
   }
 
   .ApiManagement {
-    margin: 0 0 10px;
+    // margin: 0 0 10px;
 
     .formAction {
       display: flex;
@@ -270,13 +293,13 @@
     .tableactionGroup {
       display: flex;
       //   background-color: #52c41a;
-      padding: 20px 30px;
+      padding: 20px 20px;
       width: 100%;
       flex-direction: row-reverse;
     }
 
     .antdTable {
-      padding: 20px 30px;
+      padding: 0 20px 10px;
     }
 
     .isNopublish {

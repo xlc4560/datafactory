@@ -1,7 +1,7 @@
 <template>
   <a-drawer v-model:visible="drawerVisible" class="custom-class" width="55%" title="接口测试" @after-visible-change="afterVisibleChange">
     <div class="drawer">
-      <div class="paramsDetails">
+      <div class="paramsDetails scroll_apiTest">
         <a-descriptions :column="1">
           <a-descriptions-item label="接口名称">Zhou Maomao</a-descriptions-item>
           <a-descriptions-item label="Request URL"> http://10.255.68.192:8080/taskApi/runppt</a-descriptions-item>
@@ -32,17 +32,21 @@
         </div>
       </div>
       <div class="responseResult">
-        <a-card title="返回结果(JSON)" :bordered="false"> </a-card>
+        <a-card title="返回结果(JSON)" :bordered="false">
+          <JsonViewer class="jsonViewerStyle scroll_apiTest" :value="[...columns, ...columns]" :expand-depth="3" copyable sort theme="dark" @on-key-click="keyClick" />
+        </a-card>
       </div>
     </div>
     <template #footer>
-      <a-button style="margin-right: 8px" @click="onClose">Cancel</a-button>
-      <a-button type="primary" @click="onClose">Submit</a-button>
+      <a-button type="primary" @click="onClose">接口测试</a-button>
+      <a-button style="margin-right: 8px" @click="onClose">关闭</a-button>
     </template>
   </a-drawer>
 </template>
 
 <script setup lang="ts">
+  import { JsonViewer } from 'vue3-json-viewer';
+  import 'vue3-json-viewer/dist/index.css';
   const props = defineProps({
     drawerVisible: {
       type: Boolean,
@@ -63,21 +67,25 @@
       title: '参数名称',
       dataIndex: 'name',
       key: 'name',
+      width: '20%',
     },
     {
       title: '参数位置',
       dataIndex: 'address',
       key: 'address',
+      width: '20%',
     },
     {
       title: '数据类型',
       dataIndex: 'dataType',
       key: 'dataType',
+      width: '20%',
     },
     {
       title: '是否必填',
       key: 'tags',
       dataIndex: 'tags',
+      width: '20%',
     },
     {
       title: '测试值',
@@ -101,24 +109,78 @@
       tags: '否',
     },
   ];
+  const keyClick = (keyName: string): void => {
+    console.log(keyName, '被点击了');
+  };
 </script>
 
 <style lang="less">
+  .ant-drawer-body {
+    padding: 0;
+  }
+
   .drawer {
     display: flex;
     flex-direction: row;
-
+    min-height: 80vh;
+    // background: skyblue;
     .paramsDetails {
       padding: 0 20px 10px;
-      width: 55%;
-      //   background-color: aquamarine;
+      flex: 0 0 30vw;
+      min-height: 80vh;
+      max-height: 80vh;
+      // background-color: aquamarine;
       & > div {
         margin: 10px 0 0 0;
+
+        .ant-card-body {
+          padding: 0;
+        }
+      }
+    }
+
+    .responseResult {
+      flex: 1;
+
+      .ant-card-body {
+        padding: 0;
+        // min-height: 70vh;
+        // max-height: 70vh;
+        // background: rgb(40, 44, 52);
+      }
+
+      & .jsonViewerStyle {
+        // background-color: black;
+        // color: white;
+        min-height: 75vh;
+        max-height: 75vh;
       }
     }
   }
+  // 控制滚动条样式
+  .scroll_apiTest {
+    /* background-color: aqua; */
+    overflow-x: hidden; /*禁止x轴滚动条*/
+    overflow-y: auto;
 
-  .ant-card-body {
-    padding: 5px 0;
+    &:hover {
+      overflow-y: auto; /*hover时自动显示滚动条 */
+    }
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      /*overflow: hidden;*/
+      /*display: none;*/
+    }
+
+    &::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+      background: rgb(255, 255, 255);
+    }
   }
 </style>

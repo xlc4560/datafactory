@@ -3,7 +3,7 @@
   <div class="placeholderLabel"></div>
   <!--  v-model:collapsed="collapsed" collapsed-width="40"-->
   <a-layout-sider class="navMenu" width="200" style="background: #fff">
-    <a-menu v-model:selectedKeys="selectedKeys2" v-model:openKeys="openKeys" mode="inline" :style="{ height: '100%', borderRight: 0 }" @open-change="clickMenu" @click="clickMenu">
+    <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" :style="{ height: '100%', borderRight: 0 }" @open-change="clickMenu" @click="clickMenu">
       <template v-for="item in menuData" :key="item.key">
         <a-sub-menu v-if="item.children" :key="item.key">
           <template #title>
@@ -37,16 +37,17 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router';
-  import { reactive, ref } from 'vue';
+  import { useRouter, useRoute } from 'vue-router';
   // import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue';
   import { Icon } from '@/utils/icon';
   import type { menuType } from '../layout/types';
-  const selectedKeys2 = ref<string[]>(['/Home/DataSourceManagement/ApiManagement#/']);
   // 内敛菜单收缩标识
   // const collapsed = ref<boolean>(false);
-  const openKeys = ref<string[]>(['/Home/DataSourceManagement']);
   const router = useRouter();
+  // 选中的
+  const selectedKeys = ref<string[]>(['/Home/DataSourceManagement/ApiManagement#/']);
+  // 打开的
+  const openKeys = ref<string[]>(['/Home/DataSourceManagement']);
   const menuData = reactive<menuType[]>([
     {
       subName: '数据源管理',
@@ -83,6 +84,9 @@
   //   collapsed.value = !collapsed.value;
   //   openKeys.value = collapsed.value ? [] : ['/Home'];
   // };
+  watch(useRoute(), newVal => {
+    selectedKeys.value[0] = newVal.path;
+  });
   // 菜单点击事件
   function clickMenu({ key }: { key: string | undefined }): void {
     if (key !== undefined) {
