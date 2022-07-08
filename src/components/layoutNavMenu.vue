@@ -2,7 +2,7 @@
   <!--  :style="{flex: `0 0 ${width}`}"-->
   <div class="placeholderLabel"></div>
   <!--  v-model:collapsed="collapsed" collapsed-width="40"-->
-  <a-layout-sider class="navMenu" width="200" style="background: #fff">
+  <a-layout-sider class="navMenu" width="11vw" style="background: #fff">
     <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" :style="{ height: '100%', borderRight: 0 }" @open-change="clickMenu" @click="clickMenu">
       <template v-for="item in menuData" :key="item.key">
         <a-sub-menu v-if="item.children" :key="item.key">
@@ -15,7 +15,11 @@
           </template>
           <span v-if="!item.children"></span>
           <template v-else>
-            <a-menu-item v-for="i in item.children" :key="i.key">{{ i.subName }}</a-menu-item>
+            <a-menu-item v-for="i in item.children" :key="i.key">
+              <span>
+                {{ i.subName }}
+              </span>
+            </a-menu-item>
           </template>
         </a-sub-menu>
         <a-menu-item v-else :key="item.key + ''">
@@ -45,7 +49,7 @@
   // const collapsed = ref<boolean>(false);
   const router = useRouter();
   // 选中的
-  const selectedKeys = ref<string[]>(['/Home/DataSourceManagement/ApiManagement#/']);
+  const selectedKeys = ref<string[]>(['/Home/DataSourceManagement/ApiManagement']);
   // 打开的
   const openKeys = ref<string[]>(['/Home/DataSourceManagement']);
   const menuData = reactive<menuType[]>([
@@ -56,7 +60,7 @@
       children: [
         {
           subName: '接口管理',
-          key: '/Home/DataSourceManagement/ApiManagement#/',
+          key: '/Home/DataSourceManagement/ApiManagement',
         },
         {
           subName: '已发布接口',
@@ -97,17 +101,21 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
   .placeholderLabel {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
+    width: 11vw;
+    min-width: 11vw;
+    max-width: 11vw;
     background: rgb(255, 255, 255);
-    flex: 0 0 200px;
+    flex: 0 0 11vw;
   }
 
   .navMenu {
     position: fixed;
-    top: 50px;
+    top: 5vh;
+
+    & span {
+      font-size: 1.6vh;
+    }
   }
 </style>

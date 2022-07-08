@@ -2,14 +2,14 @@
   <a-layout-header class="header" />
   <a-layout-header class="header" style="position: fixed; z-index: 9">
     <div class="logo" style="z-index: 999"> </div>
-    <a-menu v-model:selectedKeys="selectedKeys1" theme="dark" mode="horizontal" :style="{ lineHeight: '50px', flex: 1 }">
+    <a-menu v-model:selectedKeys="selectedKeys1" theme="dark" mode="horizontal" :style="{ lineHeight: '5vh', flex: 1 }">
       <a-menu-item key="1">数据工厂</a-menu-item>
       <a-menu-item key="2">指标管理</a-menu-item>
       <a-menu-item key="3">决策引擎</a-menu-item>
       <a-menu-item key="4">系统管理</a-menu-item>
     </a-menu>
     <div class="avatar">
-      <a-avatar size="large">
+      <a-avatar :size="{ xs: 9, sm: 12, md: 15, lg: 20, xl: 28, xxl: 40 }">
         <template #icon>
           <UserOutlined />
         </template>
@@ -32,27 +32,29 @@
     display: flex;
     padding: 0 !important;
     width: 100%;
-    height: 50px !important;
+    height: 5vh !important;
     //opacity: 0.5;
     .logo {
       padding: 0 !important;
-      width: 200px;
-      height: 50px;
+      width: 11vw;
+      height: 5vh;
       background: url('../assets/images/logo.png');
       background-size: cover;
-      line-height: 50px !important;
+      line-height: 5vh !important;
     }
 
     .avatar {
-      flex: 0 0 150px;
+      // background-color: aqua;
+      flex: 0 0 8vw;
       display: flex;
       align-items: center;
     }
 
     .userName {
-      margin: 0 10px;
+      margin: 0 1vh;
+      font-size: 1.5vh;
       color: white;
-      line-height: 50px;
+      line-height: 5vh;
     }
   }
 </style>
