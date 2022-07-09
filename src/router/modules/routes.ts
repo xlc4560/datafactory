@@ -17,9 +17,9 @@ export default {
           component: () => import('@/pages/apiManagement.vue'),
         },
         {
-          path: 'ApiRegister',
+          path: 'ManualReg',
           name: '人工注册',
-          component: () => import('@/pages/contentTest.vue'),
+          component: () => import('@/pages/ManualReg.vue'),
         },
       ],
     },
