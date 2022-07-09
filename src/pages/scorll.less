@@ -1,0 +1,28 @@
+// 控制滚动条样式
+.scroll_apiTest {
+  /* background-color: aqua; */
+  overflow-x: hidden; /* 禁止x轴滚动条 */
+  overflow-y: auto;
+
+  &:hover {
+    overflow-y: auto; /* hover时自动显示滚动条 */
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+
+    /* overflow: hidden; */
+
+    /* display: none; */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /* 滚动条里面小方块 */
+    border-radius: 5px;
+    background: rgb(0 0 0 / 20%);
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: rgb(255 255 255);
+  }
+}

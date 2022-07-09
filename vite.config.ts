@@ -40,10 +40,10 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/weather/, ''),
         },
-        '/str': {
-          target: 'http://api.uixsj.cn',
+        '/getApiInfo': {
+          target: 'http://192.168.78.100:8081',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/str/, ''),
+          rewrite: path => path.replace(/^\/getApiInfo/, ''),
         },
       },
     },

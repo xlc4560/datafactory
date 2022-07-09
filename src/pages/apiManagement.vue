@@ -4,21 +4,21 @@
     <!-- 筛选组 -->
     <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
       <a-form-item label="接口来源:">
-        <a-select v-model:value="formState.apiSource" :allow-clear="true" size="middle" style="width: 200px" :options="apiResourceOptions" placeholder="请选择" />
+        <a-select v-model:value="formState.apiSource" class="width" :allow-clear="true" size="middle" :options="apiResourceOptions" placeholder="请选择" />
       </a-form-item>
       <a-form-item label="api状态:">
         <!-- :options="apiStateOptions"
           :field-names="{ label: 'label', value: 'value' }" -->
-        <a-select v-model:value="formState.apiState" :allow-clear="true" size="middle" style="width: 200px" placeholder="请选择">
+        <a-select v-model:value="formState.apiState" class="width" :allow-clear="true" size="middle" placeholder="请选择">
           <a-select-option v-for="item in apiStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item label="接口名称:">
-        <a-input v-model:value="formState.apiName" placeholder="请输入" />
+        <a-input v-model:value="formState.apiName" class="width" placeholder="请输入" />
       </a-form-item>
-      <a-form-item style="flex: 1">
-        <a-button type="primary" html-type="submit" style="float: right; margin: 0 0 0 10px">查 询</a-button>
-        <a-button type="primary" ghost style="float: right" @click="resetFields">重 置</a-button>
+      <a-form-item class="formBtn">
+        <a-button type="primary" html-type="submit">查 询</a-button>
+        <a-button type="primary" ghost @click="resetFields">重 置</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -57,28 +57,25 @@
             {{ apiState[record.apiState].value }}
           </template>
           <template v-if="column.dataIndex === 'apiOperation'">
-            <a-button type="link" size="small" @click="showDrawer">接口测试</a-button>
+            <a-button type="link" size="small" @click="showDrawer(true)">接口测试</a-button>
             <a-button v-if="record.apiState !== 3" type="link" size="small">发 布</a-button>
             <a-button v-if="record.apiState === 3" type="link" size="small">停 用</a-button>
             <a-button v-if="record.apiState !== 3" type="link" size="small">编 辑</a-button>
-            <a-button v-if="record.apiState === 0" type="link" size="small">删 除</a-button>
+            <a-button v-if="record.apiState === 0" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
           </template>
         </template>
       </a-table>
     </div>
   </div>
   <!-- 接口详情弹窗 -->
-  <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 20px">
+  <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 20px" class="aModal">
     <template #footer>
       <a-button key="back" @click="handleCancel">返回</a-button>
     </template>
-    <!--  :records="records" -->
     <api-details :records="records" />
   </a-modal>
   <!-- 接口测试抽屉 -->
-  <!-- <a-drawer v-model:visible="drawerVisible" class="custom-class" width="50%" title="接口测试" @after-visible-change="afterVisibleChange"> -->
-  <api-test :key="drawerVisibleKey" :drawer-visible="drawerVisible" />
-  <!-- </a-drawer> -->
+  <api-test :drawer-visible="drawerVisible" @on-close="visible => showDrawer(visible)" />
 </template>
 
 <script setup lang="ts">
@@ -86,6 +83,8 @@
   import type { FormProps, TableProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
   import axios from 'axios';
+  // 页面固定配置项
+  import { apiResourceOptions, apiStateOptions, dataSource2 } from './data';
   // 分页
   import { usePagination } from 'vue-request';
   import { useRouter } from 'vue-router';
@@ -96,6 +95,9 @@
   import ApiTest from './apiTest.vue';
   // 网络请求
   import * as request from '@/api/test';
+  const order = ref<0 | 1>(0);
+  const pageSizeGlobal = ref<number>(10);
+  const pageNumGlobal = ref<number>(1);
   // 路由操作
   const router = useRouter();
   // 路由跳转到人工注册页
@@ -104,6 +106,7 @@
       path: '/Home/DataSourceManagement/ApiRegister',
     });
   };
+
   // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
   // 声明表单绑定数据
@@ -116,40 +119,23 @@
   const { resetFields } = useForm(formState);
   // 表单数据验证成功回调事件（筛选数据）（筛序数据回调）
   const handleFinish: FormProps['onFinish'] = () => {
-    const formData = new FormData();
-    formData.append('apiResource', formState.apiSource as string);
-    formData.append('apiStatus', formState.apiState as unknown as string);
-    formData.append('apiName', formState.apiName as string);
-    console.log({
-      apiSource: formState.apiSource,
-      apiState: formState.apiState,
-      apiName: formState.apiName,
-      pageNum: 10,
-    });
-    const res = request.GetApiList({
-      apiSource: formState.apiSource,
-      apiState: formState.apiState,
-      apiName: formState.apiName,
-      pageNum: 10,
-    });
+    const res = request.GetApiList(
+      {
+        apiSource: formState.apiSource,
+        apiState: formState.apiState,
+        apiName: formState.apiName,
+        pageNum: pageNumGlobal.value,
+        order: order.value,
+        pageSize: pageSizeGlobal.value,
+      },
+      order.value,
+    );
     console.log(res);
   };
   // 表单数据验证失败回调事件
   const handleFinishFailed: FormProps['onFinishFailed'] = errors => {
     console.log(errors);
   };
-
-  // select框下拉数据
-  // 接口来源
-  const apiResourceOptions: ApiType.apiSource[] = [{ value: '数据服务' }, { value: '指标管理' }, { value: '决策引擎' }, { value: '数据工厂' }];
-  // 接口状态(用于渲染select框)
-  const apiStateOptions: { value: number; lable: string }[] = [
-    { value: 0, lable: '已停用' },
-    { value: 1, lable: '草稿' },
-    { value: 2, lable: '未发布' },
-    { value: 3, lable: '已发布' },
-  ];
-
   // 加载数据源
   const queryData = (params: ApiType.APIParams) => {
     return axios.get<ApiType.APIResult>('https://randomuser.me/api?noinfo', { params });
@@ -164,54 +150,15 @@
     loading,
     current,
     pageSize,
-  } = usePagination(queryData, {
-    formatResult: res => res.data.results,
+  } = usePagination(request.GetApiList, {
+    formatResult: res => res,
     pagination: {
-      currentKey: 'page',
-      pageSizeKey: 'results',
+      currentKey: 'pageNum',
+      pageSizeKey: 'pageSize',
     },
   });
-  // console.log(dataSource);
-
-  // const a = ref<string>('嗨害嗨');
-  // console.log(a);
-  // 测试数据
-  const dataSource2 = ref<ApiType.dataSource[]>([
-    {
-      apiId: '01',
-      apiName: '接口1',
-      apiDesc: '接口描述接口描述接口描述接口描述',
-      apiSource: '数据工厂',
-      apiState: 0,
-      updateTime: '2021-12-12 12:24:25',
-    },
-    {
-      apiId: '02',
-      apiName: '接口2',
-      apiDesc: '接口描述接口描述接口描述接口描述',
-      apiSource: '数据工厂',
-      apiState: 1,
-      updateTime: '2021-12-12 12:24:26',
-    },
-    {
-      apiId: '03',
-      apiName: '接口3',
-      apiDesc: '接口描述接口描述接口描述接口描述',
-      apiSource: '数据工厂',
-      apiState: 2,
-      updateTime: '2021-12-12 12:24:27',
-    },
-    {
-      apiId: '04',
-      apiName: '接口4',
-      apiDesc: '接口描述接口描述接口描述接口描述',
-      apiSource: '数据工厂',
-      apiState: 3,
-      updateTime: '1990-08-23 11:17:12',
-    },
-  ]);
   const pagination = computed(() => ({
-    total: 200,
+    total: dataSource?.value !== undefined ? dataSource.value[0].totalNum : 200,
     current: current.value,
     pageSize: pageSize.value,
     hideOnSinglePage: true,
@@ -220,17 +167,21 @@
   }));
   // 当点击分页组件时，该回调被触发
   const handleTableChange: TableProps['onChange'] = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
-    console.log(pag, sorter, filters);
-
+    order.value = sorter.order === 'ascend' ? 1 : 0;
+    pageSizeGlobal.value = pag.pageSize;
+    pageNumGlobal.value = pag.current;
     // run触发usePagination中的queryData请求
-    run({
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      results: pag.pageSize!,
-      page: pag?.current,
-      sortField: sorter.field,
-      sortOrder: sorter.order,
-      ...filters,
-    });
+    run(
+      {
+        apiSource: formState.apiSource,
+        apiState: formState.apiState,
+        apiName: formState.apiName,
+        pageSize: pag.pageSize,
+        pageNum: pag.current,
+        order: sorter.order === 'ascend' ? 1 : 0,
+      },
+      sorter.order === 'ascend' ? 1 : 0,
+    );
   };
   // Key在上方引入
   const state = reactive<{
@@ -264,10 +215,13 @@
   };
   // 接口测试抽屉组件
   const drawerVisible = ref<boolean>(false);
-  const drawerVisibleKey = ref<number>(0);
-  const showDrawer = () => {
-    drawerVisible.value = true;
-    drawerVisibleKey.value++;
+  const showDrawer = (visible: boolean) => {
+    drawerVisible.value = visible;
+  };
+  // 接口删除操作
+  const deleteApi = ({ apiId }: { apiId: string }) => {
+    console.log(apiId);
+    request.DeleteApi(apiId);
   };
 </script>
 
@@ -283,6 +237,22 @@
       display: flex;
       margin: 20px;
       padding: 0 10px;
+    }
+
+    .width {
+      width: 200px;
+    }
+
+    .formBtn {
+      flex: 1;
+
+      button {
+        float: right;
+
+        &:nth-child(1) {
+          margin: 0 0 0 10px;
+        }
+      }
     }
   }
 
@@ -311,4 +281,7 @@
       height: 7px;
     }
   }
+  // ::v-deep .aModal {
+  //   top: 20px;
+  // }
 </style>

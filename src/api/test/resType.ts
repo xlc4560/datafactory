@@ -16,37 +16,16 @@ export interface GetWth {
 
 // 请求api接口列表的响应值类型
 export interface ApiList {
-  code: number;
-  message: string;
-  data: {
-    records: {
-      id: number;
-      apiName: string;
-      apiSource: string;
-      apiType: null;
-      apiDescription: string;
-      apiProtocol: number;
-      apiMethod: number;
-      apiIpPort: string;
-      apiPath: string;
-      apiState: number;
-      apiRequestBody: string;
-      apiResponse: string;
-      apiTimeout: number;
-      apiDeleted: number;
-      createTime: string;
-      updateTime: string;
-    };
-    total: number; // 总条数
-    size: number; // 每页条数
-    current: number; // 当前页
-    orders: string[];
-    optimizeCountSql: boolean;
-    searchCount: boolean;
-    countId: null;
-    maxLimit: null;
-    pages: number;
-  };
+  id: number;
+  apiName: string;
+  apiSource: string;
+  apiState: number;
+  updateTime: string;
+  pageSize: number;
+  pageNum: number;
+  apiDescription: string;
+  apiType: string;
+  totalNum: number;
 }
 export interface ApiDetails {
   code: number;

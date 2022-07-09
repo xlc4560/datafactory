@@ -1,5 +1,5 @@
 <template>
-  <a-drawer v-model:visible="drawerVisible" class="custom-class" width="55%" title="接口测试" @after-visible-change="afterVisibleChange">
+  <a-drawer :visible="drawerVisible" class="custom-class" width="55%" title="接口测试" @close="onClose">
     <div class="drawer">
       <div class="paramsDetails scroll_apiTest">
         <a-descriptions :column="1">
@@ -47,6 +47,9 @@
 <script setup lang="ts">
   import { JsonViewer } from 'vue3-json-viewer';
   import 'vue3-json-viewer/dist/index.css';
+  import { defineEmits } from 'vue';
+  // 使用defineEmits创建名称，接受一个数组
+  const emit = defineEmits(['onClose']);
   const props = defineProps({
     drawerVisible: {
       type: Boolean,
@@ -55,12 +58,9 @@
   });
 
   // 接口测试抽屉
-  const drawerVisible = ref<boolean>(props.drawerVisible);
-  const afterVisibleChange = (bool: boolean) => {
-    console.log('visible', bool);
-  };
   const onClose = () => {
-    drawerVisible.value = false;
+    // drawerVisible.value = false;
+    emit('onClose', false);
   };
   const columns = [
     {
@@ -115,6 +115,8 @@
 </script>
 
 <style lang="less">
+  @import url('./scorll.less');
+
   .ant-drawer-body {
     padding: 0;
   }
@@ -155,32 +157,6 @@
         min-height: 75vh;
         max-height: 75vh;
       }
-    }
-  }
-  // 控制滚动条样式
-  .scroll_apiTest {
-    /* background-color: aqua; */
-    overflow-x: hidden; /*禁止x轴滚动条*/
-    overflow-y: auto;
-
-    &:hover {
-      overflow-y: auto; /*hover时自动显示滚动条 */
-    }
-
-    &::-webkit-scrollbar {
-      width: 5px;
-      /*overflow: hidden;*/
-      /*display: none;*/
-    }
-
-    &::-webkit-scrollbar-thumb {
-      /*滚动条里面小方块*/
-      border-radius: 5px;
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    &:hover::-webkit-scrollbar-thumb {
-      background: rgb(255, 255, 255);
     }
   }
 </style>

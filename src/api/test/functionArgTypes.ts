@@ -4,7 +4,7 @@ export interface GetApiListArgs {
   apiState?: number;
   apiName?: string;
   // 时间排序
-  order?: 0 | 1;
-  pageSize?: string;
+  pageSize?: number;
   pageNum: number;
+  order: 0 | 1;
 }

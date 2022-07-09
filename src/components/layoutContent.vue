@@ -2,11 +2,11 @@
   <a-layout class="content">
     <div class="divAndSectionPublic"></div>
     <section class="divAndSectionPublic">
-      <a-breadcrumb style="margin: 1.3vh 0; font-size: 1.6vh">
+      <a-breadcrumb style="margin: 16px 0">
         <a-breadcrumb-item v-for="item in routeMatch" :key="item.name">{{ item.name }}</a-breadcrumb-item>
       </a-breadcrumb>
     </section>
-    <a-layout-content class="main" :style="{ margin: ['0', '2.4vh', '2.4vh'], minHeight: '80vh' }">
+    <a-layout-content class="main" :style="{ margin: ['0', '24px', '24px'], minHeight: '80vh' }">
       <router-view />
     </a-layout-content>
   </a-layout>
@@ -32,13 +32,13 @@
 
     .divAndSectionPublic {
       width: 100%;
-      height: 5vh;
+      height: 50px;
     }
 
     section {
       position: fixed;
       z-index: 9;
-      padding: 0 2.4vh;
+      padding: 0 24px;
       background-color: rgb(255, 255, 255);
     }
   }

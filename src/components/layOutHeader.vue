@@ -2,7 +2,7 @@
   <a-layout-header class="header" />
   <a-layout-header class="header" style="position: fixed; z-index: 9">
     <div class="logo" style="z-index: 999"> </div>
-    <a-menu v-model:selectedKeys="selectedKeys1" theme="dark" mode="horizontal" :style="{ lineHeight: '5vh', flex: 1 }">
+    <a-menu v-model:selectedKeys="selectedKeys1" theme="dark" mode="horizontal" :style="{ lineHeight: '50px', flex: 1 }">
       <a-menu-item key="1">数据工厂</a-menu-item>
       <a-menu-item key="2">指标管理</a-menu-item>
       <a-menu-item key="3">决策引擎</a-menu-item>
@@ -32,20 +32,20 @@
     display: flex;
     padding: 0 !important;
     width: 100%;
-    height: 5vh !important;
+    height: 50px !important;
     //opacity: 0.5;
     .logo {
       padding: 0 !important;
-      width: 11vw;
-      height: 5vh;
+      width: 200px;
+      height: 50px;
       background: url('../assets/images/logo.png');
       background-size: cover;
-      line-height: 5vh !important;
+      line-height: 50px !important;
     }
 
     .avatar {
       // background-color: aqua;
-      flex: 0 0 8vw;
+      flex: 0 0 150px;
       display: flex;
       align-items: center;
     }

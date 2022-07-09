@@ -1,5 +1,5 @@
 <template>
-  <a-layout>
+  <a-layout class="test">
     <LayOut_Header />
     <a-layout>
       <LayOut_Navmenu />
@@ -19,7 +19,6 @@
     width: 120px;
     height: 31px;
     background: rgba(255, 255, 255, 0.3);
-    // background: skyblue;
   }
 
   .ant-row-rtl #components-layout-demo-top-side-2 .logo {

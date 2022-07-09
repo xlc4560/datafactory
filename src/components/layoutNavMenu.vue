@@ -2,7 +2,7 @@
   <!--  :style="{flex: `0 0 ${width}`}"-->
   <div class="placeholderLabel"></div>
   <!--  v-model:collapsed="collapsed" collapsed-width="40"-->
-  <a-layout-sider class="navMenu" width="11vw" style="background: #fff">
+  <a-layout-sider class="navMenu" width="200px" style="background: #fff">
     <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" :style="{ height: '100%', borderRight: 0 }" @open-change="clickMenu" @click="clickMenu">
       <template v-for="item in menuData" :key="item.key">
         <a-sub-menu v-if="item.children" :key="item.key">
@@ -103,19 +103,15 @@
 
 <style scoped lang="less">
   .placeholderLabel {
-    width: 11vw;
-    min-width: 11vw;
-    max-width: 11vw;
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
     background: rgb(255, 255, 255);
-    flex: 0 0 11vw;
+    flex: 0 0 200px;
   }
 
   .navMenu {
     position: fixed;
-    top: 5vh;
-
-    & span {
-      font-size: 1.6vh;
-    }
+    top: 50px;
   }
 </style>

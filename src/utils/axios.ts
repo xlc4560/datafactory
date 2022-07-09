@@ -1,10 +1,11 @@
 /*
  *   axios二次封装
  */
+import { message as antdMessage } from 'ant-design-vue';
 import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
-  baseURL: 'http://localhost:3200',
+  baseURL: '/getApiInfo',
   timeout: 1000,
 });
 // 请求拦截
@@ -28,17 +29,31 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   // 对响应内容做相应的逻辑处理，如：筛选、过滤等
   response => {
-    return response.data;
+    const { code, data, message } = response.data as { code: number; data: any; message: string };
+    switch (code) {
+      case 23:
+        antdMessage.success(message, 1);
+        break;
+
+      default:
+        break;
+    }
+    return data;
   },
   error => {
+    switch (error?.code) {
+      case 'ECONNABORTED':
+        antdMessage.error('请求超时', 1);
+        break;
+    }
     return Promise.reject(error);
   },
 );
 
-function get<T>({ url, params }: { url: string; params?: object }): Promise<T> {
+export function get<T>({ url, params }: { url: string; params?: object }): Promise<T> {
   return instance.get(url, params);
 }
-function post<T>({ url, data, config }: { url: string; data?: object; config?: object }): Promise<T> {
+export function post<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
   return instance.post(url, data, config);
 }
 
