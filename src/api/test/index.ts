@@ -12,6 +12,8 @@ enum Api {
   GET_API_DETAILS = '/apiList/apiDetail/', //获取接口详情
   API_STATE_UPDATE = '/updateApiState/apiList/reviseStatePort', //修改接口状态
   DELETE_API = '/deleteApi/api/apiList/delete/', // 删除接口api
+  UPDATE_API = '/apiList/apiEdit/', // 编辑接口信息
+  API_TEST = '/apiList/apiTest', // 接口测试
 }
 
 export const accountInfoApi = () => api.get<resType.GetAccountInfoModel>({ url: Api.ACCOUNT_INFO });
@@ -33,5 +35,16 @@ export const GetApiDetails = (id: string) => api.get<resType.ApiDetails>({ url: 
 export const UpdateApiState = ({ operation, idList }: { operation: number; idList: string[] }) => api.post<any>({ url: Api.API_STATE_UPDATE, data: { operation, idList } });
 // 删除接口
 export const DeleteApi = (id: string) => api.get({ url: Api.DELETE_API + id });
-// 测试接口
+// 编辑接口信息
+export const UpdateApi = (params: funType.UpdateApi, state: 0 | 1) => api.post<any>({ url: Api.UPDATE_API + state, data: params });
+// 接口测试
+export const ApiTest = (params: funType.ApiTest) => {
+  type key = keyof funType.ApiTest;
+  const form = new FormData();
+  Object.keys(params).forEach((item: string) => {
+    form.append(item, params[item as key] as string);
+  });
+  return api.post<string>({ url: Api.API_TEST, data: form });
+};
+// 测试接口（用于测试网络请求及代理配置是否成功）
 export const gettest = () => api.post({ url: Api.GET_TEST });

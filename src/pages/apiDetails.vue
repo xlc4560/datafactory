@@ -131,7 +131,7 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
-    height: 600px;
+    height: 62vh;
 
     .tab,
     .apiReponseInstance {
