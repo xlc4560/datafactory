@@ -3,31 +3,26 @@
     <h1 style="font-size: 20px; text-align: center"><strong>接口详情</strong></h1>
     <a-card :title="'接口名称:     ' + props.records.apiName" size="small">
       <a-descriptions>
-        <a-descriptions-item label="接口分类">Zhou Maomao</a-descriptions-item>
-        <a-descriptions-item label="请求协议">1810000000</a-descriptions-item>
-        <a-descriptions-item label="请求方式">Hangzhou, Zhejiang</a-descriptions-item>
-        <a-descriptions-item label="支持格式">empty</a-descriptions-item>
-        <a-descriptions-item label="IP端口"> District, Hangzhou, Zhejiang, China </a-descriptions-item>
-        <a-descriptions-item label="Path"> /taskApi/taskradar </a-descriptions-item>
+        <a-descriptions-item v-for="item in apiDeatils.descriptions" :key="item.lable" :label="item.lable">{{ item.value }}</a-descriptions-item>
       </a-descriptions>
     </a-card>
     <div class="tab">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="请求参数">
           <a-card size="small">
-            <a-table :columns="columns" :data-source="data" :pagination="false"> </a-table>
+            <a-table :columns="columns" :data-source="apiDeatils.apiParameter" :pagination="false"> </a-table>
           </a-card>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求body" force-render>
           <a-card size="small" class="scroll_apiDetails">
-            <JsonViewer class="scroll_apiDetails" :value="[...columns, ...columns]" :expand-depth="1" boxed copyable sort theme="light" />
+            <JsonViewer class="scroll_apiDetails" :value="apiDeatils.apiRequestBody" :expand-depth="1" boxed copyable sort theme="light" />
           </a-card>
         </a-tab-pane>
       </a-tabs>
     </div>
     <div class="apiReponseInstance">
       <a-card title="接口返回示例" size="small">
-        <JsonViewer class="scroll_apiDetails" :value="[...columns, ...columns]" :expand-depth="1" boxed copyable sort theme="light" />
+        <JsonViewer class="scroll_apiDetails" :value="apiDeatils.apiResponse" :expand-depth="1" boxed copyable sort theme="light" />
       </a-card>
     </div>
   </div>
@@ -36,75 +31,86 @@
 <script setup lang="ts">
   import { JsonViewer } from 'vue3-json-viewer';
   import 'vue3-json-viewer/dist/index.css';
+  // 表格配置项
   const columns = [
     {
       title: '参数名称',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'parameterName',
+      key: 'parameterName',
     },
     {
       title: '参数位置',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'parameterPosition',
+      key: 'parameterPosition',
     },
     {
       title: '数据类型',
-      dataIndex: 'classify',
-      key: 'classify',
+      dataIndex: 'parameterType',
+      key: 'parameterType',
     },
     {
       title: '是否必填',
-      key: 'isNecessary',
-      dataIndex: 'isNecessary',
+      key: 'parameterRequire',
+      dataIndex: 'parameterRequire',
     },
     {
       title: '默认值',
-      dataIndex: 'default',
-      key: 'default',
+      dataIndex: 'parameterDefault',
+      key: 'parameterDefault',
     },
     {
       title: '说明',
-      dataindex: 'descrip',
-      key: 'descrip',
+      dataindex: 'parameterDescription',
+      key: 'parameterDescription',
     },
   ];
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      address: 'New York No. 1 Lake Park',
-      classify: '数据工厂',
-      isNecessary: '是',
-      default: '0',
-      descrip: '暂无',
-    },
-    {
-      key: '2',
-      name: 'John Brown',
-      address: 'New York No. 1 Lake Park',
-      classify: '数据工厂',
-      isNecessary: '是',
-      default: '0',
-      descrip: '暂无',
-    },
-    {
-      key: '3',
-      name: 'John Brown',
-      address: 'New York No. 1 Lake Park',
-      classify: '数据工厂',
-      isNecessary: '是',
-      default: '0',
-      descrip: '暂无',
-    },
-  ];
+  // 使用props接收来自父组件的数据
   const props = defineProps({
     records: {
       type: Object,
       default: () => ({ a: 1, b: 2 }),
     },
   });
-  // const { records } = toRefs(props);
-  console.log(props.records);
+  // 所有需要展示的数据
+  const apiDeatils = computed(() => {
+    let apiParameter: object[] = [];
+    if (props.records.apiParameter === null || props.records.apiParameter === undefined || props.records.apiParameter === '') {
+      apiParameter = [];
+    } else {
+      apiParameter = [...props.records.apiParameter];
+    }
+    return {
+      descriptions: [
+        {
+          lable: '接口分类',
+          value: props.records?.ApiType,
+        },
+        {
+          lable: '请求协议',
+          value: props.records?.apiProtocol === 0 ? 'http' : 'https',
+        },
+        {
+          lable: '请求方式',
+          value: props.records?.ApiType === 0 ? 'get' : 'post',
+        },
+        {
+          lable: '支持格式',
+          value: '暂无此数据',
+        },
+        {
+          lable: 'IP端口',
+          value: props.records?.apiIpPort,
+        },
+        {
+          lable: 'Path',
+          value: props.records?.apiPath,
+        },
+      ],
+      apiParameter,
+      apiRequestBody: props.records?.apiRequestBody,
+      apiResponse: props.records?.apiResponse,
+    };
+  });
 
   const activeKey = ref<string>('1');
 </script>

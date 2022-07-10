@@ -182,12 +182,15 @@
 <script lang="ts">
   import { defineComponent, ref, reactive, toRaw, UnwrapRef } from 'vue';
   import { message, Form } from 'ant-design-vue';
-  import { useRouter } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
   const useForm = Form.useForm;
 
   export default defineComponent({
     components: {},
     setup() {
+      // 接收params参数
+      const route = useRoute();
+      console.log(route.params);
       // api基本信息和参数
       const api_basic = reactive({
         api_state: 1, //api状态  0停用 1草稿 2未发布 3已发布

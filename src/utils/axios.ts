@@ -29,7 +29,7 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   // 对响应内容做相应的逻辑处理，如：筛选、过滤等
   response => {
-    const { code, data, msg } = response.data as { code: number; data: { apiBasics: object[]; totalNum: number }; msg: string };
+    const { code, data, msg } = response.data as { code: number; data: any; msg: string };
     switch (code) {
       case 100200:
         antdMessage.success(msg, 1);

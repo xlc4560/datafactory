@@ -58,6 +58,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/updateApi/, ''),
         },
+        // 吴正东
+        '/registerApi': {
+          target: 'http://10.8.22.160:8081',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/registerApi/, ''),
+        },
       },
     },
     plugins: [

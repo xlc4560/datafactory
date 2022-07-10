@@ -89,5 +89,6 @@ const apiState: { value: string; color: string }[] = [
   { value: '草稿', color: '#18c9e4' },
   { value: '未发布', color: '#faad14' },
   { value: '已发布', color: '#52c41a' },
+  { value: '已停用', color: '#ff4d4f' },
 ];
 export { columns, apiState };

@@ -1,5 +1,5 @@
 <template>
-  <a-drawer :visible="drawerVisible" class="custom-class" width="55%" title="接口测试" @close="onClose">
+  <a-drawer :visible="drawerVisible" class="custom-class" width="55%" title="接口测试" @close="onClose" @after-visible-change="afterVisibleChange">
     <div class="drawer">
       <div class="paramsDetails scroll_apiTest">
         <a-descriptions :column="1">
@@ -38,7 +38,7 @@
       </div>
     </div>
     <template #footer>
-      <a-button type="primary" @click="onClose">接口测试</a-button>
+      <a-button type="primary" @click="apiTestBtn">接口测试</a-button>
       <a-button style="margin-right: 8px" @click="onClose">关闭</a-button>
     </template>
   </a-drawer>
@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
   import { JsonViewer } from 'vue3-json-viewer';
+  import * as request from '@/api/test';
   import 'vue3-json-viewer/dist/index.css';
   // 使用defineEmits创建名称，接受一个数组
   const emit = defineEmits(['onClose']);
@@ -54,12 +55,44 @@
       type: Boolean,
       default: false,
     },
+    apiId: {
+      type: String,
+      default: '',
+    },
   });
-
   // 接口测试抽屉
   const onClose = () => {
-    // drawerVisible.value = false;
     emit('onClose', false);
+  };
+  // 接口所有数据在这里
+  const apiInfo = ref<any>();
+  const afterVisibleChange = async (bool: boolean) => {
+    if (bool) {
+      apiInfo.value = { ...(await request.GetApiDetails(props.apiId)) };
+    }
+    console.log(apiInfo.value);
+  };
+  const computedApiInfo = computed(() => {
+    return {
+      descriptions: [
+        {
+          label: '接口名称',
+          value: apiInfo.value.apiName,
+        },
+        {
+          label: 'Request URL',
+          value: apiInfo.value.apiProtocol === 0 ? 'http://' : 'https://' + apiInfo.value.apiIpPort + '/' + apiInfo.value.apiPath,
+        },
+        {
+          label: '请求方式',
+          value: apiInfo.value.apiMethod === 0 ? 'get' : 'post',
+        },
+      ],
+    };
+  });
+  const apiTestBtn = () => {
+    console.log();
+    // request.ApiTest();
   };
   const columns = [
     {
