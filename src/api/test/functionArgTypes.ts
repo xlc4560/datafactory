@@ -1,10 +1,10 @@
 // 函数GetApiList（请求接口列表）的参数类型
 export interface GetApiListArgs {
-  apiSource?: string;
-  apiState?: number;
-  apiName?: string;
+  apiSource?: string | null;
+  apiState?: number | null;
+  apiName?: string | null;
   // 时间排序
-  pageSize?: number;
+  pageSize?: number | null;
   pageNum: number;
   order: 0 | 1;
 }

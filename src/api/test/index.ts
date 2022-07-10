@@ -8,10 +8,10 @@ enum Api {
   TOKEN_EXPIRED = '/user/tokenExpired',
   GET_TEST = '/getTest/api/QueryApiDetails/1', // 测试url
   GET_WTH = '/weather/weather_mini?city=%E9%87%8D%E5%BA%86', // 获取天气数据(仅测试)
-  GET_API_LIST = '/getApiList/api/apiList/searchAPI', //获取列表数据http://192.168.78.100:8081
-  GET_API_DETAILS = '/apiList/apiDetail/', //获取接口详情
+  GET_API_LIST = '/getApiInfo/api/apiList/searchAPI', //获取列表数据http://192.168.78.100:8081
+  GET_API_DETAILS = '/details/apiList/apiDetail/', //获取接口详情
   API_STATE_UPDATE = '/updateApiState/apiList/reviseStatePort', //修改接口状态
-  DELETE_API = '/deleteApi/api/apiList/delete/', // 删除接口api
+  DELETE_API = '/api/apiList/delete/', // 删除接口api
   UPDATE_API = '/apiList/apiEdit/', // 编辑接口信息
   API_TEST = '/apiList/apiTest', // 接口测试
 }
@@ -25,9 +25,11 @@ export const GetApiList = (params: funType.GetApiListArgs, order = 0) => {
   params.order = order as 0 | 1;
   const form = new FormData();
   Object.keys(params).forEach((item: string) => {
-    form.append(item, params[item as key] as string);
+    if (params[item as key] !== null && params[item as key] !== undefined && params[item as key] !== '') {
+      form.append(item, params[item as key] as string);
+    }
   });
-  return api.post<resType.ApiList[]>({ url: Api.GET_API_LIST, data: form });
+  return api.post<resType.ApiList>({ url: Api.GET_API_LIST, data: form });
 };
 // 获取接口详情数据
 export const GetApiDetails = (id: string) => api.get<resType.ApiDetails>({ url: Api.GET_API_DETAILS + id });

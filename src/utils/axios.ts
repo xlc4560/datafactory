@@ -5,7 +5,7 @@ import { message as antdMessage } from 'ant-design-vue';
 import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
-  baseURL: '/getApiInfo',
+  baseURL: '',
   timeout: 1000,
 });
 // 请求拦截
@@ -29,12 +29,14 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   // 对响应内容做相应的逻辑处理，如：筛选、过滤等
   response => {
-    const { code, data, message } = response.data as { code: number; data: any; message: string };
+    const { code, data, msg } = response.data as { code: number; data: { apiBasics: object[]; totalNum: number }; msg: string };
     switch (code) {
-      case 23:
-        antdMessage.success(message, 1);
+      case 100200:
+        antdMessage.success(msg, 1);
         break;
-
+      case 100500:
+        antdMessage.error(msg, 1);
+        throw new Error('返回接口错误');
       default:
         break;
     }

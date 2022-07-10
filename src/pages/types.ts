@@ -1,8 +1,8 @@
 // 常用类型
 interface FormState {
-  apiSource?: string;
-  apiState?: number;
-  apiName?: string;
+  apiSource: string | null;
+  apiState: number | null;
+  apiName: string | null;
 }
 type APIParams = {
   results: number;

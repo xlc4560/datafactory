@@ -47,7 +47,6 @@
 <script setup lang="ts">
   import { JsonViewer } from 'vue3-json-viewer';
   import 'vue3-json-viewer/dist/index.css';
-  import { defineEmits } from 'vue';
   // 使用defineEmits创建名称，接受一个数组
   const emit = defineEmits(['onClose']);
   const props = defineProps({

@@ -40,10 +40,23 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/weather/, ''),
         },
+        // 黄朝浩
         '/getApiInfo': {
-          target: 'http://192.168.78.100:8081',
+          target: 'http://10.8.22.162:8081',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/getApiInfo/, ''),
+        },
+        // 江艳秋
+        '/details': {
+          target: 'http://10.8.22.129:8081',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/details/, ''),
+        },
+        // 卢建鑫
+        '/updateApi': {
+          target: 'http://10.8.22.133:8081',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/updateApi/, ''),
         },
       },
     },

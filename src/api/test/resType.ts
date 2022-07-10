@@ -16,15 +16,7 @@ export interface GetWth {
 
 // 请求api接口列表的响应值类型
 export interface ApiList {
-  id: number;
-  apiName: string;
-  apiSource: string;
-  apiState: number;
-  updateTime: string;
-  pageSize: number;
-  pageNum: number;
-  apiDescription: string;
-  apiType: string;
+  apiBasics: { id: number; apiName: string; apiSource: string; apiState: number; updateTime: string; pageSize: number; pageNum: number; apiDescription: string; apiType: string; totalNum: number }[];
   totalNum: number;
 }
 export interface ApiDetails {

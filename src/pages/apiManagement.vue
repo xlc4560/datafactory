@@ -39,7 +39,7 @@
         :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
         :columns="columns"
         :row-key="record => record.apiId"
-        :data-source="dataSource2"
+        :data-source="dataSource?.apiBasics"
         :pagination="pagination"
         :loading="loading"
         size="middle"
@@ -60,7 +60,7 @@
             <a-button type="link" size="small" @click="showDrawer(true)">接口测试</a-button>
             <a-button v-if="record.apiState !== 3" type="link" size="small">发 布</a-button>
             <a-button v-if="record.apiState === 3" type="link" size="small">停 用</a-button>
-            <a-button v-if="record.apiState !== 3" type="link" size="small">编 辑</a-button>
+            <a-button v-if="record.apiState !== 3" type="link" size="small" @click="updateApi(record?.id)">编 辑</a-button>
             <a-button v-if="record.apiState === 0" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
           </template>
         </template>
@@ -82,9 +82,8 @@
   import apiDetails from './apiDetails.vue';
   import type { FormProps, TableProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
-  import axios from 'axios';
   // 页面固定配置项
-  import { apiResourceOptions, apiStateOptions, dataSource2 } from './data';
+  import { apiResourceOptions, apiStateOptions } from './data';
   // 分页
   import { usePagination } from 'vue-request';
   import { useRouter } from 'vue-router';
@@ -111,15 +110,15 @@
   const useForm = Form.useForm;
   // 声明表单绑定数据
   const formState = reactive<ApiType.FormState>({
-    apiSource: undefined,
-    apiState: undefined,
+    apiSource: null,
+    apiState: null,
     apiName: '',
   });
   // 用于重置表单
   const { resetFields } = useForm(formState);
   // 表单数据验证成功回调事件（筛选数据）（筛序数据回调）
   const handleFinish: FormProps['onFinish'] = () => {
-    const res = request.GetApiList(
+    const res = run(
       {
         apiSource: formState.apiSource,
         apiState: formState.apiState,
@@ -128,17 +127,13 @@
         order: order.value,
         pageSize: pageSizeGlobal.value,
       },
-      order.value,
+      // order.value,
     );
     console.log(res);
   };
   // 表单数据验证失败回调事件
   const handleFinishFailed: FormProps['onFinishFailed'] = errors => {
     console.log(errors);
-  };
-  // 加载数据源
-  const queryData = (params: ApiType.APIParams) => {
-    return axios.get<ApiType.APIResult>('https://randomuser.me/api?noinfo', { params });
   };
   // 控制按钮是否可用（操作按钮组）
   const isDisabled = ref<boolean>(true);
@@ -151,19 +146,22 @@
     current,
     pageSize,
   } = usePagination(request.GetApiList, {
-    formatResult: res => res,
     pagination: {
       currentKey: 'pageNum',
       pageSizeKey: 'pageSize',
     },
+    onError(error, params) {
+      console.log(params);
+    },
   });
+
   const pagination = computed(() => ({
-    total: dataSource?.value !== undefined ? dataSource.value[0].totalNum : 200,
+    total: dataSource.value?.totalNum,
     current: current.value,
     pageSize: pageSize.value,
-    hideOnSinglePage: true,
+    // hideOnSinglePage: true,
     showQuickJumper: true,
-    showTotal: () => `共${200}条`,
+    showTotal: () => `共${dataSource.value?.totalNum}条`,
   }));
   // 当点击分页组件时，该回调被触发
   const handleTableChange: TableProps['onChange'] = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
@@ -212,6 +210,13 @@
   const handleCancel = (e: MouseEvent) => {
     console.log(e);
     modalVisible.value = false;
+  };
+  // 接口编辑按钮
+  const updateApi = (id: number) => {
+    console.log(id);
+
+    const res = request.GetApiDetails(id + '');
+    console.log('--------------------', res);
   };
   // 接口测试抽屉组件
   const drawerVisible = ref<boolean>(false);
