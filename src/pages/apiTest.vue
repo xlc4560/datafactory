@@ -3,13 +3,11 @@
     <div class="drawer">
       <div class="paramsDetails scroll_apiTest">
         <a-descriptions :column="1">
-          <a-descriptions-item label="接口名称">Zhou Maomao</a-descriptions-item>
-          <a-descriptions-item label="Request URL"> http://10.255.68.192:8080/taskApi/runppt</a-descriptions-item>
-          <a-descriptions-item label="请求方式">Hangzhou, Zhejiang</a-descriptions-item>
+          <a-descriptions-item v-for="item in computedApiInfo.descriptions" :key="item.label" :label="item.label">{{ item.value }}</a-descriptions-item>
         </a-descriptions>
         <div>
           <a-card title="输入参数" :bordered="false">
-            <a-table :columns="columns" :data-source="data" size="small" :pagination="false">
+            <a-table :columns="columns" :data-source="computedApiInfo.apiParameter" size="small" :pagination="false">
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'tags'">
                   <span>
@@ -19,15 +17,15 @@
                   </span>
                 </template>
                 <template v-else-if="column.key === 'action'">
-                  <a-input placeholder="请输入" />
+                  <a-input v-model:value="testValue" placeholder="请输入" />
                 </template>
               </template>
             </a-table>
           </a-card>
         </div>
         <div>
-          <a-card title="请求body" :bordered="false">
-            <a-textarea placeholder="请输入" :rows="15" />
+          <a-card v-if="computedApiInfo.apiRequestBody" title="请求body" :bordered="false">
+            <a-textarea v-model:value="resBody" placeholder="请输入" :rows="15" />
           </a-card>
         </div>
       </div>
@@ -72,52 +70,86 @@
     }
     console.log(apiInfo.value);
   };
+  const testValue = ref<string>('');
+  const resBody = ref<string>('');
   const computedApiInfo = computed(() => {
+    let apiParameter: {
+      id?: number;
+      parameterApiId?: number;
+      parameterName: string;
+      parameterType: number;
+      parameterRequire: number; //是否必须 (0:非必填 1:必填)
+      parameterPosition: number; //参数位置(0:query 1:header 3:body)
+      parameterDescription?: string;
+      parameterDefault: string;
+    }[] = [];
+    if (apiInfo.value?.apiParameter === null || apiInfo.value?.apiParameter === undefined || apiInfo.value?.apiParameter === '') {
+      apiParameter = [];
+    } else {
+      apiParameter = [...apiInfo.value.apiParameter];
+    }
+    resBody.value = apiInfo.value?.apiRequestBody;
     return {
       descriptions: [
         {
           label: '接口名称',
-          value: apiInfo.value.apiName,
+          value: apiInfo.value?.apiName,
         },
         {
           label: 'Request URL',
-          value: apiInfo.value.apiProtocol === 0 ? 'http://' : 'https://' + apiInfo.value.apiIpPort + '/' + apiInfo.value.apiPath,
+          value: apiInfo.value?.apiProtocol === 0 ? 'http://' : 'https://' + apiInfo.value?.apiIpPort + '/' + apiInfo.value?.apiPath,
         },
         {
           label: '请求方式',
-          value: apiInfo.value.apiMethod === 0 ? 'get' : 'post',
+          value: apiInfo.value?.apiMethod === 0 ? 'get' : apiInfo.value?.apiMethod === 1 ? 'post' : '无数据',
         },
       ],
+      apiParameter,
+      apiRequestBody: apiInfo.value?.apiRequestBody,
     };
   });
   const apiTestBtn = () => {
-    console.log();
-    // request.ApiTest();
+    computedApiInfo.value.apiParameter.forEach(item => {
+      delete item.id;
+      delete item.parameterApiId;
+    });
+    console.log(apiInfo.value?.apiMethod);
+
+    request.ApiTest({
+      apiPath: computedApiInfo.value.descriptions[1].value,
+      apiName: apiInfo.value?.apiName,
+      apiMethod: apiInfo.value?.apiMethod,
+      apiRequestBody: resBody.value,
+      apiParameter: computedApiInfo.value.apiParameter as {
+        parameterName: string;
+        parameterType: number;
+        parameterRequire: number; //是否必须 (0:非必填 1:必填)
+        parameterPosition: number; //参数位置(0:query 1:header 3:body)
+        parameterDescription?: string;
+        parameterDefault: string;
+      }[],
+    });
   };
   const columns = [
     {
       title: '参数名称',
-      dataIndex: 'name',
-      key: 'name',
-      width: '20%',
+      dataIndex: 'parameterName',
+      key: 'parameterName',
     },
     {
       title: '参数位置',
-      dataIndex: 'address',
-      key: 'address',
-      width: '20%',
+      dataIndex: 'parameterPosition',
+      key: 'parameterPosition',
     },
     {
       title: '数据类型',
-      dataIndex: 'dataType',
-      key: 'dataType',
-      width: '20%',
+      dataIndex: 'parameterType',
+      key: 'parameterType',
     },
     {
       title: '是否必填',
-      key: 'tags',
-      dataIndex: 'tags',
-      width: '20%',
+      key: 'parameterRequire',
+      dataIndex: 'parameterRequire',
     },
     {
       title: '测试值',
@@ -125,22 +157,6 @@
     },
   ];
 
-  const data = [
-    {
-      key: '1',
-      name: 'name',
-      address: 'query',
-      dataType: 'string',
-      tags: '是',
-    },
-    {
-      key: '2',
-      name: 'name',
-      address: 'query',
-      dataType: 'string',
-      tags: '否',
-    },
-  ];
   const keyClick = (keyName: string): void => {
     console.log(keyName, '被点击了');
   };

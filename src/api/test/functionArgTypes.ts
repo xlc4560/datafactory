@@ -46,7 +46,7 @@ export interface ApiTest {
     parameterPosition: number; //参数位置(0:query 1:header 3:body)
     parameterDescription?: string;
     parameterDefault: string;
-  };
+  }[];
 }
 
 export interface register {

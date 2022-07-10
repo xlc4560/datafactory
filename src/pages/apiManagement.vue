@@ -58,10 +58,10 @@
           </template>
           <template v-if="column.dataIndex === 'apiOperation'">
             <a-button type="link" size="small" @click="showDrawer(true, record.id)">接口测试</a-button>
-            <a-button v-if="record.apiState !== 3" type="link" size="small" @click="updateApisState('1', [record.id + ''])">发 布</a-button>
+            <a-button v-if="record.apiState === 4 || record.apiState === 2" type="link" size="small" @click="updateApisState('1', [record.id + ''])">发 布</a-button>
             <a-button v-if="record.apiState === 3" type="link" size="small" @click="updateApisState('0', [record.id + ''])">停 用</a-button>
             <a-button v-if="record.apiState !== 3" type="link" size="small" @click="updateApi(record?.id)">编 辑</a-button>
-            <a-button v-if="record.apiState === 0" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
+            <a-button v-if="record.apiState === 1 || record.apiState === 2" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
           </template>
         </template>
       </a-table>
@@ -238,9 +238,19 @@
     drawerVisible.value = visible;
   };
   // 接口删除操作
-  const deleteApi = ({ apiId }: { apiId: string }) => {
-    console.log(apiId);
-    request.DeleteApi(apiId);
+  const deleteApi = async (record: { id: string }) => {
+    await request.DeleteApi(record.id);
+    await run(
+      {
+        apiSource: formState.apiSource,
+        apiState: formState.apiState,
+        apiName: formState.apiName,
+        pageNum: pageNumGlobal.value,
+        order: order.value,
+        pageSize: pageSizeGlobal.value,
+      },
+      order.value,
+    );
   };
   // 批量更改接口状态
   const updateApisState = (operation: string | number, idList: string[]) => {

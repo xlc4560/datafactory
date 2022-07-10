@@ -11,7 +11,7 @@ enum Api {
   GET_API_LIST = '/getApiInfo/api/apiList/searchAPI', //获取列表数据http://192.168.78.100:8081
   GET_API_DETAILS = '/details/api/apiList/apiDetail/', //获取接口详情
   API_STATE_UPDATE = '/details/api/apiList/reviseStatePort', //修改接口状态
-  DELETE_API = '/api/apiList/delete/', // 删除接口api
+  DELETE_API = '/getApiInfo/api/apiList/delete/', // 删除接口api
   UPDATE_API = '/apiList/apiEdit/', // 编辑接口信息
   REGISTER_API = '/registerApi/api/registerApi/save', // 新增接口
   API_TEST = '/apiList/apiTest', // 接口测试
@@ -51,7 +51,11 @@ export const ApiTest = (params: funType.ApiTest) => {
   const form = new FormData();
   Object.keys(params).forEach((item: string) => {
     if (params[item as key] !== null && params[item as key] !== undefined && params[item as key] !== '') {
-      form.append(item, params[item as key] as string);
+      if (item === 'apiParameter') {
+        form.append(item, JSON.stringify(params[item as key]));
+      } else {
+        form.append(item, params[item as key] as string);
+      }
     }
   });
   return api.post<string>({ url: Api.API_TEST, data: form });
