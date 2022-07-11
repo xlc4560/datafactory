@@ -10,7 +10,7 @@
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="请求参数">
           <a-card size="small">
-            <a-table :columns="columns" :data-source="apiDeatils.apiParameter" :pagination="false"> </a-table>
+            <a-table :columns="apiDetails_columns" :data-source="apiDeatils.apiParameter" :pagination="false"> </a-table>
           </a-card>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求body" force-render>
@@ -29,10 +29,13 @@
 </template>
 
 <script setup lang="ts">
+  import type { apiParameter } from './types';
   import { JsonViewer } from 'vue3-json-viewer';
   import 'vue3-json-viewer/dist/index.css';
+  // tab标签页初始展示
+  const activeKey = ref('1');
   // 表格配置项
-  const columns = [
+  const apiDetails_columns = [
     {
       title: '参数名称',
       dataIndex: 'parameterName',
@@ -73,11 +76,30 @@
   });
   // 所有需要展示的数据
   const apiDeatils = computed(() => {
-    let apiParameter: object[] = [];
+    let apiParameter: apiParameter[] = [];
     if (props.records.apiParameter === null || props.records.apiParameter === undefined || props.records.apiParameter === '') {
       apiParameter = [];
     } else {
-      apiParameter = [...props.records.apiParameter];
+      apiParameter = props.records.apiParameter;
+      apiParameter.forEach(item => {
+        switch (item.parameterPosition) {
+          case 0:
+            item.parameterPosition = 'query';
+          case 1:
+            item.parameterPosition = 'header';
+          case 2:
+            item.parameterPosition = 'body';
+        }
+        item.parameterRequire = item.parameterRequire === 0 ? '否' : '是';
+        switch (item.parameterType) {
+          case 0:
+            item.parameterType = 'string';
+          case 1:
+            item.parameterType = 'integer';
+          case 2:
+            item.parameterType = 'number';
+        }
+      });
     }
     return {
       descriptions: [
@@ -107,12 +129,10 @@
         },
       ],
       apiParameter,
-      apiRequestBody: props.records?.apiRequestBody,
-      apiResponse: props.records?.apiResponse,
+      apiRequestBody: props.records?.apiRequestBody ? props.records?.apiRequestBody : {},
+      apiResponse: props.records?.apiResponse ? props.records?.apiResponse : {},
     };
   });
-
-  const activeKey = ref<string>('1');
 </script>
 
 <style lang="less">

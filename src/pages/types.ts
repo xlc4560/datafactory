@@ -19,7 +19,16 @@ type APIResult = {
   }[];
 };
 type Key = string | number;
-
+// 接口参数的类型
+export interface apiParameter {
+  parameterApiId: number | null;
+  parameterName: string;
+  parameterType: number | null | string;
+  parameterRequire: number | null | string; //是否必须 (0:非必填 1:必填)
+  parameterPosition: number | null | string; //参数位置(0:query 1:header 3:body)
+  parameterDescription?: string;
+  parameterDefault: string;
+}
 // 接口来源
 interface apiSource {
   value: string;

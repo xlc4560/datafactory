@@ -33,6 +33,7 @@ export interface UpdateApi {
     parameterDefault: string;
   }[];
 }
+// api的参数类型
 export interface apiParameter {
   parameterApiId: number | null;
   parameterName: string;
@@ -42,7 +43,7 @@ export interface apiParameter {
   parameterDescription?: string;
   parameterDefault: string;
 }
-
+// 用于注册函数
 export interface ApiTest {
   apiPath: string;
   apiName: string;
@@ -57,7 +58,7 @@ export interface ApiTest {
     parameterDefault: string;
   }[];
 }
-
+// 用于注册函数
 export interface register {
   checkOperation: number | string | null;
   id: number | null;
@@ -83,7 +84,7 @@ export interface register {
     parameterDefault: string;
   }[];
 }
-
+// 用于接口验证函数
 export interface ApiCheck {
   id: number | null | string;
   apiName: string;
