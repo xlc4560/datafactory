@@ -10,28 +10,37 @@ export interface GetApiListArgs {
 }
 
 export interface UpdateApi {
-  id: number;
+  id: number | null;
   apiName: string;
   apiSource: string;
   apiType: string;
-  apiProtocol: number; // 接口协议(0:http 1:https)
-  apiMethod: number; // 请求方式请求方式(0:get 1:post)
+  apiProtocol: number | null; // 接口协议(0:http 1:https)
+  apiMethod: number | null; // 请求方式请求方式(0:get 1:post)
   apiIpPort: string;
   apiPath: string;
-  apiState: number;
-  apiResponse: string;
-  apiTimeout: number;
+  apiState: number | null;
+  apiResponse: string | null;
+  apiTimeout: number | null;
   apiRequestBody?: string;
   apiDescription?: string;
   apiParameter?: {
-    parameterApiId: number;
+    parameterApiId: number | null;
     parameterName: string;
-    parameterType: number;
-    parameterRequire: number; //是否必须 (0:非必填 1:必填)
-    parameterPosition: number; //参数位置(0:query 1:header 3:body)
+    parameterType: number | null;
+    parameterRequire: number | null; //是否必须 (0:非必填 1:必填)
+    parameterPosition: number | null; //参数位置(0:query 1:header 3:body)
     parameterDescription?: string;
     parameterDefault: string;
-  };
+  }[];
+}
+export interface apiParameter {
+  parameterApiId: number | null;
+  parameterName: string;
+  parameterType: number | null;
+  parameterRequire: number | null; //是否必须 (0:非必填 1:必填)
+  parameterPosition: number | null; //参数位置(0:query 1:header 3:body)
+  parameterDescription?: string;
+  parameterDefault: string;
 }
 
 export interface ApiTest {
@@ -50,26 +59,43 @@ export interface ApiTest {
 }
 
 export interface register {
-  id: number;
+  checkOperation: number | string | null;
+  id: number | null;
   apiName: string;
   apiSource: string;
   apiType: string;
-  apiProtocol: number; // 接口协议(0:http 1:https)
-  apiMethod: number; // 请求方式请求方式(0:get 1:post)
+  apiProtocol: number | null; // 接口协议(0:http 1:https)
+  apiMethod: number | null; // 请求方式请求方式(0:get 1:post)
   apiIpPort: string;
   apiPath: string;
-  apiState: number;
-  apiResponse: string;
-  apiTimeout: number;
+  apiState: number | null;
+  apiResponse: string | null;
+  apiTimeout: number | null;
   apiRequestBody?: string;
   apiDescription?: string;
   apiParameter?: {
-    parameterApiId: number;
+    parameterApiId: number | null;
     parameterName: string;
-    parameterType: number;
-    parameterRequire: number; //是否必须 (0:非必填 1:必填)
-    parameterPosition: number; //参数位置(0:query 1:header 3:body)
+    parameterType: number | null;
+    parameterRequire: number | null; //是否必须 (0:非必填 1:必填)
+    parameterPosition: number | null; //参数位置(0:query 1:header 3:body)
     parameterDescription?: string;
     parameterDefault: string;
-  };
+  }[];
+}
+
+export interface ApiCheck {
+  id: number | null | string;
+  apiName: string;
+  apiSource: string;
+  apiType: string;
+  apiProtocol: number | null; // 接口协议(0:http 1:https)
+  apiMethod: number | null; // 请求方式请求方式(0:get 1:post)
+  apiIpPort: string;
+
+  apiPath: string;
+
+  apiTimeout: number | null;
+  apiDescription?: string;
+  checkOperation: number | null;
 }

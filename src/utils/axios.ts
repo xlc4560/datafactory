@@ -6,7 +6,7 @@ import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
   baseURL: '',
-  timeout: 1000,
+  timeout: 3000,
 });
 // 请求拦截
 instance.interceptors.request.use(
@@ -36,7 +36,7 @@ instance.interceptors.response.use(
         break;
       case 100500:
         antdMessage.error(msg, 1);
-        throw new Error('返回接口错误');
+        return code;
       default:
         break;
     }

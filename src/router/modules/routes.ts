@@ -15,10 +15,18 @@ export default {
           path: 'ApiManagement',
           name: '接口管理',
           component: () => import('@/pages/apiManagement.vue'),
+          meta: {
+            title: '接口管理',
+          },
         },
         {
           path: 'ManualReg',
           name: '人工注册',
+          component: () => import('@/pages/ManualReg.vue'),
+        },
+        {
+          path: 'ManualReg/:id',
+          name: 'ManualRegEdit',
           component: () => import('@/pages/ManualReg.vue'),
         },
       ],

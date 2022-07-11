@@ -26,92 +26,160 @@
         <!-- 基本信息 -->
         <a-form-item label="基本信息" :colon="false" class="basicmsg"> </a-form-item>
 
-        <a-form-item label="接口名称" v-bind="validateInfos.api_name">
-          <a-input v-model:value="api_basic.api_name" :disabled="api_basic.api_state === 0" @blur="validate('name', { trigger: 'blur' }).catch(() => {})" />
+        <a-form-item label="接口名称" v-bind="validateInfos.apiName">
+          <a-input v-model:value="api_basic.apiName" :disabled="api_basic.apiState === 4" />
         </a-form-item>
 
-        <a-form-item v-bind="validateInfos.api_source" label="接口来源">
-          <a-select v-model:value="api_basic.api_source" :disabled="api_basic.api_state === 0" style="text-align: left">
+        <a-form-item v-bind="validateInfos.apiSource" label="接口来源">
+          <a-select v-model:value="api_basic.apiSource" :disabled="api_basic.apiState === 4" style="text-align: left">
             <a-select-option value="数据服务">数据服务</a-select-option>
             <a-select-option value="指标管理">指标管理</a-select-option>
             <a-select-option value="决策引擎">决策引擎</a-select-option>
             <a-select-option value="数据工厂">数据工厂</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="接口描述" v-bind="validateInfos.api_description">
-          <a-textarea v-model:value="api_basic.api_description" :auto-size="{ minRows: 2, maxRows: 5 }" />
+        <a-form-item label="接口描述" v-bind="validateInfos.apiDescription">
+          <a-textarea v-model:value="api_basic.apiDescription" :auto-size="{ minRows: 2, maxRows: 5 }" />
         </a-form-item>
         <!-- api参数 -->
         <a-form-item label="API参数" :colon="false" class="basicmsg"> </a-form-item>
 
-        <a-form-item label="协议" v-bind="validateInfos.api_protocol">
-          <a-select v-model:value="api_basic.api_protocol" :disabled="api_basic.api_state === 0 || api_basic.api_state === 2" style="text-align: left">
-            <a-select-option value="HTTP">HTTP</a-select-option>
-            <a-select-option value="HTTPS">HTTPS</a-select-option>
+        <a-form-item label="协议" v-bind="validateInfos.apiProtocol">
+          <a-select v-model:value="api_basic.apiProtocol" :disabled="api_basic.apiState === 4 || api_basic.apiState === 2" style="text-align: left">
+            <a-select-option v-for="i in apiprotocol" :key="i.value" :value="i.value">{{ i.msg }}</a-select-option>
           </a-select>
         </a-form-item>
 
-        <a-form-item label="IP端口" v-bind="validateInfos.api_ip_port">
-          <a-input v-model:value="api_basic.api_ip_port" @blur="validate('name', { trigger: 'blur' }).catch(() => {})" />
+        <a-form-item label="IP端口" v-bind="validateInfos.apiIpPort">
+          <a-input v-model:value="api_basic.apiIpPort" />
         </a-form-item>
 
-        <a-form-item label="Path" v-bind="validateInfos.api_path">
-          <a-input v-model:value="api_basic.api_path" :disabled="api_basic.api_state === 0 || api_basic.api_state === 2" @blur="validate('name', { trigger: 'blur' }).catch(() => {})" />
+        <a-form-item label="Path" v-bind="validateInfos.apiPath">
+          <a-input v-model:value="api_basic.apiPath" :disabled="api_basic.apiState === 4 || api_basic.apiState === 2" />
         </a-form-item>
 
-        <a-form-item label="请求方式" v-bind="validateInfos.api_method">
-          <a-select v-model:value="api_basic.api_method" :disabled="api_basic.api_state === 0 || api_basic.api_state === 2" style="text-align: left">
-            <a-select-option value="POST">POST</a-select-option>
-            <a-select-option value="GET">GET</a-select-option>
+        <a-form-item label="请求方式" v-bind="validateInfos.apiMethod">
+          <a-select v-model:value="api_basic.apiMethod" :disabled="api_basic.apiState === 4 || api_basic.apiState === 2" style="text-align: left">
+            <a-select-option v-for="i in apimethod" :key="i.value" :value="i.value">{{ i.msg }}</a-select-option>
           </a-select>
         </a-form-item>
 
-        <a-form-item label="超时时间" v-bind="validateInfos.api_timeout">
-          <a-input v-model:value="api_basic.api_timeout" @blur="validate('name', { trigger: 'blur' }).catch(() => {})" />
+        <a-form-item label="超时时间" v-bind="validateInfos.apiTimeout">
+          <a-input v-model:value="api_basic.apiTimeout" />
         </a-form-item>
 
         <!-- 重置按钮 -->
-        <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-          <a-button style="margin-left: 10px" @click="resetFields">重置</a-button>
+        <a-form-item :wrapper-col="{ span: 14, offset: 4 }" class="resetbtn">
+          <a-button @click="resetFields">重置</a-button>
         </a-form-item>
       </a-form>
     </div>
 
     <!--2. 参数配置 -->
+
     <!-- 输入参数 -->
     <div v-if="steps[current].content == 'paraconfig'" class="steps-content">
       <!-- 输入参数标题 -->
       <a-page-header class="demo-page-header" title="输入参数">
         <template #extra>
-          <a-button key="1" type="primary">新增参数</a-button>
+          <a-button key="1" type="primary" @click="addApi">新增参数</a-button>
         </template>
       </a-page-header>
       <!-- 输入参数表格 -->
-      <a-table :data-source="dataSourceInput" :columns="columnsInput" empty-text="暂无数据"> </a-table>
+      <div class="inputparahead">
+        <p class="inputparaheadtitle">参数名称</p>
+        <p class="inputparaheadtitle">参数位置</p>
+        <p class="inputparaheadtitle">数据类型</p>
+        <p class="inputparaheadtitle">是否必填</p>
+        <p>默认值</p>
+        <p>参数描述</p>
+        <p>操作</p>
+      </div>
+      <a-form :model="api_basic" @finish="onFinish">
+        <a-space v-for="(apipara, index) in api_basic.apiParameter" :key="apipara.parameterApiId" class="apiparaform" align="baseline">
+          <a-form-item :name="['apiParameter', index, 'parameterName']" :rules="[{ required: true, message: '此为必填项' }]">
+            <a-input v-model:value="apipara.parameterName" :disabled="apipara.inputstate" class="apiparainput" placeholder="请输入" />
+          </a-form-item>
+
+          <a-form-item :name="['apiParameter', index, 'parameterPosition']" :rules="[{ required: true, message: '此为必填项' }]">
+            <a-select v-model:value="apipara.parameterPosition" :disabled="apipara.inputstate" class="apiparainput" placeholder="请选择">
+              <a-select-option v-for="i in parameterposition" :key="i.value" :value="i.value">{{ i.msg }}</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item :name="['apiParameter', index, 'parameterType']" :rules="[{ required: true, message: '此为必填项' }]">
+            <a-select v-model:value="apipara.parameterType" :disabled="apipara.inputstate" class="apiparainput" placeholder="请选择">
+              <a-select-option v-for="i in parametertype" :key="i.value" :value="i.value">{{ i.msg }}</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item :name="['apiParameter', index, 'parameterRequire']" :rules="[{ required: true, message: '此为必填项' }]">
+            <a-select v-model:value="apipara.parameterRequire" :disabled="apipara.inputstate" class="apiparainput" placeholder="请选择">
+              <a-select-option v-for="i in parameterrequire" :key="i.value" :value="i.value">{{ i.msg }}</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item>
+            <a-input v-model:value="apipara.parameterDefault" :disabled="apipara.inputstate" class="apiparainput" placeholder="请输入" />
+          </a-form-item>
+
+          <a-form-item>
+            <a-input v-model:value="apipara.parameterDescription" :disabled="apipara.inputstate" class="apiparainput" placeholder="请输入" />
+          </a-form-item>
+
+          <a v-if="apipara.inputstate === true" @click="statechange(index, false)">编辑</a>
+          <a v-if="apipara.inputstate === false" @click="statechange(index, true)">保存</a>
+          <!-- 删除 -->
+          <a-popconfirm title="Are you sure？" ok-text="Yes" cancel-text="No" @confirm="removeApi(index)">
+            <a>删除</a>
+          </a-popconfirm>
+        </a-space>
+        <!-- 按钮提交 -->
+        <!-- <a-form-item v-if="api_basic.apiParameter?.length !== 0" style="margin-right: 2%; text-align: right">
+          <a-button type="primary" html-type="submit">保存</a-button>
+        </a-form-item> -->
+      </a-form>
     </div>
 
     <!-- 请求body -->
-    <div v-if="steps[current].content == 'paraconfig' && api_basic.api_method == 'POST'" class="steps-content">
+    <div v-if="steps[current].content == 'paraconfig' && api_basic.apiMethod === 1" class="steps-content">
       <!-- 输入参数标题 -->
-      <a-page-header class="demo-page-header" title="请求Body">
-        <template #extra>
-          <a-button key="1" type="primary">新增参数</a-button>
-        </template>
-      </a-page-header>
-      <!-- 输入参数表格 -->
-      <a-table :data-source="dataSourceBody" :columns="columnsBody"> </a-table>
+      <a-page-header class="demo-page-header" title="请求Body"> </a-page-header>
+      <div class="bodyleft">
+        <a-textarea v-model:value="api_basic.apiRequestBody" style="height: 300px"></a-textarea>
+      </div>
     </div>
 
     <!-- 返回参数 -->
     <div v-if="steps[current].content == 'paraconfig'" class="steps-content">
       <!-- 标题 -->
-      <a-page-header class="demo-page-header" title="返回参数">
-        <template #extra>
-          <a-button key="1" type="primary">新增参数</a-button>
+      <a-page-header class="demo-page-header" title="返回示例"> </a-page-header>
+      <div class="return">
+        <a-textarea v-model:value="api_basic.apiResponse" style="border: 1px solid; width: 50%; height: 300px"></a-textarea>
+
+        <div class="returnright">{{ api_basic.apiResponse }}</div>
+      </div>
+    </div>
+
+    <!-- 按钮组 -->
+    <div class="steps-action">
+      <!-- 测试 -->
+      <a-button v-if="steps[current].content == 'paraconfig'" style="margin-right: 10px" @click="testApi">测试</a-button>
+      <!-- 取消 -->
+      <a-popconfirm placement="top" ok-text="是" cancel-text="否" :style="{ marginRight: `${buttonWidth}px`, whiteSpace: 'nowrap' }" @confirm="confirm">
+        <template #title>
+          <p>{{ text }}</p>
         </template>
-      </a-page-header>
-      <!-- 表格 -->
-      <a-table :data-source="dataSourceReturn" :columns="columnsReturn"> </a-table>
+        <a-button style="margin-right: 10px">取消</a-button>
+      </a-popconfirm>
+      <!-- 保存草稿并退出 -->
+      <a-button style="margin-right: 10px" @click="completelAdd(1)">保存草稿</a-button>
+      <!-- 下一步 -->
+      <a-button v-if="current < steps.length - 1" type="primary" @click="next">下一步</a-button>
+      <!-- 完成并退出 -->
+      <a-button v-if="current == steps.length - 1" type="primary" @click="completelAdd(2)"> 保存并退出 </a-button>
+      <!-- 上一步 -->
+      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">上一步</a-button>
     </div>
 
     <!-- 测试抽屉 -->
@@ -120,20 +188,20 @@
         <!-- 测试左侧信息 -->
         <div class="test_apimsg">
           <div>
-            <span class="test_title">接口名称　:</span><span>{{ api_basic.api_name }}</span>
+            <span class="test_title">接口名称　:</span><span>{{ api_basic.apiName }}</span>
           </div>
 
           <div>
-            <span class="test_title">Request URL　:</span><span>{{ api_basic.api_protocol.toLowerCase() + '://' + api_basic.api_ip_port + api_basic.api_path }}</span>
+            <span class="test_title">Request URL　:</span><span>{{ api_basic.apiProtocol.toLowerCase() + '://' + api_basic.apiIpPort + api_basic.apiPath }}</span>
           </div>
 
           <div>
-            <span class="test_title">请求方式　:</span><span>{{ api_basic.api_method }}</span>
+            <span class="test_title">请求方式　:</span><span>{{ api_basic.apiMethod }}</span>
           </div>
 
           <div>
             <p style="margin-top: 20px; font-size: 18px">输入参数</p>
-            <a-table :data-source="test_dataSource" :columns="test_columns" />
+            <a-table :data-source="dynamicValidateForm.apiParameter" :columns="test_columns" />
           </div>
         </div>
         <!-- 测试右侧返回 -->
@@ -156,56 +224,108 @@
         <a-button @click="close_test">关闭</a-button>
       </div>
     </a-drawer>
-
-    <!-- 按钮组 -->
-    <div class="steps-action">
-      <!-- 测试 -->
-      <a-button v-if="steps[current].content == 'paraconfig'" style="margin-right: 10px" @click="testApi">测试</a-button>
-      <!-- 取消 -->
-      <a-popconfirm placement="top" ok-text="是" cancel-text="否" :style="{ marginRight: `${buttonWidth}px`, whiteSpace: 'nowrap' }" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-        </template>
-        <a-button style="margin-right: 10px">取消</a-button>
-      </a-popconfirm>
-      <!-- 保存草稿并退出 -->
-      <a-button v-if="current < steps.length - 1" style="margin-right: 10px">保存并退出</a-button>
-      <!-- 下一步 -->
-      <a-button v-if="current < steps.length - 1" type="primary" @click="next">下一步</a-button>
-      <!-- 完成并退出 -->
-      <a-button v-if="current == steps.length - 1" type="primary" @click="message.success('Processing complete!')"> 保存并退出 </a-button>
-      <!-- 上一步 -->
-      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">上一步</a-button>
-    </div>
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, reactive, toRaw, UnwrapRef } from 'vue';
+  import { defineComponent, ref, reactive, toRaw, UnwrapRef, onMounted } from 'vue';
   import { message, Form } from 'ant-design-vue';
   import { useRouter, useRoute } from 'vue-router';
+  import * as request from '@/api/test';
   const useForm = Form.useForm;
 
+  interface apiparas {
+    id: number | null;
+    apiName: string;
+    apiSource: string;
+    apiType: string;
+    apiProtocol: number | null; // 接口协议(0:http 1:https)
+    apiMethod: number | null; // 请求方式请求方式(0:get 1:post)
+    apiIpPort: string;
+    apiPath: string;
+    apiState: number | null;
+    apiResponse: string;
+    apiTimeout: number | null;
+    apiRequestBody?: string;
+    apiDescription?: string;
+    apiParameter?: {
+      parameterApiId: number | null;
+      parameterName: string;
+      parameterType: number | null;
+      parameterRequire: number | null; //是否必须 (0:非必填 1:必填)
+      parameterPosition: number | null; //参数位置(0:query 1:header 3:body)
+      parameterDescription?: string;
+      parameterDefault: string;
+      inputstate?: boolean;
+    }[];
+  }
   export default defineComponent({
-    components: {},
     setup() {
-      // 接收params参数
+      const apimethod = reactive([
+        { value: 0, msg: 'GET' },
+        { value: 1, msg: 'POST' },
+      ]);
+      const apiprotocol = reactive([
+        { value: 0, msg: 'HTTP' },
+        { value: 1, msg: 'HTTPS' },
+      ]);
+      const parametertype = reactive([
+        { value: 0, msg: 'String' },
+        { value: 1, msg: 'Interger' },
+        { value: 2, msg: 'number' },
+      ]);
+      const parameterrequire = reactive([
+        { value: 0, msg: '否' },
+        { value: 1, msg: '是' },
+      ]);
+      const parameterposition = reactive([
+        { value: 0, msg: 'query' },
+        { value: 1, msg: 'header' },
+      ]);
+      // const base = ref<any>({});
       const route = useRoute();
-      console.log(route.params);
       // api基本信息和参数
-      const api_basic = reactive({
-        api_state: 1, //api状态  0停用 1草稿 2未发布 3已发布
-        api_name: '123',
-        api_source: '数据服务',
-        api_description: '123',
-        api_protocol: 'HTTP',
-        api_ip_port: '192.168.1.1:1',
-        api_path: '/1',
-        api_method: 'GET',
-        api_timeout: 30,
+      const api_basic = ref<apiparas>({
+        id: null,
+        apiType: '',
+        apiState: 1, //api状态  1草稿  2未发布  3已发布  4已停用
+        apiName: '',
+        apiSource: '',
+        apiDescription: '',
+        apiProtocol: null, //0:http  1:https
+        apiIpPort: '192.168.1.1:1',
+        apiPath: '/1',
+        apiMethod: null, //0:get 1:post
+        apiTimeout: 30,
+        apiRequestBody: '请求body',
+        apiResponse: '返回示例',
+        apiParameter: [],
       });
-      // 验证
+      // 新增参数
+      const addApi = () => {
+        api_basic.value.apiParameter?.push({
+          parameterApiId: null,
+          parameterName: '',
+          parameterType: null,
+          parameterRequire: null,
+          parameterDefault: '',
+          parameterPosition: null,
+          parameterDescription: '',
+          inputstate: false,
+        });
+      };
+
+      onMounted(async () => {
+        const res = await request.GetApiDetails(route.params.id as string);
+        console.log(res);
+
+        api_basic.value = res;
+
+        // api_basic.value.inputState =
+      });
+
+      // 验证规则
       const rulesRef = reactive({
-        api_name: [
+        apiName: [
           {
             required: true,
             message: '请输入接口名称',
@@ -219,25 +339,25 @@
             message: '接口名称在30个字符以内',
           },
         ],
-        api_source: [
+        apiSource: [
           {
             required: true,
             message: '请选择接口来源',
           },
         ],
-        api_protocol: [
+        apiProtocol: [
           {
             required: true,
             message: '请选协议',
           },
         ],
-        api_description: [
+        apiDescription: [
           {
             max: 1000,
             message: '限制1000个字符',
           },
         ],
-        api_ip_port: [
+        apiIpPort: [
           {
             required: true,
             message: '请输入IP端口',
@@ -247,7 +367,7 @@
             message: '请输入正确的端口号',
           },
         ],
-        api_path: [
+        apiPath: [
           {
             required: true,
             message: '请输入路径',
@@ -257,13 +377,13 @@
             message: '请输入正确的路径',
           },
         ],
-        api_method: [
+        apiMethod: [
           {
             required: true,
             message: '请选择请求方式',
           },
         ],
-        api_timeout: [
+        apiTimeout: [
           {
             required: true,
             message: '请输入超时时间',
@@ -277,25 +397,46 @@
             message: '超时时间在1800s以内',
           },
         ],
+        parameterRule: [
+          {
+            required: true,
+            message: '此为必填项',
+          },
+        ],
       });
 
       // 上下页并验证
       const { resetFields, validate, validateInfos } = useForm(api_basic, rulesRef);
+
       const current = ref<number>(0);
-      const next = () => {
-        validate()
-          .then(() => {
-            console.log(toRaw(api_basic));
-            current.value++;
-          })
-          .catch(err => {
-            console.log('error', err);
+      const next = async () => {
+        const code: { code: any } = {
+          code: 100200,
+        };
+        if (route.params.id) {
+          code.code = await request.ApiCheck({
+            checkOperation: 1,
+            ...api_basic.value,
           });
+        } else {
+          code.code = await request.ApiCheck({
+            checkOperation: 0,
+            ...api_basic.value,
+          });
+        }
+        if (typeof code.code !== 'number') {
+          validate()
+            .then(() => {
+              current.value++;
+            })
+            .catch(err => {
+              console.log('error', err);
+            });
+        }
       };
       const prev = () => {
         current.value--;
       };
-
       // 取消按钮
       const router = useRouter();
       const buttonWidth = 70;
@@ -305,130 +446,76 @@
           path: '/Home/DataSourceManagement/ApiManagement',
         });
       };
+      // 删除输入参数
+      const removeApi = (item: number) => {
+        if (api_basic.value.apiParameter !== undefined) api_basic.value.apiParameter.splice(item, 1);
+      };
 
-      const dataSourceInput = [];
-      const columnsInput = [
-        {
-          title: '参数名称',
-          dataIndex: 'name',
-          key: 'name',
-        },
-        {
-          title: '参数位置',
-          dataIndex: 'age',
-          key: 'age',
-        },
-        {
-          title: '数据类型',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '是否必填',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '默认值',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '参数描述',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '操作',
-          dataIndex: 'address',
-          key: 'address',
-        },
-      ];
+      // 保存按钮
+      const onFinish = () => {
+        console.log(api_basic);
+        message.success({
+          content: '已保存',
+          duration: 1,
+        });
+      };
+      //完成并退出  保存草稿
+      const completelAdd = async (state: 1 | 2) => {
+        let code;
+        // 后端验证数据
+        if (route.params.id) {
+          code = await request.ApiCheck({
+            checkOperation: 1,
+            ...api_basic.value,
+          });
+        } else {
+          code = await request.ApiCheck({
+            checkOperation: 0,
+            ...api_basic.value,
+          });
+        }
+        // 验证是否通过
+        if (typeof code !== 'number') {
+          api_basic.value.apiState = state;
+          if (route.params.id) {
+            request.UpdateApi(api_basic.value, state);
+          } else {
+            request.RegisterApi({ checkOperation: 0, ...api_basic.value });
+          }
+          router.push({
+            path: '/Home/DataSourceManagement/ApiManagement',
+          });
+        } else {
+        }
+      };
+      // 切换保存编辑状态
+      const statechange = (item: number, inputstate: boolean) => {
+        if (api_basic.value.apiParameter !== undefined) {
+          api_basic.value.apiParameter[item].inputstate = inputstate;
+        }
+      };
 
-      const dataSourceBody = [];
-      const columnsBody = [
-        {
-          title: '参数名称',
-          dataIndex: 'name',
-          key: 'name',
-        },
-        {
-          title: '参数位置',
-          dataIndex: 'age',
-          key: 'age',
-        },
-        {
-          title: '数据类型',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '是否必填',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '默认值',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '参数描述',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '操作',
-          dataIndex: 'address',
-          key: 'address',
-        },
-      ];
-
-      const dataSourceReturn = [];
-      const columnsReturn = [
-        {
-          title: '参数名称',
-          dataIndex: 'name',
-          key: 'name',
-        },
-        {
-          title: '数据类型',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '参数描述',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '操作',
-          dataIndex: 'address',
-          key: 'address',
-        },
-      ];
-      // 测试数据
-      const test_dataSource = [];
+      // 测试api数据
       const test_columns = [
         {
           title: '参数名称',
-          dataIndex: 'name',
-          key: 'name',
+          dataIndex: 'parameterName',
+          key: 'parameterName',
         },
         {
           title: '参数位置',
-          dataIndex: 'address',
-          key: 'address',
+          dataIndex: 'parameterPosition',
+          key: 'parameterPosition',
         },
         {
           title: '数据类型',
-          dataIndex: 'address',
-          key: 'address',
+          dataIndex: 'parameterType',
+          key: 'parameterType',
         },
         {
           title: '是否必填',
-          dataIndex: 'address',
-          key: 'address',
+          dataIndex: 'parameterRequire',
+          key: 'parameterRequire',
         },
         {
           title: '测试值',
@@ -438,18 +525,15 @@
       ];
       // 测试抽屉
       const visible = ref<boolean>(false);
-
       const afterVisibleChange = (bool: boolean) => {
         console.log('visible', bool);
       };
-
       const testApi = () => {
         visible.value = true;
       };
       const close_test = () => {
         visible.value = false;
       };
-
       return {
         validate,
         validateInfos,
@@ -461,6 +545,7 @@
         buttonWidth,
         text,
         confirm,
+        completelAdd,
         steps: [
           {
             title: '基本信息',
@@ -474,22 +559,24 @@
         next,
         prev,
 
-        dataSourceInput,
-        columnsInput,
-
-        dataSourceBody,
-        columnsBody,
-
-        dataSourceReturn,
-        columnsReturn,
-
-        test_dataSource,
         test_columns,
 
         visible,
         afterVisibleChange,
         testApi,
         close_test,
+
+        onFinish,
+        removeApi,
+        addApi,
+
+        statechange,
+
+        apimethod,
+        apiprotocol,
+        parametertype,
+        parameterrequire,
+        parameterposition,
       };
     },
   });
@@ -504,9 +591,10 @@
     margin-top: 16px;
     border: 1px dashed #e9e9e9;
     border-radius: 6px;
-    padding-top: 30px;
+    padding-top: 0px;
+    padding-bottom: 30px;
     min-height: 200px;
-    text-align: center;
+    text-align: left;
     background-color: #fafafa;
   }
 
@@ -515,9 +603,8 @@
     text-align: right;
   }
 
-  [data-theme='dark'] .steps-content {
-    border: 1px dashed #404040;
-    background-color: #2f2f2f;
+  .resetbtn {
+    text-align: center;
   }
 
   .basicmsg ::after {
@@ -540,7 +627,52 @@
     text-align: right;
   }
 
+  .bodyleft {
+    margin: 0 auto;
+    width: 90%;
+  }
+
+  .return {
+    display: flex;
+  }
+
+  .returnright {
+    overflow: auto;
+    border: 1px solid;
+    width: 50%;
+    max-height: 300px;
+  }
+
   .test_return {
     width: 50%;
+  }
+
+  .inputparahead {
+    display: flex;
+    justify-content: space-around;
+    background: #fafafa;
+  }
+
+  .inputparahead p {
+    margin-right: 6.5%;
+  }
+
+  .inputparahead :nth-child(1) {
+    margin-left: 2%;
+  }
+
+  .apiparainput {
+    margin-right: 40px;
+    width: 100px;
+  }
+
+  .apiparaform {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .inputparaheadtitle::before {
+    content: '*';
+    color: red;
   }
 </style>

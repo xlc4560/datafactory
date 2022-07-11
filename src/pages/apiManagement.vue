@@ -216,6 +216,8 @@
     records.value = {
       ...(await request.GetApiDetails(record.id)),
     };
+    console.log(records.value);
+
     modalVisible.value = true;
   };
   const handleCancel = () => {
@@ -224,7 +226,7 @@
   // 接口编辑按钮
   const updateApi = async (id: string) => {
     router.push({
-      name: '人工注册',
+      name: 'ManualRegEdit',
       params: {
         id,
       },
@@ -253,8 +255,19 @@
     );
   };
   // 批量更改接口状态
-  const updateApisState = (operation: string | number, idList: string[]) => {
-    request.UpdateApiState({ operation: operation + '', idList });
+  const updateApisState = async (operation: string | number, idList: string[]) => {
+    await request.UpdateApiState({ operation: operation + '', idList });
+    await run(
+      {
+        apiSource: formState.apiSource,
+        apiState: formState.apiState,
+        apiName: formState.apiName,
+        pageNum: pageNumGlobal.value,
+        order: order.value,
+        pageSize: pageSizeGlobal.value,
+      },
+      order.value,
+    );
   };
 </script>
 <style scoped lang="less">

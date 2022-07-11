@@ -91,7 +91,7 @@
         },
         {
           lable: '请求方式',
-          value: props.records?.ApiType === 0 ? 'get' : 'post',
+          value: props.records?.apiMethod === 0 ? 'get' : 'post',
         },
         {
           lable: '支持格式',

@@ -31,7 +31,7 @@
       </div>
       <div class="responseResult">
         <a-card title="返回结果(JSON)" :bordered="false">
-          <JsonViewer class="jsonViewerStyle scroll_apiTest" :value="[...columns, ...columns]" :expand-depth="3" copyable sort theme="dark" @on-key-click="keyClick" />
+          <JsonViewer class="jsonViewerStyle scroll_apiTest" :value="ApiDataRes" :expand-depth="3" copyable sort theme="dark" @on-key-click="keyClick" />
         </a-card>
       </div>
     </div>
@@ -67,6 +67,7 @@
   const afterVisibleChange = async (bool: boolean) => {
     if (bool) {
       apiInfo.value = { ...(await request.GetApiDetails(props.apiId)) };
+      console.log(apiInfo.value);
     }
     console.log(apiInfo.value);
   };
@@ -97,7 +98,7 @@
         },
         {
           label: 'Request URL',
-          value: apiInfo.value?.apiProtocol === 0 ? 'http://' : 'https://' + apiInfo.value?.apiIpPort + '/' + apiInfo.value?.apiPath,
+          value: (apiInfo.value?.apiProtocol === 0 ? 'http://' : 'https://') + apiInfo.value?.apiIpPort + '/' + apiInfo.value?.apiPath,
         },
         {
           label: '请求方式',
@@ -108,14 +109,13 @@
       apiRequestBody: apiInfo.value?.apiRequestBody,
     };
   });
-  const apiTestBtn = () => {
+  const ApiDataRes = ref<any>();
+  const apiTestBtn = async () => {
     computedApiInfo.value.apiParameter.forEach(item => {
       delete item.id;
       delete item.parameterApiId;
     });
-    console.log(apiInfo.value?.apiMethod);
-
-    request.ApiTest({
+    ApiDataRes.value = await request.ApiTest({
       apiPath: computedApiInfo.value.descriptions[1].value,
       apiName: apiInfo.value?.apiName,
       apiMethod: apiInfo.value?.apiMethod,
@@ -129,6 +129,7 @@
         parameterDefault: string;
       }[],
     });
+    ApiDataRes.value = JSON.parse(ApiDataRes.value);
   };
   const columns = [
     {

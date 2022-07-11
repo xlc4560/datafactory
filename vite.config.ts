@@ -48,21 +48,21 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         },
         // 江艳秋
         '/details': {
-          target: 'http://10.8.22.129:8081',
+          target: 'http://10.8.22.134:8081',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/details/, ''),
         },
         // 卢建鑫
         '/updateApi': {
-          target: 'http://10.8.22.133:8081',
+          target: 'http://10.8.22.136:8081',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/updateApi/, ''),
         },
         // 吴正东
-        '/registerApi': {
+        '/api': {
           target: 'http://10.8.22.160:8081',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/registerApi/, ''),
+          rewrite: path => path.replace(/^\/api/, '/api'),
         },
       },
     },
