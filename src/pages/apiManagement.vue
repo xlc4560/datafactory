@@ -235,7 +235,6 @@
   // 接口测试抽屉组件
   const drawerVisible = ref<boolean>(false);
   const showDrawer = (visible: boolean, id: string) => {
-    // console.log(request.GetApiDetails(id));
     apiId.value = id;
     drawerVisible.value = visible;
   };

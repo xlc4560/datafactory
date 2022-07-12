@@ -128,7 +128,7 @@
           </a-form-item>
 
           <a v-if="apipara.inputstate === true" @click="statechange(index, false)">编辑</a>
-          <a v-if="apipara.inputstate === false" @click="statechange(index, true)">保存</a>
+          <a v-if="apipara.inputstate === false || !apipara.inputstate" @click="statechange(index, true)">保存</a>
           <!-- 删除 -->
           <a-popconfirm title="Are you sure？" ok-text="Yes" cancel-text="No" @confirm="removeApi(index)">
             <a>删除</a>
@@ -164,7 +164,7 @@
     <!-- 按钮组 -->
     <div class="steps-action">
       <!-- 测试 -->
-      <a-button v-if="steps[current].content == 'paraconfig'" style="margin-right: 10px" @click="testApi">测试</a-button>
+      <a-button v-if="steps[current].content == 'paraconfig'" style="margin-right: 10px" @click="showDrawer(true, '10')">测试</a-button>
       <!-- 取消 -->
       <a-popconfirm placement="top" ok-text="是" cancel-text="否" :style="{ marginRight: `${buttonWidth}px`, whiteSpace: 'nowrap' }" @confirm="confirm">
         <template #title>
@@ -182,51 +182,12 @@
       <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">上一步</a-button>
     </div>
 
-    <!-- 测试抽屉 -->
-    <a-drawer v-model:visible="visible" width="70%" class="custom-class" title="接口测试" placement="right" @after-visible-change="afterVisibleChange">
-      <div style="display: flex">
-        <!-- 测试左侧信息 -->
-        <div class="test_apimsg">
-          <div>
-            <span class="test_title">接口名称　:</span><span>{{ api_basic.apiName }}</span>
-          </div>
-
-          <div>
-            <span class="test_title">Request URL　:</span><span>{{ api_basic.apiProtocol.toLowerCase() + '://' + api_basic.apiIpPort + api_basic.apiPath }}</span>
-          </div>
-
-          <div>
-            <span class="test_title">请求方式　:</span><span>{{ api_basic.apiMethod }}</span>
-          </div>
-
-          <div>
-            <p style="margin-top: 20px; font-size: 18px">输入参数</p>
-            <a-table :data-source="dynamicValidateForm.apiParameter" :columns="test_columns" />
-          </div>
-        </div>
-        <!-- 测试右侧返回 -->
-        <div class="test_return">
-          <p style="font-size: 18px">返回结果(JSON)</p>
-          <div style="height: 70vh; background: black">
-            <pre style="margin-left: -10%; padding-top: 5%; max-height: 70vh; color: white">
-              {
-                "msg": "返回成功",
-                "code": 100200,
-                "data": 1111
-              }
-            </pre>
-          </div>
-        </div>
-      </div>
-      <!-- 测试按钮组 -->
-      <div style="display: flex; justify-content: center; margin-top: 2%">
-        <a-button type="primary" style="margin-right: 1%">接口测试</a-button>
-        <a-button @click="close_test">关闭</a-button>
-      </div>
-    </a-drawer>
+    <!-- 接口测试抽屉 -->
+    <api-test :drawer-visible="drawerVisible" :api-basic="api_basic" @on-close="visible => showDrawer(visible, '10')" />
   </div>
 </template>
 <script lang="ts">
+  import ApiTest from './apiTest.vue';
   import { defineComponent, ref, reactive, toRaw, UnwrapRef, onMounted } from 'vue';
   import { message, Form } from 'ant-design-vue';
   import { useRouter, useRoute } from 'vue-router';
@@ -259,6 +220,9 @@
     }[];
   }
   export default defineComponent({
+    components: {
+      ApiTest,
+    },
     setup() {
       const apimethod = reactive([
         { value: 0, msg: 'GET' },
@@ -477,15 +441,19 @@
         // 验证是否通过
         if (typeof code !== 'number') {
           api_basic.value.apiState = state;
+          let code;
           if (route.params.id) {
-            request.UpdateApi(api_basic.value, state);
+            // 修改
+            code = await request.UpdateApi(api_basic.value, state);
           } else {
-            request.RegisterApi({ checkOperation: 0, ...api_basic.value });
+            // 注册
+            code = await request.RegisterApi({ checkOperation: 0, ...api_basic.value });
           }
-          router.push({
-            path: '/Home/DataSourceManagement/ApiManagement',
-          });
-        } else {
+          if (typeof code !== 'number') {
+            router.push({
+              path: '/Home/DataSourceManagement/ApiManagement',
+            });
+          }
         }
       };
       // 切换保存编辑状态
@@ -524,15 +492,10 @@
         },
       ];
       // 测试抽屉
-      const visible = ref<boolean>(false);
-      const afterVisibleChange = (bool: boolean) => {
-        console.log('visible', bool);
-      };
-      const testApi = () => {
-        visible.value = true;
-      };
-      const close_test = () => {
-        visible.value = false;
+      const drawerVisible = ref<boolean>(false);
+      const showDrawer = (visible: boolean, id: string) => {
+        // apiId.value = id;
+        drawerVisible.value = visible;
       };
       return {
         validate,
@@ -561,11 +524,8 @@
 
         test_columns,
 
-        visible,
-        afterVisibleChange,
-        testApi,
-        close_test,
-
+        drawerVisible,
+        showDrawer,
         onFinish,
         removeApi,
         addApi,

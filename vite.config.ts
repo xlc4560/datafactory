@@ -59,10 +59,10 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           rewrite: path => path.replace(/^\/updateApi/, ''),
         },
         // 吴正东
-        '/api': {
+        '/dataApi/api': {
           target: 'http://10.8.22.160:8081',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/api/, '/api'),
+          rewrite: path => path.replace(/^\/dataApi/, ''),
         },
       },
     },

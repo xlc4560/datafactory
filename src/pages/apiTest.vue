@@ -7,25 +7,27 @@
         </a-descriptions>
         <div>
           <a-card title="输入参数" :bordered="false">
-            <a-table :columns="columns" :data-source="computedApiInfo.apiParameter" size="small" :pagination="false">
+            <a-table :columns="columns" :data-source="computedApiInfo.apiParameter.value" size="small" :pagination="false">
               <template #bodyCell="{ column, record }">
-                <template v-if="column.key === 'tags'">
-                  <span>
-                    <a-tag v-for="tag in record.tags" :key="tag" :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'">
-                      {{ tag.toUpperCase() }}
-                    </a-tag>
-                  </span>
+                <template v-if="column.key === 'parameterPosition'">
+                  {{ record.parameterPosition === 0 ? 'query' : 'header' }}
+                </template>
+                <template v-else-if="column.key === 'parameterRequire'">
+                  {{ record.parameterType === 0 ? 'string' : record.parameterType === 1 ? 'integer' : 'number' }}
+                </template>
+                <template v-else-if="column.key === 'parameterType'">
+                  {{ record.parameterRequire === 0 ? '否' : '是' }}
                 </template>
                 <template v-else-if="column.key === 'action'">
-                  <a-input v-model:value="testValue" placeholder="请输入" />
+                  <a-input v-model:value="record.parameterDefault" placeholder="请输入" />
                 </template>
               </template>
             </a-table>
           </a-card>
         </div>
         <div>
-          <a-card v-if="computedApiInfo.apiRequestBody" title="请求body" :bordered="false">
-            <a-textarea v-model:value="resBody" placeholder="请输入" :rows="15" />
+          <a-card title="请求body" :bordered="false">
+            <a-textarea v-model:value="computedApiInfo.apiRequestBody.value" placeholder="请输入" :rows="15" />
           </a-card>
         </div>
       </div>
@@ -43,6 +45,8 @@
 </template>
 
 <script setup lang="ts">
+  import type { apiParameter } from './types';
+  import * as _ from 'lodash-es';
   import { JsonViewer } from 'vue3-json-viewer';
   import * as request from '@/api/test';
   import 'vue3-json-viewer/dist/index.css';
@@ -57,39 +61,41 @@
       type: String,
       default: '',
     },
+    apiBasic: {
+      type: Object,
+      default: () => {
+        return {
+          apiParameter: [],
+        };
+      },
+    },
   });
   // 接口测试抽屉
   const onClose = () => {
     emit('onClose', false);
   };
   // 接口所有数据在这里
-  const apiInfo = ref<any>();
+  const apiInfo = ref<any>({
+    apiParameter: [],
+  });
   const afterVisibleChange = async (bool: boolean) => {
     if (bool) {
-      apiInfo.value = { ...(await request.GetApiDetails(props.apiId)) };
-      console.log(apiInfo.value);
+      if (props.apiId === '' || props.apiId === null || props.apiId === undefined) {
+        apiInfo.value = props.apiBasic;
+      } else {
+        apiInfo.value = { ...(await request.GetApiDetails(props.apiId)) };
+      }
     }
-    console.log(apiInfo.value);
   };
-  const testValue = ref<string>('');
-  const resBody = ref<string>('');
+
   const computedApiInfo = computed(() => {
-    let apiParameter: {
-      id?: number;
-      parameterApiId?: number;
-      parameterName: string;
-      parameterType: number;
-      parameterRequire: number; //是否必须 (0:非必填 1:必填)
-      parameterPosition: number; //参数位置(0:query 1:header 3:body)
-      parameterDescription?: string;
-      parameterDefault: string;
-    }[] = [];
+    const apiParameter = ref<apiParameter[]>([]);
     if (apiInfo.value?.apiParameter === null || apiInfo.value?.apiParameter === undefined || apiInfo.value?.apiParameter === '') {
-      apiParameter = [];
+      apiParameter.value = [];
     } else {
-      apiParameter = [...apiInfo.value.apiParameter];
+      // 深克隆数据防止数据污染问题
+      apiParameter.value = _.cloneDeep(apiInfo.value.apiParameter);
     }
-    resBody.value = apiInfo.value?.apiRequestBody;
     return {
       descriptions: [
         {
@@ -98,7 +104,7 @@
         },
         {
           label: 'Request URL',
-          value: (apiInfo.value?.apiProtocol === 0 ? 'http://' : 'https://') + apiInfo.value?.apiIpPort + '/' + apiInfo.value?.apiPath,
+          value: (apiInfo.value?.apiProtocol === 0 ? 'http://' : 'https://') + apiInfo.value?.apiIpPort + apiInfo.value?.apiPath,
         },
         {
           label: '请求方式',
@@ -106,12 +112,16 @@
         },
       ],
       apiParameter,
-      apiRequestBody: apiInfo.value?.apiRequestBody,
+      apiRequestBody: ref<string>(apiInfo.value?.apiRequestBody),
     };
   });
+
+  // 用于接收接口测试响应数据
   const ApiDataRes = ref<any>();
+
+  // 点击测试按钮回调
   const apiTestBtn = async () => {
-    computedApiInfo.value.apiParameter.forEach(item => {
+    computedApiInfo.value.apiParameter.value.forEach(item => {
       delete item.id;
       delete item.parameterApiId;
     });
@@ -119,16 +129,10 @@
       apiPath: computedApiInfo.value.descriptions[1].value,
       apiName: apiInfo.value?.apiName,
       apiMethod: apiInfo.value?.apiMethod,
-      apiRequestBody: resBody.value,
-      apiParameter: computedApiInfo.value.apiParameter as {
-        parameterName: string;
-        parameterType: number;
-        parameterRequire: number; //是否必须 (0:非必填 1:必填)
-        parameterPosition: number; //参数位置(0:query 1:header 3:body)
-        parameterDescription?: string;
-        parameterDefault: string;
-      }[],
+      apiRequestBody: computedApiInfo.value.apiRequestBody.value,
+      apiParameter: computedApiInfo.value.apiParameter.value,
     });
+
     ApiDataRes.value = JSON.parse(ApiDataRes.value);
   };
   const columns = [

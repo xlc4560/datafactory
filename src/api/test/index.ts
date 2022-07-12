@@ -2,6 +2,7 @@
 import api from '@/utils/axios';
 import * as resType from './resType';
 import * as funType from './functionArgTypes';
+import { type } from 'os';
 enum Api {
   ACCOUNT_INFO = '/account/getAccountInfo',
   SESSION_TIMEOUT = '/user/sessionTimeout',
@@ -48,6 +49,7 @@ export const DeleteApi = (id: string) => api.get({ url: Api.DELETE_API + id });
 // 编辑接口信息
 export const UpdateApi = (params: funType.UpdateApi, state: 1 | 2) => {
   type updateApi = keyof funType.UpdateApi;
+  type parameters = keyof funType.apiParameter;
   let isParameter = 0;
   const form = new FormData();
   Object.keys(params).forEach(item => {
@@ -58,7 +60,7 @@ export const UpdateApi = (params: funType.UpdateApi, state: 1 | 2) => {
         isParameter = 1;
         (params.apiParameter as funType.apiParameter[]).forEach((apiParameter, index) => {
           Object.keys(apiParameter).forEach(key => {
-            form.append(`list[${index}].${key}`, apiParameter[key as parameters]);
+            form.append(`list[${index}].${key}`, apiParameter[key as parameters] as string);
           });
         });
       }
@@ -70,11 +72,19 @@ export const UpdateApi = (params: funType.UpdateApi, state: 1 | 2) => {
 // 接口测试
 export const ApiTest = (params: funType.ApiTest) => {
   type key = keyof funType.ApiTest;
+  type parameters = keyof funType.apiParameter;
   const form = new FormData();
   Object.keys(params).forEach((item: string) => {
     if (params[item as key] !== null && params[item as key] !== undefined && params[item as key] !== '') {
       if (item === 'apiParameter') {
-        form.append(item, JSON.stringify(params[item as key]));
+        // form.append(item, JSON.stringify(params[item as key]));
+        if (params.apiParameter?.length) {
+          (params.apiParameter as funType.apiParameter[]).forEach((apiParameter, index) => {
+            Object.keys(apiParameter).forEach(key => {
+              form.append(`list[${index}].${key}`, apiParameter[key as parameters] as string);
+            });
+          });
+        }
       } else {
         form.append(item, params[item as key] as string);
       }
@@ -92,7 +102,7 @@ export const RegisterApi = (params: funType.register) => {
       if (item === 'apiParameter') {
         (params.apiParameter as funType.apiParameter[]).forEach((apiParameter, index) => {
           Object.keys(apiParameter).forEach(key => {
-            form.append(`parameters[${index}].${key}`, apiParameter[key as parameters]);
+            form.append(`parameters[${index}].${key}`, apiParameter[key as parameters] as string);
           });
         });
       } else if (item === 'apiResponse' || item === 'apiState') {
