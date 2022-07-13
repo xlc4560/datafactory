@@ -38,8 +38,8 @@
       </div>
     </div>
     <template #footer>
-      <a-button type="primary" @click="apiTestBtn">接口测试</a-button>
-      <a-button style="margin-right: 8px" @click="onClose">关闭</a-button>
+      <a-button class="btn" type="primary" @click="apiTestBtn">接口测试</a-button>
+      <a-button class="btn" @click="onClose">关闭</a-button>
     </template>
   </a-drawer>
 </template>
@@ -70,6 +70,8 @@
       },
     },
   });
+  // 用于接收接口测试响应数据
+  const ApiDataRes = ref<any>();
   // 接口测试抽屉
   const onClose = () => {
     emit('onClose', false);
@@ -85,6 +87,8 @@
       } else {
         apiInfo.value = { ...(await request.GetApiDetails(props.apiId)) };
       }
+    } else {
+      ApiDataRes.value = {};
     }
   };
 
@@ -115,9 +119,6 @@
       apiRequestBody: ref<string>(apiInfo.value?.apiRequestBody),
     };
   });
-
-  // 用于接收接口测试响应数据
-  const ApiDataRes = ref<any>();
 
   // 点击测试按钮回调
   const apiTestBtn = async () => {
@@ -168,23 +169,34 @@
 </script>
 
 <style lang="less">
+  // 滚动条样式
   @import url('./scorll.less');
 
-  .ant-drawer-body {
-    padding: 0;
+  .ant-drawer-content-wrapper {
+    .ant-drawer-content {
+      .ant-drawer-body {
+        padding: 0;
+      }
+
+      .ant-drawer-footer {
+        .btn {
+          margin: 0 1vw 0 0;
+        }
+      }
+    }
   }
 
   .drawer {
     display: flex;
     flex-direction: row;
     min-height: 80vh;
-    // background: skyblue;
+
     .paramsDetails {
       padding: 0 20px 10px;
       flex: 0 0 30vw;
       min-height: 80vh;
       max-height: 80vh;
-      // background-color: aquamarine;
+
       & > div {
         margin: 10px 0 0 0;
 
@@ -199,14 +211,9 @@
 
       .ant-card-body {
         padding: 0;
-        // min-height: 70vh;
-        // max-height: 70vh;
-        // background: rgb(40, 44, 52);
       }
 
       & .jsonViewerStyle {
-        // background-color: black;
-        // color: white;
         min-height: 75vh;
         max-height: 75vh;
       }

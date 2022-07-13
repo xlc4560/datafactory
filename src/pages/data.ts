@@ -20,3 +20,37 @@ export const dataSource2 = [
     page: 64,
   },
 ];
+
+// 表格配置项
+export const apiDetails_columns = [
+  {
+    title: '参数名称',
+    dataIndex: 'parameterName',
+    key: 'parameterName',
+  },
+  {
+    title: '参数位置',
+    dataIndex: 'parameterPosition',
+    key: 'parameterPosition',
+  },
+  {
+    title: '数据类型',
+    dataIndex: 'parameterType',
+    key: 'parameterType',
+  },
+  {
+    title: '是否必填',
+    key: 'parameterRequire',
+    dataIndex: 'parameterRequire',
+  },
+  {
+    title: '默认值',
+    dataIndex: 'parameterDefault',
+    key: 'parameterDefault',
+  },
+  {
+    title: '说明',
+    dataindex: 'parameterDescription',
+    key: 'parameterDescription',
+  },
+];

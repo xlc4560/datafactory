@@ -6,7 +6,7 @@ import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
   baseURL: '/dataApi',
-  timeout: 6000,
+  timeout: 3000,
 });
 // 请求拦截
 instance.interceptors.request.use(
