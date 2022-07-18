@@ -15,9 +15,8 @@
 <script setup lang="ts">
   import { useRoute, RouteLocationMatched } from 'vue-router';
   import { computed } from 'vue';
-  import { cloneDeep } from 'lodash-es';
   const routeMatch = computed<RouteLocationMatched[]>(() => {
-    const match = cloneDeep(useRoute().matched) as RouteLocationMatched[];
+    const match = [...useRoute().matched];
     // match.splice(0, 1);
     return match;
   });
