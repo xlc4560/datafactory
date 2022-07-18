@@ -60,7 +60,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         },
         // 吴正东
         '/dataApi/api': {
-          target: 'http://10.8.22.160:8081',
+          target: 'http://10.8.22.173:8081',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/dataApi/, ''),
         },

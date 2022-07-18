@@ -49,18 +49,18 @@
   // const collapsed = ref<boolean>(false);
   const router = useRouter();
   // 选中的
-  const selectedKeys = ref<string[]>(['/Home/DataSourceManagement/ApiManagement']);
+  const selectedKeys = ref<string[]>(['/DataFactory/DataSourceManagement/ApiManagement']);
   // 打开的
-  const openKeys = ref<string[]>(['/Home/DataSourceManagement']);
+  const openKeys = ref<string[]>(['/DataFactory/DataSourceManagement']);
   const menuData = reactive<menuType[]>([
     {
       subName: '数据源管理',
-      key: '/Home',
+      key: '/DataFactory',
       icon: 'UserOutlined',
       children: [
         {
           subName: '接口管理',
-          key: '/Home/DataSourceManagement/ApiManagement',
+          key: '/DataFactory/DataSourceManagement/ApiManagement',
         },
         {
           subName: '已发布接口',
@@ -74,8 +74,14 @@
     },
     {
       subName: '数据标准管理',
-      key: '/Home/DataStandardsManagement#/',
+      key: '/DataFactory/DataStandardsManagement/',
       icon: 'LaptopOutlined',
+      children: [
+        {
+          subName: '码表管理',
+          key: '/DataFactory/DataStandardsManagement/stopwatch',
+        },
+      ],
     },
   ]);
   // 获取placeholderLabel节点
@@ -86,7 +92,7 @@
   // const toggleCollapsed = () => {
   //   width.value = collapsed.value ? '200px' : '40px';
   //   collapsed.value = !collapsed.value;
-  //   openKeys.value = collapsed.value ? [] : ['/Home'];
+  //   openKeys.value = collapsed.value ? [] : ['/DataFactory'];
   // };
   watch(useRoute(), newVal => {
     selectedKeys.value[0] = newVal.path;

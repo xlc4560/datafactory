@@ -3,7 +3,7 @@
     <div class="divAndSectionPublic"></div>
     <section class="divAndSectionPublic">
       <a-breadcrumb style="margin: 16px 0">
-        <a-breadcrumb-item v-for="item in routeMatch" :key="item.name">{{ item.name }}</a-breadcrumb-item>
+        <a-breadcrumb-item v-for="item in routeMatch" :key="item.name">{{ item.meta.title }}</a-breadcrumb-item>
       </a-breadcrumb>
     </section>
     <a-layout-content class="main" :style="{ margin: ['0', '24px', '24px'], minHeight: '84vh' }">
@@ -18,9 +18,10 @@
   import { cloneDeep } from 'lodash-es';
   const routeMatch = computed<RouteLocationMatched[]>(() => {
     const match = cloneDeep(useRoute().matched) as RouteLocationMatched[];
-    match.splice(0, 1);
+    // match.splice(0, 1);
     return match;
   });
+  console.log(useRoute().matched);
 </script>
 
 <style scoped lang="less">

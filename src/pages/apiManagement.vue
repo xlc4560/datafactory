@@ -103,7 +103,7 @@
   // 路由跳转到人工注册页
   const goApiRegister = () => {
     router.push({
-      path: '/Home/DataSourceManagement/ManualReg',
+      path: '/DataFactory/DataSourceManagement/ManualReg',
     });
   };
 
