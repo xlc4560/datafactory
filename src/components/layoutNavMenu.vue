@@ -1,8 +1,6 @@
 <template>
-  <!--  :style="{flex: `0 0 ${width}`}"-->
-  <div class="placeholderLabel"></div>
-  <!--  v-model:collapsed="collapsed" collapsed-width="40"-->
-  <a-layout-sider class="navMenu" width="200px" style="background: #fff">
+  <a-layout-sider v-model:collapsed="collapsed" collapsible class="placeholderLabel" collapsed-width="40"></a-layout-sider>
+  <a-layout-sider v-model:collapsed="collapsed" collapsible class="navMenu" collapsed-width="40">
     <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" :style="{ height: '100%', borderRight: 0 }" @open-change="clickMenu" @click="clickMenu">
       <template v-for="item in menuData" :key="item.key">
         <a-sub-menu v-if="item.children" :key="item.key">
@@ -34,10 +32,6 @@
       </template>
     </a-menu>
   </a-layout-sider>
-  <!--  <a-button type="default" size="large" style="position: fixed; bottom: 0;" @click="toggleCollapsed(e)">-->
-  <!--    <MenuUnfoldOutlined v-if="collapsed" />-->
-  <!--    <MenuFoldOutlined v-else />-->
-  <!--  </a-button>-->
 </template>
 
 <script setup lang="ts">
@@ -46,7 +40,7 @@
   import { Icon } from '@/utils/icon';
   import type { menuType } from '../layout/types';
   // 内敛菜单收缩标识
-  // const collapsed = ref<boolean>(false);
+  const collapsed = ref<boolean>(false);
   const router = useRouter();
   // 选中的
   const selectedKeys = ref<string[]>(['/DataFactory/DataSourceManagement/ApiManagement']);
@@ -58,6 +52,66 @@
       key: '/DataFactory',
       icon: 'UserOutlined',
       children: [
+        {
+          subName: '接口管理',
+          key: '/DataFactory/DataSourceManagement/ApiManagement',
+        },
+        {
+          subName: '已发布接口',
+          key: '/api1',
+        },
+        {
+          subName: '数据库管理',
+          key: '/api2',
+        },
+        {
+          subName: '接口管理',
+          key: '/DataFactory/DataSourceManagement/ApiManagement',
+        },
+        {
+          subName: '已发布接口',
+          key: '/api1',
+        },
+        {
+          subName: '数据库管理',
+          key: '/api2',
+        },
+        {
+          subName: '接口管理',
+          key: '/DataFactory/DataSourceManagement/ApiManagement',
+        },
+        {
+          subName: '已发布接口',
+          key: '/api1',
+        },
+        {
+          subName: '数据库管理',
+          key: '/api2',
+        },
+        {
+          subName: '接口管理',
+          key: '/DataFactory/DataSourceManagement/ApiManagement',
+        },
+        {
+          subName: '已发布接口',
+          key: '/api1',
+        },
+        {
+          subName: '数据库管理',
+          key: '/api2',
+        },
+        {
+          subName: '接口管理',
+          key: '/DataFactory/DataSourceManagement/ApiManagement',
+        },
+        {
+          subName: '已发布接口',
+          key: '/api1',
+        },
+        {
+          subName: '数据库管理',
+          key: '/api2',
+        },
         {
           subName: '接口管理',
           key: '/DataFactory/DataSourceManagement/ApiManagement',
@@ -90,7 +144,10 @@
   // const width = ref<string>('200px');
   // 菜单内联收缩事件回调
   // const toggleCollapsed = () => {
-  //   width.value = collapsed.value ? '200px' : '40px';
+  //   setTimeout(() => {
+  //     width.value = collapsed.value ? '40px' : '200px';
+  //   }, 80);
+
   //   collapsed.value = !collapsed.value;
   //   openKeys.value = collapsed.value ? [] : ['/DataFactory'];
   // };
@@ -109,15 +166,20 @@
 
 <style scoped lang="less">
   .placeholderLabel {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
-    background: rgb(255, 255, 255);
     flex: 0 0 200px;
   }
 
   .navMenu {
     position: fixed;
     top: 50px;
+    overflow-x: hidden; /* 禁止x轴滚动条 */
+    overflow-y: auto;
+    width: 200px;
+    height: 93vh;
+    background-color: rgb(255, 255, 255);
+
+    &::-webkit-scrollbar {
+      width: 0;
+    }
   }
 </style>

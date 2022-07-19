@@ -20,7 +20,7 @@
     // match.splice(0, 1);
     return match;
   });
-  console.log(useRoute().matched);
+  // console.log(useRoute().matched);
 </script>
 
 <style scoped lang="less">
