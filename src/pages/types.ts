@@ -91,7 +91,6 @@ const columns = [
     title: '操作',
     dataIndex: 'apiOperation',
     width: '20%',
-    ellipsis: true,
   },
 ];
 // 数据apiState 键值对标识，用于渲染不同的文字与颜色

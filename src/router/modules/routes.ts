@@ -55,7 +55,7 @@ export default {
         {
           path: 'stopwatch',
           name: 'stopwatch',
-          component: () => import('@/pages/stopwatchManagement.vue'),
+          component: () => import('@/pages/stopwatch/index.vue'),
           meta: {
             title: '码表管理',
           },

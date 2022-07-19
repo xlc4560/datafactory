@@ -36,11 +36,11 @@
 
 <script setup lang="ts">
   import { useRouter, useRoute } from 'vue-router';
-  // import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue';
   import { Icon } from '@/utils/icon';
   import type { menuType } from '../layout/types';
   // 内敛菜单收缩标识
   const collapsed = ref<boolean>(false);
+  // 使用路由
   const router = useRouter();
   // 选中的
   const selectedKeys = ref<string[]>(['/DataFactory/DataSourceManagement/ApiManagement']);
@@ -52,66 +52,6 @@
       key: '/DataFactory',
       icon: 'UserOutlined',
       children: [
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
         {
           subName: '接口管理',
           key: '/DataFactory/DataSourceManagement/ApiManagement',
@@ -138,19 +78,6 @@
       ],
     },
   ]);
-  // 获取placeholderLabel节点
-  // const placeholderLabel = ref(null);
-  // 设置初始宽度
-  // const width = ref<string>('200px');
-  // 菜单内联收缩事件回调
-  // const toggleCollapsed = () => {
-  //   setTimeout(() => {
-  //     width.value = collapsed.value ? '40px' : '200px';
-  //   }, 80);
-
-  //   collapsed.value = !collapsed.value;
-  //   openKeys.value = collapsed.value ? [] : ['/DataFactory'];
-  // };
   watch(useRoute(), newVal => {
     selectedKeys.value[0] = newVal.path;
   });

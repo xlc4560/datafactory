@@ -6,5 +6,4 @@ export default {
   meta: {
     title: '首页',
   },
-  // component: () => import('@/layout/content.vue'),
 };
