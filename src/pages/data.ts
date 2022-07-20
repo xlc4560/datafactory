@@ -183,3 +183,21 @@ export const apiDetails_columns = [
     key: 'parameterDescription',
   },
 ];
+// 码表 表格配置项
+export const codeDetails_columns = [
+  {
+    title: '码表取值',
+    dataIndex: 'code_config_value',
+    key: 'code_config_value',
+  },
+  {
+    title: '码表名称',
+    dataIndex: 'code_config_name',
+    key: 'code_config_name',
+  },
+  {
+    title: '码表含义',
+    dataIndex: 'code_config_description',
+    key: 'code_config_description',
+  },
+];

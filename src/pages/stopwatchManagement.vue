@@ -4,14 +4,12 @@
     <!-- 筛选组 -->
     <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
       <a-form-item label="码表状态:">
-        <!-- :options="apiStateOptions"
-          :field-names="{ label: 'label', value: 'value' }" -->
-        <a-select v-model:value="formState.codeState" class="width" :allow-clear="true" size="middle" placeholder="请选择">
+        <a-select v-model:value="formState.code_state" class="width" :allow-clear="true" size="middle" placeholder="请选择">
           <a-select-option v-for="item in codeStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item label="码表名称:">
-        <a-input v-model:value="formState.apiName" class="width" placeholder="请输入" />
+        <a-input v-model:value="formState.code_name" class="width" placeholder="请输入" />
       </a-form-item>
       <a-form-item class="formBtn">
         <a-button type="primary" html-type="submit">查 询</a-button>
@@ -42,14 +40,11 @@
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'code_id'">
-            <a @click="apiDeatils(record)">{{ record.code_id }}</a>
+            <a @click="codeDeatils(record)">{{ record.code_id }}</a>
           </template>
           <template v-if="column.dataIndex === 'code_state'">
             <span class="isNopublish" :style="{ background: codeState[record.code_state].color }"></span>
             {{ codeState[record.code_state].value }}
-          </template>
-          <template v-if="column.dataIndex === 'update_time'">
-            {{ record.update_time }}
           </template>
           <template v-if="column.dataIndex === 'code_operation'">
             <!-- <a-button type="link" size="small" @click="showDrawer(true, record.id)">接口测试</a-button> -->
@@ -63,18 +58,19 @@
     </div>
   </div>
   <!-- 码表详情弹窗 -->
-  <a-modal v-model:visible="modalVisible" width="1000px" :closable="false" style="top: 20px" class="aModal">
+  <a-modal v-model:visible="modalVisible" width="800px" :closable="false" style="top: 20px" class="aModal">
     <template #footer>
       <a-button key="back" @click="handleCancel">返回</a-button>
     </template>
-    <api-details :records="records" />
+    <code-details :records="records" />
   </a-modal>
   <!-- 接口测试抽屉 -->
   <api-test :drawer-visible="drawerVisible" :api-id="apiId + ''" @on-close="visible => showDrawer(visible, apiId)" />
 </template>
 
 <script setup lang="ts">
-  import apiDetails from './apiDetails.vue';
+  // import apiDetails from './apiDetails.vue';
+  import codeDetails from './codeDetails.vue';
   import type { FormProps, TableProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
   // 页面固定配置项
@@ -109,7 +105,10 @@
     apiSource: null,
     apiState: null,
     apiName: '',
-    codeState: null, //码表状态
+
+    //码表
+    code_state: null, //码表状态
+    code_name: null, //码表名称
   });
   // 用于重置表单
   const ResetFields = () => {
@@ -205,16 +204,20 @@
     }
     state.selectedRowKeys = selectedRowKeys;
   };
-  // 查看接口详情
+  // 查看码表详情
   const modalVisible = ref<boolean>(false);
   const records = ref<object>({});
-  const apiDeatils = async (record: { id: string }) => {
-    records.value = {
-      ...(await request.GetApiDetails(record.id)),
-    };
-    console.log(records.value);
+  // const codeDeatils = async (record: { id: string }) => {
+  //   records.value = {
+  //     ...(await request.GetApiDetails(record.id)),
+  //   };
+  //   console.log(records.value);
 
+  //   modalVisible.value = true;
+  // };
+  const codeDeatils = (record: any) => {
     modalVisible.value = true;
+    console.log(record);
   };
   const handleCancel = () => {
     modalVisible.value = false;

@@ -23,13 +23,9 @@ declare module '@vue/runtime-core' {
     AMenu: typeof import('ant-design-vue/es')['Menu'];
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem'];
     AModal: typeof import('ant-design-vue/es')['Modal'];
-    APageHeader: typeof import('ant-design-vue/es')['PageHeader'];
-    APopconfirm: typeof import('ant-design-vue/es')['Popconfirm'];
     ASelect: typeof import('ant-design-vue/es')['Select'];
     ASelectOption: typeof import('ant-design-vue/es')['SelectOption'];
     ASpace: typeof import('ant-design-vue/es')['Space'];
-    AStep: typeof import('ant-design-vue/es')['Step'];
-    ASteps: typeof import('ant-design-vue/es')['Steps'];
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu'];
     ATable: typeof import('ant-design-vue/es')['Table'];
     ATabPane: typeof import('ant-design-vue/es')['TabPane'];

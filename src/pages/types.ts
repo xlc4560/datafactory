@@ -6,6 +6,7 @@ interface FormState {
 
   //码表
   code_state: number | null;
+  code_name: string | null;
 }
 type APIParams = {
   results: number;
