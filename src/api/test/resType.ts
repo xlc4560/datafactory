@@ -19,6 +19,21 @@ export interface ApiList {
   apiBasics: { id: number; apiName: string; apiSource: string; apiState: number; updateTime: string; pageSize: number; pageNum: number; apiDescription: string; apiType: string; totalNum: number }[];
   totalNum: number;
 }
+// 请求码表列表的响应值类型
+export interface CodeList {
+  CodeBasics: {
+    id: number;
+    code_id: string;
+    code_name: string;
+    code_statee: number;
+    code_description: string;
+    update_time: string;
+    pageSize: number;
+    pageNum: number;
+    totalNum: number;
+  }[];
+  totalNum: number;
+}
 export interface ApiDetails {
   id: number;
   apiName: string;
