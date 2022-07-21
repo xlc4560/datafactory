@@ -138,8 +138,6 @@
     data: dataSource,
     run,
     loading,
-    current,
-    pageSize,
   } = usePagination(request.getStopwatchList, {
     defaultParams: [
       {
@@ -151,14 +149,14 @@
       },
     ],
   });
-
   const pagination = computed(() => ({
-    total: dataSource.value?.list.length,
-    current: current.value,
-    pageSize: pageSize.value,
-    // hideOnSinglePage: true,
+    total: dataSource.value?.total,
+    current: pageGlobal.value,
+    pageSize: sizeGlobal.value,
+    hideOnSinglePage: true,
     showQuickJumper: true,
-    showTotal: () => `共${dataSource.value?.list.length}条`,
+    showSizeChanger: true,
+    showTotal: () => `共${dataSource.value?.total}条`,
   }));
   // 当点击分页组件时，该回调被触发
   const handleTableChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
