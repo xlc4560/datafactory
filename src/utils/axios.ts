@@ -40,6 +40,9 @@ instance.interceptors.response.use(
       case 100006:
         antdMessage.warning(msg, 1);
         return code;
+      case 100003:
+        antdMessage.warning(msg, 1);
+        return code;
       default:
         break;
     }

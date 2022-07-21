@@ -1,5 +1,5 @@
 <template>
-  <a-table :columns="stopwatchDetails_columns" :data-source="stopwatchDetails.value.codeConfigs" size="small" :pagination="false"> </a-table>
+  <a-table :columns="stopwatchDetails_columns" :data-source="stopwatchDetails.value.codeConfig" size="small" :pagination="false"> </a-table>
 </template>
 
 <script lang="ts" setup>
@@ -20,7 +20,7 @@
     props.stopwatchData,
     async () => {
       stopwatchDetails.value = await getStopwatchDetails(props.stopwatchData.codeId);
-      console.log(stopwatchDetails.value.codeConfigs);
+      console.log(stopwatchDetails.value.codeConfig);
     },
     { immediate: true },
   );

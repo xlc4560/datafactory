@@ -10,6 +10,7 @@ export interface GetStopwatchList {
 
 // 新增码表参数类型
 export interface AddStopwatch {
+  codeId?: string;
   codeName: string;
   codeDescription: string | null | undefined;
   codeState?: number;

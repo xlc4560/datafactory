@@ -123,8 +123,15 @@
     emits('openDrawer', true, record, isRegister);
   };
   // 删除码表回调
-  const deleteStopwatch = (codeId: string) => {
-    request.deleteStopwatch(codeId);
+  const deleteStopwatch = async (codeId: string) => {
+    await request.deleteStopwatch(codeId);
+    run({
+      page: pageGlobal.value,
+      size: sizeGlobal.value,
+      orderBy: order.value,
+      codeState: props.stopwatchFilters.codeState,
+      codeName: props.stopwatchFilters.codeName,
+    });
   };
   // 以下是分页逻辑
   const {

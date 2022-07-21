@@ -14,8 +14,8 @@ enum Api {
   GET_STOPWATCH_LIST = '/LJX/code/list/', // 获取码表列表数据
   ADD_STOPWATCH = '/code/add', // 新增码表
   EDIT_STOPWATCH = '/code/edit', // 编辑码表
-  DELETE_STOPWATCH = '/code/delete/', // 删除码表
-  GET_STOPWATCH_DETAILS = '/HCH/code/detail/', // 查看码表详情
+  DELETE_STOPWATCH = '/LJX/code/delete/', // 删除码表
+  GET_STOPWATCH_DETAILS = '/code/detail/', // 查看码表详情
   UPDATE_STOPWATCH_STATE = '/code/stateUpdate', // 码表状态修改
 }
 // 检索列表回调
@@ -30,7 +30,10 @@ export const getStopwatchList = (params: funArgsType.GetStopwatchList) => {
 };
 
 // 新增码表
-export const addStopwatch = (params: funArgsType.AddStopwatch) => api.post<any>({ url: Api.ADD_STOPWATCH, data: params });
+export const addStopwatch = (params: funArgsType.AddStopwatch) => {
+  delete params?.codeId;
+  return api.post<any>({ url: Api.ADD_STOPWATCH, data: params });
+};
 
 // 编辑码表信息
 export const editStopwatch = (params: funArgsType.EditStopwatch) => {

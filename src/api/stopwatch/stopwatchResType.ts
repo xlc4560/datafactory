@@ -13,9 +13,9 @@ export interface StopwatchListRes {
 }
 // 码表详情响应类型
 export interface StopwatchDetailsRes {
-  codeConfigs: {
-    id: number;
-    codeId: string;
+  codeConfig?: {
+    id?: number;
+    codeId?: string;
     codeConfigName: string;
     codeConfigValue: string;
     codeConfigDescription: string;

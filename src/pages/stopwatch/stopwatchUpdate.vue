@@ -102,7 +102,7 @@
   const formState = reactive<FormState>({
     codeName: '',
     codeDescription: '',
-    codeState: 0,
+    // codeState: 0,
     codeConfig: ref<
       {
         codeConfigName: string;
@@ -122,7 +122,9 @@
         formState.codeName = data.codeName;
         // formState.codeDescription = data.code
         //   响应式列表数据
-        formState.codeConfig = data.codeConfigs.reduce((total: any, currentValue): object[] => {
+        formState.codeConfig = data.codeConfig?.reduce((total: any, currentValue): object[] => {
+          delete currentValue.codeId;
+          delete currentValue.id;
           total.push(reactive<any>(currentValue));
           return total;
         }, []);
@@ -158,7 +160,7 @@
     console.log('Failed:', errorInfo);
   };
 
-  //   添加配置项回调
+  // 添加配置项回调
   const addConfigurationItem = () => {
     formState.codeConfig.push(
       reactive<any>({
