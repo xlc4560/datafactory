@@ -2,77 +2,101 @@
 export const stopwatch_columns = [
   {
     title: '码表编号',
-    dataIndex: 'id',
-    key: 'id',
+    dataIndex: 'codeId',
+    key: 'codeId',
+    width: '10%',
   },
   {
     title: '码表名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'codeName',
+    key: 'codeName',
     ellipsis: true,
+    width: '15%',
   },
   {
     title: '码表说明',
-    dataIndex: 'description',
-    key: 'description',
+    dataIndex: 'codeDescription',
+    key: 'codeDescription',
     ellipsis: true,
   },
   {
     title: '码表状态',
-    key: 'state',
-    dataIndex: 'state',
+    key: 'codeState',
+    dataIndex: 'codeState',
+    width: '10%',
   },
   {
     title: '更新时间',
     dataIndex: 'updateTime',
     key: 'updateTime',
     sorter: true,
+    width: '15%',
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: 'action',
+    width: '260px',
   },
 ];
 
 // 表格模拟数据（列表数据）
 export const stopwatchData = [
   {
-    key: '1',
-    id: 'ME017B',
-    name: 'xxxxxxxxxxxxxxxxxxxxxx',
-    description: 'hsrghaeruhg;oajrgaregharighh;iawrgjg',
-    state: 0,
+    codeId: 'ME017B',
+    codeName: 'xxxxxxxxxxxxxxxxxxxxxx',
+    codeDescription: 'hsrghaeruhg;oajrgaregharighh;iawrgjghsrghaeruhg;oajrgaregharighh;iawrgjghsrghaeruhg;oajrgaregharighh;iawrgjghsrghaeruhg;oajrgaregharighh;iawrgjg',
+    codeState: 0,
     updateTime: '2022-07-18 16:18:32',
-    action: '13454',
   },
   {
-    key: '2',
-    id: 'ME017B',
-    name: 'xxxxxxxxxxxxxxxxxxxxxx',
-    description: 'hsrghaeruhg;oajrgaregharighh;iawrgjg',
-    state: 0,
+    codeId: 'ME017A',
+    codeName: 'xxxxxxxxxxxxxxxxxxxxxx',
+    codeDescription: 'hsrghaeruhg;oajrgaregharighh;iawrgjg',
+    codeState: 1,
     updateTime: '2022-07-18 16:18:32',
-    action: '635453',
+  },
+  {
+    codeId: 'ME017C',
+    codeName: 'xxxxxxxxxxxxxxxxxxxxxx',
+    codeDescription: 'hsrghaeruhg;oajrgaregharighh;iawrgjg',
+    codeState: 2,
+    updateTime: '2022-07-18 16:18:32',
   },
 ];
-
+// 接口状态(用于渲染select框)  0:未发布，1:已发布，2:已停用
+export const stopwatchStateOptions: { value: number; lable: string }[] = [
+  { value: 0, lable: '未发布' },
+  { value: 1, lable: '已发布' },
+  { value: 2, lable: '已停用' },
+];
+// 定义状态修改的枚举类型
+export enum UpdateStateApi {
+  RELEASE,
+  DISABLE,
+}
+// 数据(码表状态)codeState 键值对标识，用于渲染不同的文字与颜色  0:未发布，1:已发布，2:已停用
+export const codeState: { value: string; color: string }[] = [
+  { value: '未发布', color: '#faad14' },
+  { value: '已发布', color: '#52c41a' },
+  { value: '已停用', color: '#ff4d4f' },
+];
 // 码表详情
 export const stopwatchDetails_columns = [
   {
     title: '码值取值',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'codeConfigValue',
+    key: 'codeConfigValue',
   },
   {
     title: '码值名称',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'codeConfigName',
+    key: 'codeConfigName',
   },
   {
     title: '码值含义',
-    dataIndex: 'address',
-    key: 'address',
+    dataIndex: 'codeConfigDescription',
+    key: 'codeConfigDescription',
   },
 ];
 
@@ -105,17 +129,17 @@ export const stopwatchDetails_data = [
 export const stopwatchUpdate_columns = [
   {
     title: '码值取值',
-    dataIndex: 'name',
+    dataIndex: 'codeConfigValue',
     width: '25%',
   },
   {
     title: '码值名称',
-    dataIndex: 'money',
+    dataIndex: 'codeConfigName',
     width: '25%',
   },
   {
     title: '码值含义',
-    dataIndex: 'address',
+    dataIndex: 'codeConfigDescription',
     width: '25%',
   },
   {

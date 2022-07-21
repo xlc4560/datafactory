@@ -20,7 +20,7 @@ export default {
         {
           path: 'ApiManagement',
           name: 'ApiManagement',
-          component: () => import('@/pages/apiManagement.vue'),
+          component: () => import('@/pages/apiManagement/apiManagement.vue'),
           meta: {
             title: '接口管理',
           },
@@ -31,7 +31,7 @@ export default {
           meta: {
             title: '人工注册',
           },
-          component: () => import('@/pages/ManualReg.vue'),
+          component: () => import('@/pages/apiManagement/ManualReg.vue'),
         },
         {
           path: 'ManualReg/:id',
@@ -39,7 +39,7 @@ export default {
           meta: {
             title: '编辑',
           },
-          component: () => import('@/pages/ManualReg.vue'),
+          component: () => import('@/pages/apiManagement/ManualReg.vue'),
         },
       ],
     },

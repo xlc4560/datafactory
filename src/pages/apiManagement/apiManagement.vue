@@ -93,7 +93,8 @@
   import type * as ApiType from './types';
   import ApiTest from './apiTest.vue';
   // 网络请求
-  import * as request from '@/api/test';
+  import * as request from '@/api/apiManagement';
+
   const order = ref<0 | 1>(0);
   const pageSizeGlobal = ref<number>(10);
   const pageNumGlobal = ref<number>(1);
@@ -160,9 +161,6 @@
     pagination: {
       currentKey: 'pageNum',
       pageSizeKey: 'pageSize',
-    },
-    onError(error, params) {
-      console.log(params);
     },
   });
   const pagination = computed(() => ({

@@ -48,7 +48,7 @@
   import type { apiParameter } from './types';
   import * as _ from 'lodash-es';
   import { JsonViewer } from 'vue3-json-viewer';
-  import * as request from '@/api/test';
+  import * as request from '@/api/apiManagement';
   import 'vue3-json-viewer/dist/index.css';
   // 使用defineEmits创建名称，接受一个数组
   const emit = defineEmits(['onClose']);

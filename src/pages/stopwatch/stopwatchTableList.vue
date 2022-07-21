@@ -4,28 +4,43 @@
     <!-- 按钮操作组 -->
     <div class="tableactionGroup">
       <a-space :size="12">
-        <a-button :disabled="btnIsDisabled">批量发布</a-button>
-        <a-button :disabled="btnIsDisabled">批量停用</a-button>
+        <a-button :disabled="btnIsDisabled" @click="updataStopwatchState(UpdateStateApi.RELEASE)">批量发布</a-button>
+        <a-button :disabled="btnIsDisabled" @click="updataStopwatchState(UpdateStateApi.DISABLE)">批量停用</a-button>
       </a-space>
       <a-space :size="12">
         <a-button>导入模板下载</a-button>
         <a-button>标准导入</a-button>
-        <a-button type="primary" @click="stopwatchUpdate(0)">新增码表</a-button>
+        <a-button type="primary" @click="stopwatchUpdate(0, { codeId: '' })">新增码表</a-button>
       </a-space>
     </div>
     <!-- 表格组 -->
+    <!-- :data-source="stopwatchData"
+        :row-key="record => record.id" -->
     <div class="antdTable">
-      <a-table :columns="stopwatch_columns" :data-source="stopwatchData" :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }">
+      <a-table
+        :columns="stopwatch_columns"
+        :row-key="rowKey"
+        :data-source="dataSource?.list"
+        :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+        :pagination="pagination"
+        :loading="loading"
+        size="small"
+        @change="handleTableChange"
+      >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'id'">
-            <a @click="stopwatchDetails(record)">{{ record.id }}</a>
+          <template v-if="column.dataIndex === 'codeId'">
+            <a @click="stopwatchDetails(record)">{{ record.codeId }}</a>
+          </template>
+          <template v-if="column.dataIndex === 'codeState'">
+            <span class="isNopublish" :style="{ background: codeState[record.codeState].color }"></span>
+            {{ codeState[record.codeState].value }}
           </template>
           <template v-else-if="column.dataIndex === 'action'">
-            <a-button type="link" size="small">发 布</a-button>
-            <a-button type="link" size="small">停 用</a-button>
-            <a-button type="link" @click="stopwatchUpdate(1, record)">编 辑</a-button>
-            <a-popconfirm title="确认删除?" ok-text="是" cancel-text="否" @confirm="deleteStopwatch(record)">
-              <a-button type="link">删 除</a-button>
+            <a-button v-if="record.codeState === 0 || record.codeState === 2" type="link" size="small" @click="updataStopwatchState(UpdateStateApi.RELEASE, record.codeId)">发 布</a-button>
+            <a-button v-if="record.codeState === 1" type="link" size="small" @click="updataStopwatchState(UpdateStateApi.DISABLE, record.codeId)">停 用</a-button>
+            <a-button v-if="record.codeState === 0 || record.codeState === 2" type="link" @click="stopwatchUpdate(1, record)">编 辑</a-button>
+            <a-popconfirm title="确认删除?" ok-text="是" cancel-text="否" @confirm="deleteStopwatch(record.codeId)">
+              <a-button v-if="record.codeState === 0" type="link">删 除</a-button>
             </a-popconfirm>
           </template>
         </template>
@@ -35,17 +50,52 @@
 </template>
 
 <script setup lang="ts">
-  import { stopwatch_columns, stopwatchData } from './stopwatchData';
+  import { stopwatch_columns, codeState, UpdateStateApi } from './stopwatchData';
+  import type { Key, StopwatchFiltersType } from './stopwatchType';
+  // import type { TableProps } from 'ant-design-vue';
+  import * as request from '@/api/stopwatch/stopwatch';
+  import { usePagination } from 'vue-request'; // 分页
+  // 定义全局变量接收分页参数
+  const order = ref<0 | 1 | null>(null);
+  const sizeGlobal = ref<number>(10);
+  const pageGlobal = ref<number>(1);
+  // 接收来自筛选组件的数据
+  const props = defineProps({
+    stopwatchFilters: {
+      type: Object,
+      default: () =>
+        reactive<StopwatchFiltersType>({
+          codeState: null,
+          codeName: '',
+        }),
+    },
+  });
+  // 监视数据是否发生变化
+  watch(props.stopwatchFilters, () => {
+    run({
+      page: pageGlobal.value,
+      size: sizeGlobal.value,
+      orderBy: order.value,
+      codeState: props.stopwatchFilters.codeState,
+      codeName: props.stopwatchFilters.codeName,
+    });
+  });
+  // 声明自定义事件用于和父组件通信
   const emits = defineEmits(['openModal', 'openDrawer']);
-  type Key = string | number;
+  // 控制批量操作按钮是否可点击
   const btnIsDisabled = ref<boolean>(true);
+  // 表格row-key配置
+  const rowKey = (record: { codeId: string }) => record.codeId;
+  // 多选状态
   const state = reactive<{
-    selectedRowKeys: Key[];
+    selectedRowKeys: (string | number)[];
     loading: boolean;
   }>({
     selectedRowKeys: [], // Check here to configure the default column
     loading: false,
   });
+
+  // 当选择状态发生改变时的回调
   const onSelectChange = (selectedRowKeys: Key[]) => {
     if (selectedRowKeys.length > 0) {
       btnIsDisabled.value = false;
@@ -53,15 +103,69 @@
       btnIsDisabled.value = true;
     }
     state.selectedRowKeys = selectedRowKeys;
+    console.log(state.selectedRowKeys);
   };
+  // 批量操作按钮回调
+  const updataStopwatchState = (operation: 0 | 1, codeId?: string) => {
+    if (codeId) {
+      request.updateStopwatchState({ codeId: [codeId], operation });
+    } else {
+      request.updateStopwatchState({ codeId: state.selectedRowKeys, operation });
+    }
+  };
+  // 打开码表详情弹窗回调
   const stopwatchDetails = (record: any) => {
+    // 触发父组件中的回调emits(事件名, 事件参数)
     emits('openModal', true, record);
   };
-  const stopwatchUpdate = (isRegister: 0 | 1, record: any = {}) => {
+  // 打开码表编辑、注册抽屉回调
+  const stopwatchUpdate = (isRegister: 0 | 1, record: any) => {
     emits('openDrawer', true, record, isRegister);
   };
-  const deleteStopwatch = (record: any) => {
-    console.log(record);
+  // 删除码表回调
+  const deleteStopwatch = (codeId: string) => {
+    request.deleteStopwatch(codeId);
+  };
+  // 以下是分页逻辑
+  const {
+    data: dataSource,
+    run,
+    loading,
+    current,
+    pageSize,
+  } = usePagination(request.getStopwatchList, {
+    defaultParams: [
+      {
+        page: 1,
+        size: 10,
+        orderBy: null,
+        codeState: props.stopwatchFilters.codeState,
+        codeName: props.stopwatchFilters.codeName,
+      },
+    ],
+  });
+
+  const pagination = computed(() => ({
+    total: dataSource.value?.list.length,
+    current: current.value,
+    pageSize: pageSize.value,
+    // hideOnSinglePage: true,
+    showQuickJumper: true,
+    showTotal: () => `共${dataSource.value?.list.length}条`,
+  }));
+  // 当点击分页组件时，该回调被触发
+  const handleTableChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
+    order.value = sorter.order === 'ascend' ? 1 : 0;
+    sizeGlobal.value = pag.pageSize;
+    pageGlobal.value = pag.current;
+    // run触发usePagination中的queryData请求
+    run({
+      page: pageGlobal.value,
+      size: sizeGlobal.value,
+      orderBy: order.value,
+      codeState: props.stopwatchFilters.codeState,
+      codeName: props.stopwatchFilters.codeName,
+    });
   };
 </script>
 

@@ -5,7 +5,7 @@ import { message as antdMessage } from 'ant-design-vue';
 import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
-  baseURL: '/dataApi',
+  // baseURL: '',
   timeout: 3000,
 });
 // 请求拦截
@@ -36,6 +36,9 @@ instance.interceptors.response.use(
         break;
       case 100500:
         antdMessage.error(msg, 1);
+        return code;
+      case 100006:
+        antdMessage.warning(msg, 1);
         return code;
       default:
         break;

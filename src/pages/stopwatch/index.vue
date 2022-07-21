@@ -1,16 +1,14 @@
 <template>
   <!-- 数据筛选组件 -->
-  <StopwatchDataFilterVue />
+  <StopwatchDataFilterVue @get-filter-data="getFilterData" />
   <!-- 列表部分 -->
-  <StopwatchTableList :show-modal="showModal" @open-modal="showModal" @open-drawer="showDrawer" />
+  <StopwatchTableList :show-modal="showModal" :stopwatch-filters="stopwatchFilters" @open-modal="showModal" @open-drawer="showDrawer" />
   <!-- 详情弹窗 -->
-  <a-modal v-model:visible="visible" width="800px" title="Basic Modal" @ok="handleOk">
-    <StopwatchDetails :data="data" />
+  <a-modal v-model:visible="visible" width="800px" :title="stopwatchData.codeName" @ok="handleOk">
+    <StopwatchDetails :stopwatch-data="stopwatchData" />
   </a-modal>
   <!-- 编辑、新增 -->
-  <a-drawer :title="isRegister" width="800px" :visible="drawerVisible" @close="onClose">
-    <StopwatchUpdateVue />
-  </a-drawer>
+  <StopwatchUpdateVue :drawer-data="drawerData" />
 </template>
 
 <script lang="ts" setup>
@@ -18,25 +16,34 @@
   import StopwatchTableList from './stopwatchTableList.vue';
   import StopwatchDetails from './stopwatchDetails.vue';
   import StopwatchUpdateVue from './stopwatchUpdate.vue';
+  import type { StopwatchFiltersType } from './stopwatchType';
   const visible = ref<boolean>(false);
-  const drawerVisible = ref<boolean>(false);
-  const data = ref<any>({});
+  const drawerData = reactive<{ visible: boolean; isRegister: string; codeId?: string | null; id: number }>({ visible: false, isRegister: '', id: 0 });
+  const stopwatchData = reactive<{ codeId: string; codeName: string }>({ codeId: '', codeName: '' });
+  // 获取筛选组件的数据
+  const stopwatchFilters = reactive<StopwatchFiltersType>({ codeState: null, codeName: '' });
+  // const filterData = reactive<>()
+  const getFilterData = (params: StopwatchFiltersType) => {
+    stopwatchFilters.codeState = params.codeState;
+    stopwatchFilters.codeName = params.codeName;
+  };
+  // 打开弹窗
   const showModal = (visibleValue: boolean, record: any) => {
     visible.value = visibleValue;
-    data.value = record;
-    console.log(record);
+    stopwatchData.codeId = record.codeId;
+    stopwatchData.codeName = record.codeName;
   };
   const handleOk = (e: MouseEvent) => {
-    console.log(e);
     visible.value = false;
   };
-  const isRegister = ref<string>('新增码表');
   const showDrawer = (visibleValue: boolean, record: any, isRegisterValue: 0 | 1) => {
-    drawerVisible.value = visibleValue;
-    isRegister.value = isRegisterValue === 0 ? '新增码表' : '码表编辑';
-  };
-  const onClose = () => {
-    drawerVisible.value = false;
+    drawerData.visible = visibleValue;
+    drawerData.isRegister = isRegisterValue === 0 ? '新增码表' : '码表编辑';
+    if (record) {
+      drawerData.codeId = record.codeId;
+    }
+
+    drawerData.id++;
   };
 </script>
 

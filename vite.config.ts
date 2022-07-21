@@ -40,29 +40,28 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/weather/, ''),
         },
-        // 黄朝浩
-        '/getApiInfo': {
-          target: 'http://10.8.22.162:8081',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/getApiInfo/, ''),
-        },
-        // 江艳秋
-        '/details': {
-          target: 'http://10.8.22.134:8081',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/details/, ''),
-        },
-        // 卢建鑫
-        '/updateApi': {
-          target: 'http://10.8.22.136:8081',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/updateApi/, ''),
-        },
         // 吴正东
         '/dataApi/api': {
           target: 'http://10.8.22.173:8081',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/dataApi/, ''),
+        },
+        '/code': {
+          target: 'http://192.168.43.37:8082',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/code/, '/code'),
+        },
+        // 卢建鑫
+        '/LJX': {
+          target: 'http://192.168.43.118:8082',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/LJX/, ''),
+        },
+        // 黄超浩
+        '/HCH': {
+          target: 'http://192.168.43.154:8081',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/HCH/, ''),
         },
       },
     },
