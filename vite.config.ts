@@ -51,18 +51,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/code/, '/code'),
         },
-        // 卢建鑫
-        '/LJX': {
-          target: 'http://192.168.43.118:8082',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/LJX/, ''),
-        },
-        // 黄超浩
-        '/HCH': {
-          target: 'http://192.168.43.154:8081',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/HCH/, ''),
-        },
       },
     },
     plugins: [
