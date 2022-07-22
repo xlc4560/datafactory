@@ -78,9 +78,15 @@
       ],
     },
   ]);
-  watch(useRoute(), newVal => {
-    selectedKeys.value[0] = newVal.path;
-  });
+  //
+  watch(
+    useRoute(),
+    newVal => {
+      selectedKeys.value[0] = newVal.path;
+    },
+    { immediate: true },
+  );
+
   // 菜单点击事件
   function clickMenu({ key }: { key: string | undefined }): void {
     if (key !== undefined) {

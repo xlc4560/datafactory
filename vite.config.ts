@@ -40,16 +40,17 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/weather/, ''),
         },
-        // 吴正东
+        // 吴正东（接口管理）
         '/dataApi/api': {
           target: 'http://10.8.22.173:8081',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/dataApi/, ''),
         },
+        // 码表管理
         '/code': {
-          target: 'http://192.168.43.37:8082',
+          target: 'http://10.8.21.166:8082',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/code/, '/code'),
+          // rewrite: path => path.replace(/^\/code/, '/code'),
         },
       },
     },
