@@ -76,26 +76,17 @@
 
 <script setup lang="ts">
   import { stopwatchUpdate_columns } from './stopwatchData';
-  import type { Ref } from 'vue';
+  import { FormState } from './stopwatchType';
   import { FormInstance, message } from 'ant-design-vue';
   import { addStopwatch, getStopwatchDetails, editStopwatch } from '@/api/stopwatch/stopwatch';
-  interface FormState {
-    codeId?: string;
-    codeName: string;
-    codeDescription: string | null | undefined;
-    codeState?: number;
-    codeConfig: Ref<
-      {
-        codeConfigName: string;
-        codeConfigValue: string;
-        codeConfigDescription: string | null | undefined;
-      }[]
-    >;
-  }
   const props = defineProps({
     drawerData: {
       type: Object,
       default: () => reactive<{ visible: boolean; isRegister: string }>({ visible: false, isRegister: '' }),
+    },
+    run: {
+      type: Function,
+      default: null,
     },
   });
   // 表单数据
@@ -149,6 +140,8 @@
   // 抽屉关闭
   const onClose = () => {
     drawerVisible.value = false;
+    // 调用来自stopwatchTableList.vue组件的run方法，用于刷新页面数据
+    props.run();
   };
 
   // 表单验证通过
@@ -178,14 +171,18 @@
   // 提交
   const formRef = ref<FormInstance>();
   const formSubmit = () => {
-    formRef.value
-      .validate()
-      .then(() => {
+    formRef?.value
+      ?.validate()
+      .then(async () => {
         if (formState.codeConfig.length > 0) {
           if (formState.codeId) {
-            editStopwatch(formState);
+            // 码表编辑
+            const res = await editStopwatch(formState);
+            res === null ? '' : onClose();
           } else {
-            addStopwatch(formState);
+            // 新增码表
+            const res = await addStopwatch(formState);
+            res === null ? '' : onClose();
           }
         } else {
           message.error('码表配置项不能为空');

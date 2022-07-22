@@ -14,8 +14,6 @@
       </a-space>
     </div>
     <!-- 表格组 -->
-    <!-- :data-source="stopwatchData"
-        :row-key="record => record.id" -->
     <div class="antdTable">
       <a-table
         :columns="stopwatch_columns"
@@ -52,7 +50,6 @@
 <script setup lang="ts">
   import { stopwatch_columns, codeState, UpdateStateApi } from './stopwatchData';
   import type { Key, StopwatchFiltersType } from './stopwatchType';
-  // import type { TableProps } from 'ant-design-vue';
   import * as request from '@/api/stopwatch/stopwatch';
   import { usePagination } from 'vue-request'; // 分页
   // 定义全局变量接收分页参数
@@ -70,8 +67,36 @@
         }),
     },
   });
-  // 监视数据是否发生变化
-  watch(props.stopwatchFilters, () => {
+  // 声明自定义事件用于和父组件通信
+  const emits = defineEmits(['openModal', 'openDrawer']);
+  // 以下是分页逻辑
+  const {
+    data: dataSource,
+    run,
+    loading,
+  } = usePagination(request.getStopwatchList, {
+    defaultParams: [
+      {
+        page: 1,
+        size: 10,
+        orderBy: null,
+        codeState: props.stopwatchFilters.codeState,
+        codeName: props.stopwatchFilters.codeName,
+      },
+    ],
+  });
+  // 表格分页配置
+  const pagination = computed(() => ({
+    total: dataSource.value?.total,
+    current: pageGlobal.value,
+    pageSize: sizeGlobal.value,
+    hideOnSinglePage: true,
+    showQuickJumper: true,
+    showSizeChanger: true,
+    showTotal: () => `共${dataSource.value?.total}条`,
+  }));
+  // 将run方法封装到函数中,便于后续使用
+  const useRun: () => void = () => {
     run({
       page: pageGlobal.value,
       size: sizeGlobal.value,
@@ -79,9 +104,12 @@
       codeState: props.stopwatchFilters.codeState,
       codeName: props.stopwatchFilters.codeName,
     });
+  };
+  // 监视数据是否发生变化
+  watch(props.stopwatchFilters, () => {
+    useRun();
   });
-  // 声明自定义事件用于和父组件通信
-  const emits = defineEmits(['openModal', 'openDrawer']);
+
   // 控制批量操作按钮是否可点击
   const btnIsDisabled = ref<boolean>(true);
   // 表格row-key配置
@@ -106,12 +134,13 @@
     console.log(state.selectedRowKeys);
   };
   // 批量操作按钮回调
-  const updataStopwatchState = (operation: 0 | 1, codeId?: string) => {
+  const updataStopwatchState = async (operation: 0 | 1, codeId?: string) => {
     if (codeId) {
-      request.updateStopwatchState({ codeId: [codeId], operation });
+      await request.updateStopwatchState({ codeId: [codeId], operation });
     } else {
-      request.updateStopwatchState({ codeId: state.selectedRowKeys, operation });
+      await request.updateStopwatchState({ codeId: state.selectedRowKeys, operation });
     }
+    useRun();
   };
   // 打开码表详情弹窗回调
   const stopwatchDetails = (record: any) => {
@@ -120,57 +149,21 @@
   };
   // 打开码表编辑、注册抽屉回调
   const stopwatchUpdate = (isRegister: 0 | 1, record: any) => {
-    emits('openDrawer', true, record, isRegister);
+    // 传递函数或数据到index（所有组件共同的父组件）组件中，为了其他兄弟组件中使用
+    emits('openDrawer', true, record, isRegister, useRun);
   };
   // 删除码表回调
   const deleteStopwatch = async (codeId: string) => {
     await request.deleteStopwatch(codeId);
-    run({
-      page: pageGlobal.value,
-      size: sizeGlobal.value,
-      orderBy: order.value,
-      codeState: props.stopwatchFilters.codeState,
-      codeName: props.stopwatchFilters.codeName,
-    });
+    useRun();
   };
-  // 以下是分页逻辑
-  const {
-    data: dataSource,
-    run,
-    loading,
-  } = usePagination(request.getStopwatchList, {
-    defaultParams: [
-      {
-        page: 1,
-        size: 10,
-        orderBy: null,
-        codeState: props.stopwatchFilters.codeState,
-        codeName: props.stopwatchFilters.codeName,
-      },
-    ],
-  });
-  const pagination = computed(() => ({
-    total: dataSource.value?.total,
-    current: pageGlobal.value,
-    pageSize: sizeGlobal.value,
-    hideOnSinglePage: true,
-    showQuickJumper: true,
-    showSizeChanger: true,
-    showTotal: () => `共${dataSource.value?.total}条`,
-  }));
   // 当点击分页组件时，该回调被触发
   const handleTableChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
-    order.value = sorter.order === 'ascend' ? 1 : 0;
+    order.value = sorter.order === 'ascend' ? 1 : (order.value = sorter.order === 'descend' ? 0 : null);
     sizeGlobal.value = pag.pageSize;
     pageGlobal.value = pag.current;
-    // run触发usePagination中的queryData请求
-    run({
-      page: pageGlobal.value,
-      size: sizeGlobal.value,
-      orderBy: order.value,
-      codeState: props.stopwatchFilters.codeState,
-      codeName: props.stopwatchFilters.codeName,
-    });
+    // useRun触发usePagination中的queryData请求
+    useRun();
   };
 </script>
 

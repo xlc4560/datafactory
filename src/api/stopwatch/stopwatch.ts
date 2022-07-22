@@ -20,7 +20,6 @@ enum Api {
 }
 // 检索列表回调
 export const getStopwatchList = (params: funArgsType.GetStopwatchList) => {
-  console.log(params);
   const data = {
     codeState: params.codeState,
     codeName: params.codeName,

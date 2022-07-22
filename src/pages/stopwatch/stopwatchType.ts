@@ -1,3 +1,4 @@
+import { Ref } from 'vue';
 export type Key = string | number;
 export interface StopwatchFiltersType {
   codeState: number | null | undefined;
@@ -15,4 +16,18 @@ export interface stopwatchDetailsType {
   }[];
   codeId?: string;
   codeName?: string;
+}
+// 编辑、新增组件中使用
+export interface FormState {
+  codeId?: string;
+  codeName: string;
+  codeDescription: string | null | undefined;
+  codeState?: number;
+  codeConfig: Ref<
+    {
+      codeConfigName: string;
+      codeConfigValue: string;
+      codeConfigDescription: string | null | undefined;
+    }[]
+  >;
 }

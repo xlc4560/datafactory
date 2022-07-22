@@ -20,7 +20,6 @@
     props.stopwatchData,
     async () => {
       stopwatchDetails.value = await getStopwatchDetails(props.stopwatchData.codeId);
-      console.log(stopwatchDetails.value.codeConfig);
     },
     { immediate: true },
   );

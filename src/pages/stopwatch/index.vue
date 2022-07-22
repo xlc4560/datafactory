@@ -8,7 +8,7 @@
     <StopwatchDetails :stopwatch-data="stopwatchData" />
   </a-modal>
   <!-- 编辑、新增 -->
-  <StopwatchUpdateVue :drawer-data="drawerData" />
+  <StopwatchUpdateVue :drawer-data="drawerData" :run="run" />
 </template>
 
 <script lang="ts" setup>
@@ -36,14 +36,16 @@
   const handleOk = (e: MouseEvent) => {
     visible.value = false;
   };
-  const showDrawer = (visibleValue: boolean, record: any, isRegisterValue: 0 | 1) => {
+  // 页面数据查询方法
+  const run = ref<() => void>();
+  const showDrawer = (visibleValue: boolean, record: any, isRegisterValue: 0 | 1, useRun: () => void) => {
     drawerData.visible = visibleValue;
     drawerData.isRegister = isRegisterValue === 0 ? '新增码表' : '码表编辑';
     if (record) {
       drawerData.codeId = record.codeId;
     }
-
     drawerData.id++;
+    run.value = useRun;
   };
 </script>
 
