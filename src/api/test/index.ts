@@ -2,7 +2,7 @@
 import api from '@/utils/axios';
 import * as resType from './resType';
 import * as funType from './functionArgTypes';
-import { type } from 'os';
+import { GetAccountInfoModel, GETLIST } from './resType';
 enum Api {
   ACCOUNT_INFO = '/account/getAccountInfo',
   SESSION_TIMEOUT = '/user/sessionTimeout',
@@ -18,7 +18,13 @@ enum Api {
   REGISTER_API = '/api/registerApi/save', // 新增接口
   API_TEST = '/api/apiList/apiTest', // 接口测试
   API_CHECK = '/api/registerApi/check', // 信息校验
+
+  //码表
+  CODE_LIST = '/code/list/', //获取列表数据
 }
+
+//获取码表列表数据
+export const codegetlist = (params: GETLIST) => api.post<GetAccountInfoModel>({ url: Api.CODE_LIST, data: params });
 
 export const accountInfoApi = () => api.get<resType.GetAccountInfoModel>({ url: Api.ACCOUNT_INFO });
 export const getTest = () => api.get<resType.GetStr>({ url: Api.GET_TEST });

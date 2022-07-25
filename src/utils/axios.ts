@@ -5,7 +5,7 @@ import { message as antdMessage } from 'ant-design-vue';
 import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
-  baseURL: '/dataApi',
+  baseURL: '10.8.22.171',
   timeout: 3000,
 });
 // 请求拦截

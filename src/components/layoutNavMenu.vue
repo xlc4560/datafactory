@@ -57,72 +57,8 @@
           key: '/DataFactory/DataSourceManagement/ApiManagement',
         },
         {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
           subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
-        },
-        {
-          subName: '接口管理',
-          key: '/DataFactory/DataSourceManagement/ApiManagement',
-        },
-        {
-          subName: '已发布接口',
-          key: '/api1',
-        },
-        {
-          subName: '数据库管理',
-          key: '/api2',
+          key: '/DataFactory/DataSourceManagement/dbManagement',
         },
       ],
     },
