@@ -52,6 +52,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
+        '/api': {
+          target: 'http://1.15.74.90:8082',
+          changeOrigin: true,
+          // rewrite: path => path.replace(/^\/code/, '/code'),
+        },
       },
     },
     plugins: [
