@@ -114,6 +114,8 @@
     apiSource: null,
     apiState: null,
     apiName: '',
+    code_state: null,
+    code_name: null,
   });
   // 用于重置表单
   const ResetFields = () => {
@@ -126,6 +128,8 @@
       pageNum: pageNumGlobal.value,
       order: order.value,
       pageSize: pageSizeGlobal.value,
+      code_state: null,
+      code_name: null,
     });
   };
   const { resetFields } = useForm(formState);
@@ -139,6 +143,8 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
+        code_state: null,
+        code_name: null,
       },
       order.value,
     );
@@ -188,6 +194,8 @@
         pageSize: pag.pageSize,
         pageNum: pag.current,
         order: sorter.order === 'ascend' ? 1 : 0,
+        code_state: null,
+        code_name: null,
       },
       sorter.order === 'ascend' ? 1 : 0,
     );
@@ -249,6 +257,8 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
+        code_state: null,
+        code_name: null,
       },
       order.value,
     );
@@ -264,6 +274,8 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
+        code_state: null,
+        code_name: null,
       },
       order.value,
     );

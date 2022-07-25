@@ -58,3 +58,19 @@ export interface ApiDetails {
     parameterDefault: string;
   }[];
 }
+export interface GETLIST {
+  page: number;
+  size: number;
+  /**
+   * 码表名称
+   */
+  codeName?: string;
+  /**
+   * 码表状态，0:未发布，1:已发布，2:已停用
+   */
+  codeState?: number;
+  /**
+   * 时间排序，0:降序，1:升序，默认降序
+   */
+  orderBy?: number;
+}

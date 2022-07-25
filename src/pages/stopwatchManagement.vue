@@ -121,6 +121,9 @@
       pageNum: pageNumGlobal.value,
       order: order.value,
       pageSize: pageSizeGlobal.value,
+
+      code_state: formState.code_state,
+      code_name: formState.code_name,
     });
   };
   const { resetFields } = useForm(formState);
@@ -134,6 +137,9 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
+
+        code_state: formState.code_state,
+        code_name: formState.code_name,
       },
       order.value,
     );
@@ -183,6 +189,9 @@
         pageSize: pag.pageSize,
         pageNum: pag.current,
         order: sorter.order === 'ascend' ? 1 : 0,
+
+        code_state: formState.code_state,
+        code_name: formState.code_name,
       },
       sorter.order === 'ascend' ? 1 : 0,
     );
@@ -248,6 +257,9 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
+
+        code_state: formState.code_state,
+        code_name: formState.code_name,
       },
       order.value,
     );
@@ -263,6 +275,9 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
+
+        code_state: formState.code_state,
+        code_name: formState.code_name,
       },
       order.value,
     );
