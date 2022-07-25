@@ -38,7 +38,7 @@
       <a-table
         :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
         :columns="columns"
-        :row-key="record => record.id + ''"
+        :row-key="rowKey"
         :data-source="dataSource?.apiBasics"
         :pagination="pagination"
         :loading="loading"
@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
   import apiDetails from './apiDetails.vue';
-  import type { FormProps, TableProps } from 'ant-design-vue';
+  import type { FormProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
   // 页面固定配置项
   import { apiResourceOptions, apiStateOptions } from './data';
@@ -107,6 +107,8 @@
       path: '/DataFactory/DataSourceManagement/ManualReg',
     });
   };
+  // 表格row-key配置项
+  const rowKey = (record: { id: number }) => record.id + '';
 
   // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
@@ -172,8 +174,7 @@
     showTotal: () => `共${dataSource.value?.totalNum}条`,
   }));
   // 当点击分页组件时，该回调被触发
-  const handleTableChange: TableProps['onChange'] = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
-    console.log(sorter);
+  const handleTableChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
     order.value = sorter.order === 'ascend' ? 1 : 0;
     pageSizeGlobal.value = pag.pageSize;
     pageNumGlobal.value = pag.current;
@@ -214,8 +215,6 @@
     records.value = {
       ...(await request.GetApiDetails(record.id)),
     };
-    console.log(records.value);
-
     modalVisible.value = true;
   };
   const handleCancel = () => {

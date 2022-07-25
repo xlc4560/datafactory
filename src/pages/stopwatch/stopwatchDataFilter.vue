@@ -3,12 +3,12 @@
   <div class="backColor stopwatch">
     <!-- 筛选组 -->
     <a-form layout="inline" :model="stopwatchFilters" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
-      <a-form-item label="api状态:">
+      <a-form-item label="码表状态:">
         <a-select v-model:value="stopwatchFilters.codeState" class="width" :allow-clear="true" size="middle" placeholder="请选择">
           <a-select-option v-for="item in stopwatchStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="接口名称:">
+      <a-form-item label="码表名称:">
         <a-input v-model:value="stopwatchFilters.codeName" class="width" placeholder="请输入" />
       </a-form-item>
       <a-form-item class="formBtn">

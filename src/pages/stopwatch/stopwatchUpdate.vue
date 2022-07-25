@@ -12,10 +12,20 @@
       @finish-failed="onFinishFailed"
     >
       <div class="title___2CoZR">码表基本信息</div>
-      <a-form-item has-feedback label="码表名称" name="codeName" :rules="[{ required: true, message: '请输入码表名称' }]">
+      <a-form-item
+        has-feedback
+        label="码表名称"
+        name="codeName"
+        :rules="[
+          { required: true, message: '请输入码表名称' },
+          {
+            pattern: /^[a-zA-Z\u4e00-\u9fa5]+$/,
+            message: '只能输入中文和字母',
+          },
+        ]"
+      >
         <a-input v-model:value="formState.codeName" :allow-clear="true" />
       </a-form-item>
-
       <a-form-item label="码表说明" name="codeDescription">
         <a-textarea v-model:value="formState.codeDescription" :rows="3" />
       </a-form-item>
@@ -142,8 +152,8 @@
     drawerVisible.value = false;
     // 调用来自stopwatchTableList.vue组件的run方法，用于刷新页面数据
     props.run();
+    formRef?.value?.resetFields();
   };
-
   // 表单验证通过
   const onFinish = (values: any) => {
     console.log('Success:', values);
@@ -194,7 +204,6 @@
       });
   };
 </script>
-
 <style lang="less">
   th.column-money,
   td.column-money {
@@ -215,7 +224,7 @@
         }
       }
     }
-
+    // 控制校验失败提示样式
     .table-form-item {
       & .ant-form-item-explain {
         position: absolute;
@@ -228,19 +237,19 @@
         line-height: 32px;
       }
 
-      & .ant-form-item-explain::before {
-        position: absolute;
-        top: 10px;
-        left: -20px;
-        z-index: 99;
-        display: block;
-        border-top: 5px solid transparent;
-        border-right: 10px solid #fff;
-        border-bottom: 5px solid transparent;
-        width: 0;
-        height: 0;
-        content: '';
-      }
+      // & .ant-form-item-explain::before {
+      //   position: absolute;
+      //   top: 10px;
+      //   left: -20px;
+      //   z-index: 99;
+      //   display: block;
+      //   border-top: 5px solid transparent;
+      //   border-right: 10px solid #fff;
+      //   border-bottom: 5px solid transparent;
+      //   width: 0;
+      //   height: 0;
+      //   content: '';
+      // }
     }
 
     & .ant-form-item-control {

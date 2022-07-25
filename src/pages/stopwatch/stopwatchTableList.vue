@@ -16,10 +16,10 @@
     <!-- 表格组 -->
     <div class="antdTable">
       <a-table
+        :row-selection="{ selectedRowKeys: selectedRowKeysRef, onChange: onSelectChange }"
         :columns="stopwatch_columns"
         :row-key="rowKey"
         :data-source="dataSource?.list"
-        :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
         :pagination="pagination"
         :loading="loading"
         size="small"
@@ -117,12 +117,10 @@
   // 多选状态
   const state = reactive<{
     selectedRowKeys: (string | number)[];
-    loading: boolean;
   }>({
     selectedRowKeys: [], // Check here to configure the default column
-    loading: false,
   });
-
+  const { selectedRowKeys: selectedRowKeysRef } = toRefs(state);
   // 当选择状态发生改变时的回调
   const onSelectChange = (selectedRowKeys: Key[]) => {
     if (selectedRowKeys.length > 0) {
@@ -131,7 +129,6 @@
       btnIsDisabled.value = true;
     }
     state.selectedRowKeys = selectedRowKeys;
-    console.log(state.selectedRowKeys);
   };
   // 批量操作按钮回调
   const updataStopwatchState = async (operation: 0 | 1, codeId?: string) => {
@@ -140,7 +137,10 @@
     } else {
       await request.updateStopwatchState({ codeId: state.selectedRowKeys, operation });
     }
+    // 重新获取列表数据
     useRun();
+    // 清空选中的数据
+    state.selectedRowKeys = [];
   };
   // 打开码表详情弹窗回调
   const stopwatchDetails = (record: any) => {
