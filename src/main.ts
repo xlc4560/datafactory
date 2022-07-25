@@ -1,8 +1,9 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
-import router from './router';
+import router from './router/index';
 import { createHead } from '@vueuse/head';
+import 'ant-design-vue/es/message/style/index.css';
 import './assets/index.postcss';
 
 const head = createHead();

@@ -3,6 +3,7 @@ import { ConfigEnv, UserConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import { wrapperEnv } from './build/utils';
 import pkg from './package.json';
 
@@ -32,6 +33,26 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: VITE_PORT,
       // Load proxy configuration from .env
       // proxy: createProxy(VITE_PROXY),
+      // 配置代理服务器
+      proxy: {
+        '/weather': {
+          target: 'http://wthrcdn.etouch.cn',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/weather/, ''),
+        },
+        // 吴正东（接口管理）
+        '/dataApi/api': {
+          target: 'http://10.8.22.173:8081',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/dataApi/, ''),
+        },
+        // 码表管理
+        '/code': {
+          target: 'http://10.8.21.220:6002',
+          changeOrigin: true,
+          // rewrite: path => path.replace(/^\/code/, '/code'),
+        },
+      },
     },
     plugins: [
       vue(),
@@ -53,6 +74,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       Components({
         dirs: ['src/components'],
         extensions: ['vue'],
+        // 配置antd按需引入
+        resolvers: [AntDesignVueResolver()],
       }),
     ],
     esbuild: {
