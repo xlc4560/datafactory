@@ -36,11 +36,11 @@
 
 <script setup lang="ts">
   import { useRouter, useRoute } from 'vue-router';
-  // import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue';
   import { Icon } from '@/utils/icon';
   import type { menuType } from '../layout/types';
   // 内敛菜单收缩标识
   const collapsed = ref<boolean>(false);
+  // 使用路由
   const router = useRouter();
   // 选中的
   const selectedKeys = ref<string[]>(['/DataFactory/DataSourceManagement/ApiManagement']);
@@ -74,22 +74,15 @@
       ],
     },
   ]);
-  // 获取placeholderLabel节点
-  // const placeholderLabel = ref(null);
-  // 设置初始宽度
-  // const width = ref<string>('200px');
-  // 菜单内联收缩事件回调
-  // const toggleCollapsed = () => {
-  //   setTimeout(() => {
-  //     width.value = collapsed.value ? '40px' : '200px';
-  //   }, 80);
+  //
+  watch(
+    useRoute(),
+    newVal => {
+      selectedKeys.value[0] = newVal.path;
+    },
+    { immediate: true },
+  );
 
-  //   collapsed.value = !collapsed.value;
-  //   openKeys.value = collapsed.value ? [] : ['/DataFactory'];
-  // };
-  watch(useRoute(), newVal => {
-    selectedKeys.value[0] = newVal.path;
-  });
   // 菜单点击事件
   function clickMenu({ key }: { key: string | undefined }): void {
     if (key !== undefined) {

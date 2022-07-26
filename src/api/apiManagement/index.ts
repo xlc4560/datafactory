@@ -2,7 +2,6 @@
 import api from '@/utils/axios';
 import * as resType from './resType';
 import * as funType from './functionArgTypes';
-import { GetAccountInfoModel, GETLIST } from './resType';
 enum Api {
   ACCOUNT_INFO = '/account/getAccountInfo',
   SESSION_TIMEOUT = '/user/sessionTimeout',

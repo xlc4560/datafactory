@@ -3,13 +3,18 @@
   <div class="backColor ApiManagement">
     <!-- 筛选组 -->
     <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
-      <a-form-item label="码表状态:">
-        <a-select v-model:value="formState.code_state" class="width" :allow-clear="true" size="middle" placeholder="请选择">
-          <a-select-option v-for="item in codeStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
+      <a-form-item label="接口来源:">
+        <a-select v-model:value="formState.apiSource" class="width" :allow-clear="true" size="middle" :options="apiResourceOptions" placeholder="请选择" />
+      </a-form-item>
+      <a-form-item label="api状态:">
+        <!-- :options="apiStateOptions"
+          :field-names="{ label: 'label', value: 'value' }" -->
+        <a-select v-model:value="formState.apiState" class="width" :allow-clear="true" size="middle" placeholder="请选择">
+          <a-select-option v-for="item in apiStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="码表名称:">
-        <a-input v-model:value="formState.code_name" class="width" placeholder="请输入" />
+      <a-form-item label="接口名称:">
+        <a-input v-model:value="formState.apiName" class="width" placeholder="请输入" />
       </a-form-item>
       <a-form-item class="formBtn">
         <a-button type="primary" html-type="submit">查 询</a-button>
@@ -24,79 +29,86 @@
       <a-space :size="12">
         <a-button type="primary" :disabled="isDisabled" @click="updateApisState('1', state.selectedRowKeys)">批量发布</a-button>
         <a-button type="primary" :disabled="isDisabled" @click="updateApisState('0', state.selectedRowKeys)">批量停用</a-button>
-        <a-button type="primary" @click="goCodeRegister">新增码表</a-button>
+        <a-button type="primary" :disabled="isDisabled">批量分类</a-button>
+        <a-button type="primary" @click="goApiRegister">人工注册</a-button>
       </a-space>
     </div>
     <!-- 表格组 -->
     <div class="antdTable">
       <a-table
-        :data-source="data"
-        :columns="firstcolumn"
         :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+        :columns="columns"
+        :row-key="rowKey"
+        :data-source="dataSource?.apiBasics"
+        :pagination="pagination"
         :loading="loading"
         size="middle"
-        :pagination="pagination"
         @change="handleTableChange"
       >
         <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'code_id'">
-            <a @click="codeDeatils(record)">{{ record.code_id }}</a>
+          <template v-if="column.dataIndex === 'apiName'">
+            <a @click="apiDeatils(record)">{{ record.apiName }}</a>
           </template>
-          <template v-if="column.dataIndex === 'code_state'">
-            <span class="isNopublish" :style="{ background: codeState[record.code_state].color }"></span>
-            {{ codeState[record.code_state].value }}
+          <template v-if="column.dataIndex === 'apiClassify'">
+            {{ record.apiClassify ? record.apiClassify : '暂无数据' }}
           </template>
-          <template v-if="column.dataIndex === 'code_operation'">
-            <!-- <a-button type="link" size="small" @click="showDrawer(true, record.id)">接口测试</a-button> -->
-            <a-button v-if="record.code_state === 1 || record.code_state === 3" type="link" size="small" @click="updateApisState('1', [record.id + ''])">发 布</a-button>
-            <a-button v-if="record.code_state === 2" type="link" size="small" @click="updateApisState('0', [record.id + ''])">停 用</a-button>
-            <a-button v-if="record.code_state === 1" type="link" size="small" @click="updateApi(record?.id)">编 辑</a-button>
-            <a-button v-if="record.code_state === 1" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
+          <template v-if="column.dataIndex === 'apiState'">
+            <span class="isNopublish" :style="{ background: apiState[record.apiState].color }"></span>
+            {{ apiState[record.apiState].value }}
+          </template>
+          <template v-if="column.dataIndex === 'apiOperation'">
+            <a-button type="link" size="small" @click="showDrawer(true, record.id)">接口测试</a-button>
+            <a-button v-if="record.apiState === 4 || record.apiState === 2" type="link" size="small" @click="updateApisState('1', [record.id + ''])">发 布</a-button>
+            <a-button v-if="record.apiState === 3" type="link" size="small" @click="updateApisState('0', [record.id + ''])">停 用</a-button>
+            <a-button v-if="record.apiState !== 3" type="link" size="small" @click="updateApi(record?.id)">编 辑</a-button>
+            <a-button v-if="record.apiState === 1 || record.apiState === 2" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
           </template>
         </template>
       </a-table>
     </div>
   </div>
-  <!-- 码表详情弹窗 -->
-  <a-modal v-model:visible="modalVisible" width="800px" :closable="false" style="top: 20px" class="aModal">
+  <!-- 接口详情弹窗 -->
+  <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 20px" class="aModal">
     <template #footer>
       <a-button key="back" @click="handleCancel">返回</a-button>
     </template>
-    <code-details :records="records" />
+    <api-details :records="records" />
   </a-modal>
   <!-- 接口测试抽屉 -->
   <api-test :drawer-visible="drawerVisible" :api-id="apiId + ''" @on-close="visible => showDrawer(visible, apiId)" />
 </template>
 
 <script setup lang="ts">
-  // import apiDetails from './apiDetails.vue';
-  import codeDetails from './codeDetails.vue';
-  import type { FormProps, TableProps } from 'ant-design-vue';
+  import apiDetails from './apiDetails.vue';
+  import type { FormProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
   // 页面固定配置项
-  import { codeStateOptions, data } from './data';
+  import { apiResourceOptions, apiStateOptions } from './data';
   // 分页
   import { usePagination } from 'vue-request';
   import { useRouter } from 'vue-router';
   // 引入表格配置
-  import { firstcolumn, codeState } from './types';
+  import { columns, apiState } from './types';
   // 引入自定义表单数据类型
   import type * as ApiType from './types';
   import ApiTest from './apiTest.vue';
   // 网络请求
-  import * as request from '@/api/test';
+  import * as request from '@/api/apiManagement';
+
   const order = ref<0 | 1>(0);
   const pageSizeGlobal = ref<number>(10);
   const pageNumGlobal = ref<number>(1);
   const apiId = ref<string>('');
   // 路由操作
   const router = useRouter();
-  // 路由跳转到新增码表页
-  const goCodeRegister = () => {
+  // 路由跳转到人工注册页
+  const goApiRegister = () => {
     router.push({
       path: '/DataFactory/DataSourceManagement/ManualReg',
     });
   };
+  // 表格row-key配置项
+  const rowKey = (record: { id: number }) => record.id + '';
 
   // ant-design-vue内置的Form，可用于使用相应方法
   const useForm = Form.useForm;
@@ -105,10 +117,8 @@
     apiSource: null,
     apiState: null,
     apiName: '',
-
-    //码表
-    code_state: null, //码表状态
-    code_name: null, //码表名称
+    code_state: null,
+    code_name: null,
   });
   // 用于重置表单
   const ResetFields = () => {
@@ -121,9 +131,8 @@
       pageNum: pageNumGlobal.value,
       order: order.value,
       pageSize: pageSizeGlobal.value,
-
-      code_state: formState.code_state,
-      code_name: formState.code_name,
+      code_state: null,
+      code_name: null,
     });
   };
   const { resetFields } = useForm(formState);
@@ -137,9 +146,8 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
-
-        code_state: formState.code_state,
-        code_name: formState.code_name,
+        code_state: null,
+        code_name: null,
       },
       order.value,
     );
@@ -162,9 +170,6 @@
       currentKey: 'pageNum',
       pageSizeKey: 'pageSize',
     },
-    onError(error, params) {
-      console.log(params);
-    },
   });
   const pagination = computed(() => ({
     total: dataSource.value?.totalNum,
@@ -172,11 +177,10 @@
     pageSize: pageSize.value,
     // hideOnSinglePage: true,
     showQuickJumper: true,
-    showTotal: () => `共${data.length}条`,
+    showTotal: () => `共${dataSource.value?.totalNum}条`,
   }));
   // 当点击分页组件时，该回调被触发
-  const handleTableChange: TableProps['onChange'] = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
-    console.log(sorter);
+  const handleTableChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
     order.value = sorter.order === 'ascend' ? 1 : 0;
     pageSizeGlobal.value = pag.pageSize;
     pageNumGlobal.value = pag.current;
@@ -189,9 +193,8 @@
         pageSize: pag.pageSize,
         pageNum: pag.current,
         order: sorter.order === 'ascend' ? 1 : 0,
-
-        code_state: formState.code_state,
-        code_name: formState.code_name,
+        code_state: null,
+        code_name: null,
       },
       sorter.order === 'ascend' ? 1 : 0,
     );
@@ -213,20 +216,14 @@
     }
     state.selectedRowKeys = selectedRowKeys;
   };
-  // 查看码表详情
+  // 查看接口详情
   const modalVisible = ref<boolean>(false);
   const records = ref<object>({});
-  // const codeDeatils = async (record: { id: string }) => {
-  //   records.value = {
-  //     ...(await request.GetApiDetails(record.id)),
-  //   };
-  //   console.log(records.value);
-
-  //   modalVisible.value = true;
-  // };
-  const codeDeatils = (record: any) => {
+  const apiDeatils = async (record: { id: string }) => {
+    records.value = {
+      ...(await request.GetApiDetails(record.id)),
+    };
     modalVisible.value = true;
-    console.log(record);
   };
   const handleCancel = () => {
     modalVisible.value = false;
@@ -240,12 +237,12 @@
       },
     });
   };
-  // // 接口测试抽屉组件
-  // const drawerVisible = ref<boolean>(false);
-  // const showDrawer = (visible: boolean, id: string) => {
-  //   apiId.value = id;
-  //   drawerVisible.value = visible;
-  // };
+  // 接口测试抽屉组件
+  const drawerVisible = ref<boolean>(false);
+  const showDrawer = (visible: boolean, id: string) => {
+    apiId.value = id;
+    drawerVisible.value = visible;
+  };
   // 接口删除操作
   const deleteApi = async (record: { id: string }) => {
     await request.DeleteApi(record.id);
@@ -257,9 +254,8 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
-
-        code_state: formState.code_state,
-        code_name: formState.code_name,
+        code_state: null,
+        code_name: null,
       },
       order.value,
     );
@@ -275,9 +271,8 @@
         pageNum: pageNumGlobal.value,
         order: order.value,
         pageSize: pageSizeGlobal.value,
-
-        code_state: formState.code_state,
-        code_name: formState.code_name,
+        code_state: null,
+        code_name: null,
       },
       order.value,
     );

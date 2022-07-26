@@ -33,7 +33,7 @@
     padding: 0 !important;
     width: 100%;
     height: 50px !important;
-    //opacity: 0.5;
+
     .logo {
       padding: 0 !important;
       width: 200px;

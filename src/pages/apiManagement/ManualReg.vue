@@ -1,13 +1,3 @@
-<!-- <template>
-  <div v-for="item in 50" :key="item">
-    <h1>this is h1</h1>
-  </div>
-</template>
-
-<script setup lang="ts"></script>
-
-<style scoped></style> -->
-
 <template>
   <div>
     <!-- 步骤条 -->
@@ -191,7 +181,7 @@
   import { defineComponent, ref, reactive, onMounted } from 'vue';
   import { message, Form } from 'ant-design-vue';
   import { useRouter, useRoute } from 'vue-router';
-  import * as request from '@/api/test';
+  import * as request from '@/api/apiManagement';
   const useForm = Form.useForm;
 
   interface apiparas {

@@ -102,7 +102,6 @@ const columns = [
     title: '操作',
     dataIndex: 'apiOperation',
     width: '20%',
-    ellipsis: true,
   },
 ];
 

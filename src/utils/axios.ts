@@ -5,7 +5,7 @@ import { message as antdMessage } from 'ant-design-vue';
 import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
-  baseURL: '10.8.22.171',
+  // baseURL: '',
   timeout: 3000,
 });
 // 请求拦截
@@ -30,16 +30,27 @@ instance.interceptors.response.use(
   // 对响应内容做相应的逻辑处理，如：筛选、过滤等
   response => {
     const { code, data, msg } = response.data as { code: number; data: any; msg: string };
-    switch (code) {
-      case 100200:
-        antdMessage.success(msg, 1);
-        break;
-      case 100500:
-        antdMessage.error(msg, 1);
-        return code;
-      default:
-        break;
+    if (code === 100200) {
+      antdMessage.success(msg, 1);
+    } else {
+      antdMessage.error(msg, 1);
     }
+    // switch (code) {
+    //   case 100200:
+    //     antdMessage.success(msg, 1);
+    //     break;
+    //   case 100500:
+    //     antdMessage.error(msg, 1);
+    //     return code;
+    //   case 100006:
+    //     antdMessage.warning(msg, 1);
+    //     return code;
+    //   case 100003:
+    //     antdMessage.warning(msg, 1);
+    //     return code;
+    //   default:
+    //     break;
+    // }
     return data;
   },
   error => {

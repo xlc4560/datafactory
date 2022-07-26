@@ -40,29 +40,17 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/weather/, ''),
         },
-        // 黄朝浩
-        '/getApiInfo': {
-          target: 'http://10.8.22.162:8081',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/getApiInfo/, ''),
-        },
-        // 江艳秋
-        '/details': {
-          target: 'http://10.8.22.134:8081',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/details/, ''),
-        },
-        // 卢建鑫
-        '/updateApi': {
-          target: 'http://10.8.22.136:8081',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/updateApi/, ''),
-        },
-        // 吴正东
+        // 吴正东（接口管理）
         '/dataApi/api': {
           target: 'http://10.8.22.173:8081',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/dataApi/, ''),
+        },
+        // 码表管理
+        '/code': {
+          target: 'http://10.8.21.220:6002',
+          changeOrigin: true,
+          // rewrite: path => path.replace(/^\/code/, '/code'),
         },
       },
     },

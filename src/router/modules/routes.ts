@@ -20,9 +20,17 @@ export default {
         {
           path: 'ApiManagement',
           name: 'ApiManagement',
-          component: () => import('@/pages/apiManagement.vue'),
+          component: () => import('@/pages/apiManagement/apiManagement.vue'),
           meta: {
             title: '接口管理',
+          },
+        },
+        {
+          path: 'dbManagement',
+          name: 'dbManagement',
+          component: () => import('@/pages/dbManagement/dbManagement.vue'),
+          meta: {
+            title: '数据库管理',
           },
         },
         {
@@ -31,7 +39,7 @@ export default {
           meta: {
             title: '人工注册',
           },
-          component: () => import('@/pages/ManualReg.vue'),
+          component: () => import('@/pages/apiManagement/ManualReg.vue'),
         },
         {
           path: 'ManualReg/:id',
@@ -39,7 +47,7 @@ export default {
           meta: {
             title: '编辑',
           },
-          component: () => import('@/pages/ManualReg.vue'),
+          component: () => import('@/pages/apiManagement/ManualReg.vue'),
         },
         {
           path: 'dbManagement',
@@ -63,7 +71,7 @@ export default {
         {
           path: 'stopwatch',
           name: 'stopwatch',
-          component: () => import('@/pages/stopwatchManagement.vue'),
+          component: () => import('@/pages/stopwatch/index.vue'),
           meta: {
             title: '码表管理',
           },
