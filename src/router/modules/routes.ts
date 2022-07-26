@@ -26,6 +26,14 @@ export default {
           },
         },
         {
+          path: 'dbManagement',
+          name: 'dbManagement',
+          component: () => import('@/pages/dbManagement/dbManagement.vue'),
+          meta: {
+            title: '数据库管理',
+          },
+        },
+        {
           path: 'ManualReg',
           name: 'ManualReg',
           meta: {
