@@ -60,6 +60,14 @@ export default {
             title: '码表管理',
           },
         },
+        {
+          path: 'standard',
+          name: 'standard',
+          component: () => import('@/pages/standard/index.vue'),
+          meta: {
+            title: '数据标准目录',
+          },
+        },
       ],
     },
   ],
