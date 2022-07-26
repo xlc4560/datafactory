@@ -1,85 +1,95 @@
 <template>
-  <!--  数据筛选部分-->
-  <div class="backColor ApiManagement">
-    <!-- 筛选组 -->
-    <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
-      <a-form-item label="接口来源:">
-        <a-select v-model:value="formState.apiSource" class="width" :allow-clear="true" size="middle" :options="apiResourceOptions" placeholder="请选择" />
-      </a-form-item>
-      <a-form-item label="api状态:">
-        <!-- :options="apiStateOptions"
+  <div class="father">
+    <!-- 分类区 -->
+    <div style=" position: absolute;width: 240px; height: 100%; background-color: white">
+      <classification />
+    </div>
+    <div class="tableBox">
+      <!--  数据筛选部分-->
+      <div class="backColor ApiManagement">
+        <!-- 筛选组 -->
+        <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
+          <a-form-item label="接口来源:">
+            <a-select v-model:value="formState.apiSource" class="width" :allow-clear="true" size="middle" :options="apiResourceOptions" placeholder="请选择" />
+          </a-form-item>
+          <a-form-item label="api状态:">
+            <!-- :options="apiStateOptions"
           :field-names="{ label: 'label', value: 'value' }" -->
-        <a-select v-model:value="formState.apiState" class="width" :allow-clear="true" size="middle" placeholder="请选择">
-          <a-select-option v-for="item in apiStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label="接口名称:">
-        <a-input v-model:value="formState.apiName" class="width" placeholder="请输入" />
-      </a-form-item>
-      <a-form-item class="formBtn">
-        <a-button type="primary" html-type="submit">查 询</a-button>
-        <a-button type="primary" ghost @click="ResetFields">重 置</a-button>
-      </a-form-item>
-    </a-form>
-  </div>
-  <!--  数据列表部分-->
-  <div class="backColor tableWarp" style="margin: 10px 0">
-    <!-- 按钮操作组 -->
-    <div class="tableactionGroup">
-      <a-space :size="12">
-        <a-button type="primary" :disabled="isDisabled" @click="updateApisState('1', state.selectedRowKeys)">批量发布</a-button>
-        <a-button type="primary" :disabled="isDisabled" @click="updateApisState('0', state.selectedRowKeys)">批量停用</a-button>
-        <a-button type="primary" :disabled="isDisabled">批量分类</a-button>
-        <a-button type="primary" @click="goApiRegister">人工注册</a-button>
-      </a-space>
+            <a-select v-model:value="formState.apiState" class="width" :allow-clear="true" size="middle" placeholder="请选择">
+              <a-select-option v-for="item in apiStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item label="接口名称:">
+            <a-input v-model:value="formState.apiName" class="width" placeholder="请输入" />
+          </a-form-item>
+          <a-form-item class="formBtn">
+            <a-button type="primary" html-type="submit">查 询</a-button>
+            <a-button type="primary" ghost @click="ResetFields">重 置</a-button>
+          </a-form-item>
+        </a-form>
+      </div>
+      <!--  数据列表部分-->
+      <div class="backColor tableWarp" style="margin: 10px 0 0 0">
+        <!-- 按钮操作组 -->
+        <div class="tableactionGroup">
+          <a-space :size="12">
+            <a-button type="primary" :disabled="isDisabled" @click="updateApisState('1', state.selectedRowKeys)">批量发布</a-button>
+            <a-button type="primary" :disabled="isDisabled" @click="updateApisState('0', state.selectedRowKeys)">批量停用</a-button>
+            <a-button type="primary" :disabled="isDisabled">批量分类</a-button>
+            <a-button type="primary" @click="goApiRegister">人工注册</a-button>
+          </a-space>
+        </div>
+        <!-- 表格组 -->
+        <div class="antdTable">
+          <a-table
+            :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+            :columns="columns"
+            :row-key="rowKey"
+            :data-source="dataSource?.records"
+            :pagination="pagination"
+            :loading="loading"
+            size="middle"
+            @change="handleTableChange"
+          >
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.dataIndex === 'apiName'">
+                <a @click="apiDeatils(record)">{{ record.apiName }}</a>
+              </template>
+              <template v-if="column.dataIndex === 'apiClassify'">
+                {{ record.apiClassify ? record.apiClassify : '暂无数据' }}
+              </template>
+              <template v-if="column.dataIndex === 'apiState'">
+                <span class="isNopublish" :style="{ background: apiState[record.apiState].color }"></span>
+                {{ apiState[record.apiState].value }}
+              </template>
+              <template v-if="column.dataIndex === 'apiOperation'">
+                <a-button type="link" size="small" @click="showDrawer(true, record.id)">接口测试</a-button>
+                <a-button v-if="record.apiState === 4 || record.apiState === 2" type="link" size="small" @click="updateApisState('1', [record.id + ''])">发 布</a-button>
+                <a-button v-if="record.apiState === 3" type="link" size="small" @click="updateApisState('0', [record.id + ''])">停 用</a-button>
+                <a-button v-if="record.apiState !== 3" type="link" size="small" @click="updateApi(record?.id)">编 辑</a-button>
+                <a-button v-if="record.apiState === 1 || record.apiState === 2" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
+              </template>
+            </template>
+          </a-table>
+        </div>
+      </div>
     </div>
-    <!-- 表格组 -->
-    <div class="antdTable">
-      <a-table
-        :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
-        :columns="columns"
-        :row-key="rowKey"
-        :data-source="dataSource?.apiBasics"
-        :pagination="pagination"
-        :loading="loading"
-        size="middle"
-        @change="handleTableChange"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'apiName'">
-            <a @click="apiDeatils(record)">{{ record.apiName }}</a>
-          </template>
-          <template v-if="column.dataIndex === 'apiClassify'">
-            {{ record.apiClassify ? record.apiClassify : '暂无数据' }}
-          </template>
-          <template v-if="column.dataIndex === 'apiState'">
-            <span class="isNopublish" :style="{ background: apiState[record.apiState].color }"></span>
-            {{ apiState[record.apiState].value }}
-          </template>
-          <template v-if="column.dataIndex === 'apiOperation'">
-            <a-button type="link" size="small" @click="showDrawer(true, record.id)">接口测试</a-button>
-            <a-button v-if="record.apiState === 4 || record.apiState === 2" type="link" size="small" @click="updateApisState('1', [record.id + ''])">发 布</a-button>
-            <a-button v-if="record.apiState === 3" type="link" size="small" @click="updateApisState('0', [record.id + ''])">停 用</a-button>
-            <a-button v-if="record.apiState !== 3" type="link" size="small" @click="updateApi(record?.id)">编 辑</a-button>
-            <a-button v-if="record.apiState === 1 || record.apiState === 2" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
-          </template>
-        </template>
-      </a-table>
-    </div>
+
+    <!-- 接口详情弹窗 -->
+    <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 20px" class="aModal">
+      <template #footer>
+        <a-button key="back" @click="handleCancel">返回</a-button>
+      </template>
+      <api-details :records="records" />
+    </a-modal>
+    <!-- 接口测试抽屉 -->
+    <api-test :drawer-visible="drawerVisible" :api-id="apiId + ''" @on-close="visible => showDrawer(visible, apiId)" />
   </div>
-  <!-- 接口详情弹窗 -->
-  <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 20px" class="aModal">
-    <template #footer>
-      <a-button key="back" @click="handleCancel">返回</a-button>
-    </template>
-    <api-details :records="records" />
-  </a-modal>
-  <!-- 接口测试抽屉 -->
-  <api-test :drawer-visible="drawerVisible" :api-id="apiId + ''" @on-close="visible => showDrawer(visible, apiId)" />
 </template>
 
 <script setup lang="ts">
   import apiDetails from './apiDetails.vue';
+  import classification from '@/pages/classification/index.vue';
   import type { FormProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
   // 页面固定配置项
@@ -126,8 +136,8 @@
       apiSource: formState.apiSource,
       apiState: formState.apiState,
       apiName: formState.apiName,
-      pageNum: pageNumGlobal.value,
-      order: order.value,
+      page: pageNumGlobal.value,
+      updateTimeOrder: order.value,
       pageSize: pageSizeGlobal.value,
     });
   };
@@ -139,8 +149,8 @@
         apiSource: formState.apiSource,
         apiState: formState.apiState,
         apiName: formState.apiName,
-        pageNum: pageNumGlobal.value,
-        order: order.value,
+        page: pageNumGlobal.value,
+        updateTimeOrder: order.value,
         pageSize: pageSizeGlobal.value,
       },
       order.value,
@@ -157,21 +167,20 @@
     data: dataSource,
     run,
     loading,
-    current,
-    pageSize,
   } = usePagination(request.GetApiList, {
     pagination: {
       currentKey: 'pageNum',
       pageSizeKey: 'pageSize',
     },
   });
+
   const pagination = computed(() => ({
-    total: dataSource.value?.totalNum,
-    current: current.value,
-    pageSize: pageSize.value,
-    // hideOnSinglePage: true,
+    total: dataSource.value?.total,
+    current: pageNumGlobal.value,
+    pageSize: pageSizeGlobal.value,
     showQuickJumper: true,
-    showTotal: () => `共${dataSource.value?.totalNum}条`,
+    showSizeChanger: true,
+    showTotal: () => `共${dataSource.value?.total}条`,
   }));
   // 当点击分页组件时，该回调被触发
   const handleTableChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
@@ -185,8 +194,8 @@
         apiState: formState.apiState,
         apiName: formState.apiName,
         pageSize: pag.pageSize,
-        pageNum: pag.current,
-        order: sorter.order === 'ascend' ? 1 : 0,
+        page: pag.current,
+        updateTimeOrder: sorter.order === 'ascend' ? 1 : 0,
       },
       sorter.order === 'ascend' ? 1 : 0,
     );
@@ -243,8 +252,8 @@
         apiSource: formState.apiSource,
         apiState: formState.apiState,
         apiName: formState.apiName,
-        pageNum: pageNumGlobal.value,
-        order: order.value,
+        page: pageNumGlobal.value,
+        updateTimeOrder: order.value,
         pageSize: pageSizeGlobal.value,
       },
       order.value,
@@ -258,8 +267,8 @@
         apiSource: formState.apiSource,
         apiState: formState.apiState,
         apiName: formState.apiName,
-        pageNum: pageNumGlobal.value,
-        order: order.value,
+        page: pageNumGlobal.value,
+        updateTimeOrder: order.value,
         pageSize: pageSizeGlobal.value,
       },
       order.value,
@@ -267,58 +276,70 @@
   };
 </script>
 <style scoped lang="less">
-  .backColor {
-    background-color: #ffffff;
-  }
+  .father {
+    position: relative;
+    width: 100%;
 
-  .ApiManagement {
-    // margin: 0 0 10px;
-    .formAction {
-      display: flex;
-      margin: 20px;
-      padding: 0 10px;
+    .backColor {
+      background-color: #ffffff;
     }
+    // table盒子
+    .tableBox {
+      margin-left: 260px;
+      // 筛选部分相关
+      .ApiManagement {
+        position: relative;
+        // margin: 0 0 10px;
+        overflow: hidden;
 
-    .width {
-      width: 200px;
-    }
+        .formAction {
+          display: flex;
+          margin: 20px;
+          padding: 0 10px;
+        }
 
-    .formBtn {
-      flex: 1;
+        .width {
+          width: 200px;
+        }
 
-      button {
-        float: right;
+        .formBtn {
+          flex: 1;
 
-        &:nth-child(1) {
-          margin: 0 0 0 10px;
+          button {
+            float: right;
+
+            &:nth-child(1) {
+              margin: 0 0 0 10px;
+            }
+          }
         }
       }
-    }
-  }
+      // 表格相关
+      .tableWarp {
+        width: 100%;
+        min-height: 70vh;
 
-  .tableWarp {
-    width: 100%;
-    min-height: 70vh;
+        .tableactionGroup {
+          display: flex;
+          //   background-color: #52c41a;
+          padding: 20px 20px;
+          width: 100%;
+          flex-direction: row-reverse;
+        }
 
-    .tableactionGroup {
-      display: flex;
-      //   background-color: #52c41a;
-      padding: 20px 20px;
-      width: 100%;
-      flex-direction: row-reverse;
-    }
+        .antdTable {
+          padding: 0 20px 10px;
+        }
 
-    .antdTable {
-      padding: 0 20px 10px;
-    }
-
-    .isNopublish {
-      display: inline-block;
-      // background: #faad14;
-      margin-right: 3px;
-      border-radius: 50%;
-      width: 7px;
-      height: 7px;
+        .isNopublish {
+          display: inline-block;
+          // background: #faad14;
+          margin-right: 3px;
+          border-radius: 50%;
+          width: 7px;
+          height: 7px;
+        }
+      }
     }
   }
 </style>

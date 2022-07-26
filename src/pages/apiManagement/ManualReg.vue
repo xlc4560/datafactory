@@ -17,11 +17,11 @@
         <a-form-item label="基本信息" :colon="false" class="basicmsg"> </a-form-item>
 
         <a-form-item label="接口名称" v-bind="validateInfos.apiName">
-          <a-input v-model:value="api_basic.apiName" :disabled="api_basic.apiState === 4" />
+          <a-input v-model:value="api_basic.apiBasic.apiName" :disabled="api_basic.apiBasic.apiState === 4" />
         </a-form-item>
 
         <a-form-item v-bind="validateInfos.apiSource" label="接口来源">
-          <a-select v-model:value="api_basic.apiSource" :disabled="api_basic.apiState === 4" style="text-align: left">
+          <a-select v-model:value="api_basic.apiBasic.apiSource" :disabled="api_basic.apiBasic.apiState === 4" style="text-align: left">
             <a-select-option value="数据服务">数据服务</a-select-option>
             <a-select-option value="指标管理">指标管理</a-select-option>
             <a-select-option value="决策引擎">决策引擎</a-select-option>
@@ -29,33 +29,33 @@
           </a-select>
         </a-form-item>
         <a-form-item label="接口描述" v-bind="validateInfos.apiDescription">
-          <a-textarea v-model:value="api_basic.apiDescription" :auto-size="{ minRows: 2, maxRows: 5 }" />
+          <a-textarea v-model:value="api_basic.apiBasic.apiDescription" :auto-size="{ minRows: 2, maxRows: 5 }" />
         </a-form-item>
         <!-- api参数 -->
         <a-form-item label="API参数" :colon="false" class="basicmsg"> </a-form-item>
 
         <a-form-item label="协议" v-bind="validateInfos.apiProtocol">
-          <a-select v-model:value="api_basic.apiProtocol" :disabled="api_basic.apiState === 4 || api_basic.apiState === 2" style="text-align: left">
+          <a-select v-model:value="api_basic.apiBasic.apiProtocol" :disabled="api_basic.apiBasic.apiState === 4 || api_basic.apiBasic.apiState === 2" style="text-align: left">
             <a-select-option v-for="i in apiprotocol" :key="i.value" :value="i.value">{{ i.msg }}</a-select-option>
           </a-select>
         </a-form-item>
 
         <a-form-item label="IP端口" v-bind="validateInfos.apiIpPort">
-          <a-input v-model:value="api_basic.apiIpPort" />
+          <a-input v-model:value="api_basic.apiBasic.apiIpPort" />
         </a-form-item>
 
         <a-form-item label="Path" v-bind="validateInfos.apiPath">
-          <a-input v-model:value="api_basic.apiPath" :disabled="api_basic.apiState === 4 || api_basic.apiState === 2" />
+          <a-input v-model:value="api_basic.apiBasic.apiPath" :disabled="api_basic.apiBasic.apiState === 4 || api_basic.apiBasic.apiState === 2" />
         </a-form-item>
 
         <a-form-item label="请求方式" v-bind="validateInfos.apiMethod">
-          <a-select v-model:value="api_basic.apiMethod" :disabled="api_basic.apiState === 4 || api_basic.apiState === 2" style="text-align: left">
+          <a-select v-model:value="api_basic.apiBasic.apiMethod" :disabled="api_basic.apiBasic.apiState === 4 || api_basic.apiBasic.apiState === 2" style="text-align: left">
             <a-select-option v-for="i in apimethod" :key="i.value" :value="i.value">{{ i.msg }}</a-select-option>
           </a-select>
         </a-form-item>
 
         <a-form-item label="超时时间" v-bind="validateInfos.apiTimeout">
-          <a-input v-model:value="api_basic.apiTimeout" />
+          <a-input v-model:value="api_basic.apiBasic.apiTimeout" />
         </a-form-item>
 
         <!-- 重置按钮 -->
@@ -132,11 +132,11 @@
     </div>
 
     <!-- 请求body -->
-    <div v-if="steps[current].content == 'paraconfig' && api_basic.apiMethod === 1" class="steps-content">
+    <div v-if="steps[current].content == 'paraconfig'" class="steps-content">
       <!-- 输入参数标题 -->
       <a-page-header class="demo-page-header" title="请求Body"> </a-page-header>
       <div class="bodyleft">
-        <a-textarea v-model:value="api_basic.apiRequestBody" style="height: 300px"></a-textarea>
+        <a-textarea v-model:value="api_basic.apiBasic.apiRequestBody" style="height: 300px"></a-textarea>
       </div>
     </div>
 
@@ -145,9 +145,9 @@
       <!-- 标题 -->
       <a-page-header class="demo-page-header" title="返回示例"> </a-page-header>
       <div class="return">
-        <a-textarea v-model:value="api_basic.apiResponse" style="border: 1px solid; width: 50%; height: 300px"></a-textarea>
+        <a-textarea v-model:value="api_basic.apiBasic.apiResponse" style="border: 1px solid; width: 50%; height: 300px"></a-textarea>
 
-        <div class="returnright">{{ api_basic.apiResponse }}</div>
+        <div class="returnright">{{ api_basic.apiBasic.apiResponse }}</div>
       </div>
     </div>
 
@@ -185,19 +185,22 @@
   const useForm = Form.useForm;
 
   interface apiparas {
-    id: number | null;
-    apiName: string;
-    apiSource: string;
-    apiType: string;
-    apiProtocol: number | null; // 接口协议(0:http 1:https)
-    apiMethod: number | null; // 请求方式请求方式(0:get 1:post)
-    apiIpPort: string;
-    apiPath: string;
-    apiState: number | null;
-    apiResponse: string;
-    apiTimeout: number | null;
-    apiRequestBody?: string;
-    apiDescription?: string;
+    apiBasic: {
+      id: number | null;
+      apiName: string;
+      apiSource: string;
+      apiType: string;
+      apiProtocol: number | null; // 接口协议(0:http 1:https)
+      apiMethod: number | null; // 请求方式请求方式(0:get 1:post)
+      apiIpPort: string;
+      apiPath: string;
+      apiState: number | null;
+      apiResponse: string;
+      apiTimeout: number | null;
+      apiRequestBody?: string;
+      apiDescription?: string;
+    };
+
     apiParameter?: {
       parameterApiId: number | null;
       parameterName: string;
@@ -239,19 +242,21 @@
       const route = useRoute();
       // api基本信息和参数
       const api_basic = ref<apiparas>({
-        id: null,
-        apiType: '',
-        apiState: 1, //api状态  1草稿  2未发布  3已发布  4已停用
-        apiName: '',
-        apiSource: '',
-        apiDescription: '',
-        apiProtocol: null, //0:http  1:https
-        apiIpPort: '192.168.1.1:1',
-        apiPath: '/1',
-        apiMethod: null, //0:get 1:post
-        apiTimeout: 30,
-        apiRequestBody: '请求body',
-        apiResponse: '返回示例',
+        apiBasic: {
+          id: null,
+          apiType: '',
+          apiState: 1, //api状态  1草稿  2未发布  3已发布  4已停用
+          apiName: '',
+          apiSource: '',
+          apiDescription: '',
+          apiProtocol: null, //0:http  1:https
+          apiIpPort: '192.168.1.1:1',
+          apiPath: '/1',
+          apiMethod: null, //0:get 1:post
+          apiTimeout: 30,
+          apiRequestBody: '',
+          apiResponse: '',
+        },
         apiParameter: [],
       });
       // 新增参数
@@ -269,10 +274,12 @@
       };
 
       onMounted(async () => {
-        const res = await request.GetApiDetails(route.params.id as string);
-        console.log(res);
+        if (route.params.id) {
+          const res = await request.GetApiDetails(route.params.id as string);
+          console.log(res);
 
-        api_basic.value = res;
+          api_basic.value = res;
+        }
 
         // api_basic.value.inputState =
       });
@@ -378,6 +385,8 @@
             ...api_basic.value,
           });
         }
+        console.log(typeof code.code !== 'number');
+
         if (typeof code.code !== 'number') {
           validate()
             .then(() => {
@@ -397,7 +406,7 @@
       const text = '请确认是否取消此次接口编辑?';
       const confirm = () => {
         router.push({
-          path: '/Home/DataSourceManagement/ApiManagement',
+          path: '/DataFactory/DataSourceManagement/ApiManagement',
         });
       };
       // 删除输入参数
@@ -430,18 +439,19 @@
         }
         // 验证是否通过
         if (typeof code !== 'number') {
-          api_basic.value.apiState = state;
+          api_basic.value.apiBasic.apiState = state;
           let code;
           if (route.params.id) {
             // 修改
-            code = await request.UpdateApi(api_basic.value, state);
+            api_basic.value.apiBasic.apiState = state;
+            code = await request.UpdateApi(api_basic.value);
           } else {
             // 注册
             code = await request.RegisterApi({ checkOperation: 0, ...api_basic.value });
           }
           if (typeof code !== 'number') {
             router.push({
-              path: '/Home/DataSourceManagement/ApiManagement',
+              path: '/DataFactory/DataSourceManagement/ApiManagement',
             });
           }
         }
@@ -483,7 +493,7 @@
       ];
       // 测试抽屉
       const drawerVisible = ref<boolean>(false);
-      const showDrawer = (visible: boolean, id: string) => {
+      const showDrawer = (visible: boolean) => {
         // apiId.value = id;
         drawerVisible.value = visible;
       };

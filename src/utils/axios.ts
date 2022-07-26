@@ -34,6 +34,7 @@ instance.interceptors.response.use(
       antdMessage.success(msg, 1);
     } else {
       antdMessage.error(msg, 1);
+      return { code, data, msg };
     }
     // switch (code) {
     //   case 100200:

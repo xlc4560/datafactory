@@ -48,12 +48,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         },
         // 码表管理
         '/code': {
-          target: 'http://10.8.21.142:6002',
+          target: 'http://10.8.21.220:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
         '/api': {
-          target: 'http://1.15.74.90:8082',
+          target: 'http://10.8.21.235:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },

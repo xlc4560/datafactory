@@ -1,7 +1,7 @@
 <template>
   <div class="apiDetails scroll_apiDetails">
     <h1><strong>接口详情</strong></h1>
-    <a-card :title="'接口名称:     ' + props.records.apiName" size="small">
+    <a-card :title="'接口名称:     ' + props.records.apiBasic.apiName" size="small">
       <a-descriptions>
         <a-descriptions-item v-for="item in apiDeatils.descriptions" :key="item.lable" :label="item.lable">{{ item.value }}</a-descriptions-item>
       </a-descriptions>
@@ -73,15 +73,15 @@
       descriptions: [
         {
           lable: '接口分类',
-          value: props.records?.ApiType,
+          value: props.records?.apiBasic.ApiType,
         },
         {
           lable: '请求协议',
-          value: props.records?.apiProtocol === 0 ? 'http' : 'https',
+          value: props.records?.apiBasic.apiProtocol === 0 ? 'http' : 'https',
         },
         {
           lable: '请求方式',
-          value: props.records?.apiMethod === 0 ? 'get' : 'post',
+          value: props.records?.apiBasic.apiMethod === 0 ? 'get' : 'post',
         },
         {
           lable: '支持格式',
@@ -89,16 +89,16 @@
         },
         {
           lable: 'IP端口',
-          value: props.records?.apiIpPort,
+          value: props.records?.apiBasic.apiIpPort,
         },
         {
           lable: 'Path',
-          value: props.records?.apiPath,
+          value: props.records?.apiBasic.apiPath,
         },
       ],
       apiParameter,
-      apiRequestBody: props.records?.apiRequestBody ? props.records?.apiRequestBody : {},
-      apiResponse: props.records?.apiResponse ? props.records?.apiResponse : {},
+      apiRequestBody: props.records?.apiBasic.apiRequestBody ? props.records?.apiBasic.apiRequestBody : {},
+      apiResponse: props.records?.apiBasic.apiResponse ? props.records?.apiBasic.apiResponse : {},
     };
   });
 </script>
