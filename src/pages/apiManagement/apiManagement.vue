@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
   import apiDetails from './apiDetails.vue';
-  import classification from '@/pages/classification/index.vue';
+  import classification from '@/pages/category/index.vue';
   import type { FormProps } from 'ant-design-vue';
   import { Form } from 'ant-design-vue';
   // 页面固定配置项

@@ -70,5 +70,10 @@ export function get<T>({ url, params }: { url: string; params?: object }): Promi
 export function post<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
   return instance.post(url, data, config);
 }
-
-export default { get, post };
+// export function put<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
+//   return instance.put(url, data, config);
+// }
+const put: <T>({ url, data, config }: { url: string; data?: any; config?: object }) => Promise<T> = ({ url, data, config }) => {
+  return instance.put(url, data, config);
+};
+export default { get, post, put };
