@@ -57,7 +57,8 @@ const columns = [
   {
     title: '接口名称',
     dataIndex: 'apiName',
-    // width: '20%',
+    width: '10%',
+    minWidth: '100px',
   },
   {
     title: '接口描述',
@@ -68,18 +69,19 @@ const columns = [
     title: '接口分类',
     dataIndex: 'apiClassify',
     ellipsis: true,
+    minWidth: '100px',
   },
   {
     title: '接口来源',
     dataIndex: 'apiSource',
     ellipsis: true,
-    width: '7%',
+    minWidth: '100px',
   },
   {
     title: 'API状态',
     dataIndex: 'apiState',
     ellipsis: true,
-    width: '7%',
+    minWidth: '100px',
   },
   {
     title: '更新时间',
@@ -90,7 +92,7 @@ const columns = [
   {
     title: '操作',
     dataIndex: 'apiOperation',
-    width: '20%',
+    width: '260px',
   },
 ];
 // 数据apiState 键值对标识，用于渲染不同的文字与颜色

@@ -1,7 +1,7 @@
 <template>
   <div class="father">
     <!-- 分类区 -->
-    <div style=" position: absolute;width: 240px; height: 100%; background-color: white">
+    <div style="position: absolute; width: 240px; height: 100%; background-color: white">
       <classification />
     </div>
     <div class="tableBox">
@@ -48,7 +48,7 @@
             :data-source="dataSource?.records"
             :pagination="pagination"
             :loading="loading"
-            size="middle"
+            size="small"
             @change="handleTableChange"
           >
             <template #bodyCell="{ column, record }">
@@ -291,20 +291,22 @@
         position: relative;
         // margin: 0 0 10px;
         overflow: hidden;
+        width: 100%;
 
         .formAction {
           display: flex;
           margin: 20px;
           padding: 0 10px;
+          width: 100%;
         }
 
         .width {
-          width: 200px;
+          width: 150px;
         }
 
         .formBtn {
           flex: 1;
-
+          // min-width: 200px;
           button {
             float: right;
 
