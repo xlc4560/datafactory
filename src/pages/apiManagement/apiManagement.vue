@@ -1,8 +1,8 @@
 <template>
-  <div class="father">
+  <div class="apiManagementFather">
     <!-- 分类区 -->
-    <div style="position: absolute; width: 240px; height: 100%; background-color: white">
-      <classification />
+    <div class="category" style="position: absolute; width: 240px; height: 100%; background-color: white">
+      <classification category-schema="接口分类" />
     </div>
     <div class="tableBox">
       <!--  数据筛选部分-->
@@ -104,7 +104,11 @@
   import ApiTest from './apiTest.vue';
   // 网络请求
   import * as request from '@/api/apiManagement';
-
+  // import { storeToRefs } from 'pinia';
+  // 从pinia中引入集中管理的状态
+  // import useStore from '@/store';
+  // const { useCategoryStore } = useStore();
+  // const { categoryName } = storeToRefs(useCategoryStore);
   const order = ref<0 | 1>(0);
   const pageSizeGlobal = ref<number>(10);
   const pageNumGlobal = ref<number>(1);
@@ -276,9 +280,16 @@
   };
 </script>
 <style scoped lang="less">
-  .father {
+  .apiManagementFather {
     position: relative;
     width: 100%;
+
+    .category {
+      position: absolute;
+      width: 240px;
+      height: 100%;
+      background-color: white;
+    }
 
     .backColor {
       background-color: #ffffff;

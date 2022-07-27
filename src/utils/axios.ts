@@ -3,10 +3,11 @@
  */
 import { message as antdMessage } from 'ant-design-vue';
 import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 // 创建axios实例
 const instance = axios.create({
   // baseURL: '',
-  timeout: 3000,
+  timeout: 6000,
 });
 // 请求拦截
 instance.interceptors.request.use(
@@ -64,16 +65,17 @@ instance.interceptors.response.use(
   },
 );
 
-export function get<T>({ url, params }: { url: string; params?: object }): Promise<T> {
+export function get<T>({ url, params }: { url: string; params?: AxiosRequestConfig<any> }): Promise<T> {
   return instance.get(url, params);
 }
-export function post<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
+export function post<T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }): Promise<T> {
   return instance.post(url, data, config);
 }
-// export function put<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
-//   return instance.put(url, data, config);
-// }
-const put: <T>({ url, data, config }: { url: string; data?: any; config?: object }) => Promise<T> = ({ url, data, config }) => {
+// 箭头函数写法
+export const put: <T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }) => Promise<T> = ({ url, data, config }) => {
   return instance.put(url, data, config);
 };
-export default { get, post, put };
+export const _delete: <T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }) => Promise<T> = ({ url, config }) => {
+  return instance.delete(url, config);
+};
+export default { get, post, put, _delete };

@@ -55,12 +55,12 @@
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.dataIndex === 'codeConfigValue'">
               <a-form-item class="form-item-bottom" has-feedback :name="['codeConfig', index, 'codeConfigValue']" :rules="[{ required: true, message: '必填' }]">
-                <a-input v-model:value="record.codeConfigValue" style="margin: -5px 0" :allow-clear="true" />
+                <a-input v-model:value="record.codeConfigValue" style="margin: -5px 0" :allow-clear="true" @blur="blurAndFocus(index, 0)" @focus="blurAndFocus(index, 1)" />
               </a-form-item>
             </template>
             <template v-else-if="column.dataIndex === 'codeConfigName'">
               <a-form-item class="form-item-bottom" has-feedback :name="['codeConfig', index, 'codeConfigName']" :rules="codeConfigNameRules">
-                <a-input v-model:value="record.codeConfigName" style="margin: -5px 0" :allow-clear="true" />
+                <a-input v-model:value="record.codeConfigName" style="margin: -5px 0" :allow-clear="true" @blur="blurAndFocus(index, 0)" @focus="blurAndFocus(index, 1)" />
               </a-form-item>
             </template>
             <template v-else-if="column.dataIndex === 'codeConfigDescription'">
@@ -203,6 +203,23 @@
         console.log('error', error);
       });
   };
+  // 输入框失去焦点回调
+  const blurAndFocus = (index: number, opacity: number) => {
+    const warn = document.getElementsByClassName('ant-form-item-explain');
+    if (warn[index]) {
+      if (!opacity) {
+        for (let i = 0; i < warn.length; i++) {
+          const element = warn[i];
+          element.setAttribute('style', 'opacity:0');
+        }
+      } else {
+        for (let i = 0; i < warn.length; i++) {
+          const element = warn[i];
+          element.setAttribute('style', 'opacity:1');
+        }
+      }
+    }
+  };
 </script>
 <style lang="less">
   th.column-money,
@@ -228,28 +245,31 @@
     .table-form-item {
       & .ant-form-item-explain {
         position: absolute;
-        top: -35px;
+        top: -55px;
         right: 0px;
+        z-index: 1;
         display: flex;
         border-radius: 3px;
-        padding-left: 5px;
+        padding: 5px 10px;
         background: rgb(255, 255, 255);
+        box-shadow: 0 5px 10px 5px rgb(233, 233, 233);
         line-height: 32px;
       }
 
-      // & .ant-form-item-explain::before {
-      //   position: absolute;
-      //   top: 10px;
-      //   left: -20px;
-      //   z-index: 99;
-      //   display: block;
-      //   border-top: 5px solid transparent;
-      //   border-right: 10px solid #fff;
-      //   border-bottom: 5px solid transparent;
-      //   width: 0;
-      //   height: 0;
-      //   content: '';
-      // }
+      & .ant-form-item-explain::before {
+        position: absolute;
+        top: 42px;
+        right: 20px;
+        z-index: 99;
+        display: block;
+        border-top: 10px solid rgb(255, 255, 255);
+        border-right: 5px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 5px solid transparent;
+        // // width: 0;
+        // // height: 0;
+        content: '';
+      }
     }
 
     & .ant-form-item-control {

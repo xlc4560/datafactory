@@ -58,6 +58,7 @@ const columns = [
     title: '接口名称',
     dataIndex: 'apiName',
     width: '10%',
+    ellipsis: true,
     minWidth: '100px',
   },
   {
