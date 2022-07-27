@@ -30,31 +30,59 @@
     <!-- 按钮操作组 -->
     <div class="tableactionGroup">
       <div class="tableactionGroup-item">
-        <a-button class="li">批量发布</a-button>
-        <a-button class="li">批量停用</a-button>
+        <a-button class="li" :disabled="btn2">批量发布</a-button>
+        <a-button class="li" :disabled="btn1">批量停用</a-button>
       </div>
       <div class="tableactionGroup-item">
         <a-button class="li">导入模板下载</a-button>
         <a-button class="li">标准导入</a-button>
-        <a-button class="li" type="primary" @click="showDrawerAdd">新增标准</a-button>
+        <a-button class="li" type="primary" @click="showDrawerAdd('new')">新增标准</a-button>
       </div>
     </div>
     <!-- 表格 -->
-    <a-table :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 300 }" :row-selection="rowSelection">
-      <template #bodyCell="{ column, text }">
+    <a-table :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 300 }" :row-selection="rowSelection" :pagination="false" @change="sorterChange">
+      <template #bodyCell="{ column, text, record }">
         <template v-if="column.dataIndex === 'id'">
           <a @click="showModalDetails">{{ text }}</a>
         </template>
+        <template v-if="column.dataIndex === 'sstate'">
+          <a-badge v-if="text == '2'" status="success" />
+          <!-- <a-badge v-else-if="text == '1'" status="error" /> -->
+          <a-badge v-else-if="text == '1'" status="warning" />
+          <a-badge v-else-if="text == '3'" status="default" />
+          <span>{{ state[record.sstate] }}</span>
+        </template>
         <template v-if="column.key === 'operation'">
           <div class="option">
-            <a>发布</a>
-            <a>停用</a>
-            <a>编辑</a>
-            <a>删除</a>
+            <a-popconfirm title="请确认是否发布该接口" ok-text="确认" cancel-text="取消" @confirm="release(record)">
+              <a v-if="record.sstate == '1' || record.sstate == '3'">发布</a>
+            </a-popconfirm>
+            <a-popconfirm title="请确认是否停用该接口" ok-text="确认" cancel-text="取消" @confirm="disable(record)">
+              <a v-if="record.sstate == '2'">停用</a>
+            </a-popconfirm>
+            <a v-if="record.sstate == '1' || record.sstate == '3'" @click="showDrawerAdd(record.id)">编辑</a>
+            <!-- <a @click="delete()">删除</a> -->
+            <a-popconfirm title="确认删除?" ok-text="是" cancel-text="否" @confirm="deleteItem(record)">
+              <a v-if="record.sstate == '1'">删 除</a>
+            </a-popconfirm>
           </div>
         </template>
       </template>
     </a-table>
+    <!-- 分页 -->
+    <div class="pagination">
+      <a-pagination
+        v-model:current="current1"
+        v-model:page-size="pageSize1"
+        :page-size-options="['5', '10', '20', '30']"
+        show-size-changer
+        show-quick-jumper
+        :total="total"
+        :show-total="(total:any) => `共 ${total} 条数据`"
+        @change="onChange"
+      />
+      <!-- <a-pagination v-model:current="current1" v-model:page-size="pageSize1" :total="data.length" show-quick-jumper :show-total="total => `共 ${total} 条数据`" @change="onChange" /> -->
+    </div>
   </div>
   <!-- 详情部分 -->
   <a-modal v-model:visible="visible" title="Basic Modal" @ok="handleOk">
@@ -63,15 +91,16 @@
 
   <!-- 新增部分 -->
   <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" size="large" class="custom-class" style="color: red" title="新增标准" placement="right" @after-visible-change="afterVisibleChange">
-    <AddStandard></AddStandard>
+    <AddStandard :codeid="codeid"></AddStandard>
   </a-drawer>
 </template>
 <script lang="ts" setup>
   import { formState, options, columns, data } from './standardData'; //搜索表单数据,下拉选择,表头,表数据
-  import { DataItem } from './standardType'; //类型定义
+  import { DataItem, state } from './standardType'; //类型定义,状态
   import type { SelectProps } from 'ant-design-vue';
   import StandardDetails from './standardDetails.vue';
   import AddStandard from './AddStandard.vue';
+
   // 搜索
   const onFinish = (values: any) => {
     console.log('Success:', values);
@@ -82,11 +111,99 @@
   const handleChange: SelectProps['onChange'] = value => {
     console.log(value); // { key: "lucy", label: "Lucy (101)" }
   };
+  // 排序
+  const sorterChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
+    console.log('params', sorter.order);
+    // if (sorter.order == 'ascend') {
+    //   getlist.updateTimeOrder = true;
+    // }
+    // if (sorter.order == 'descend' || sorter.order == null) {
+    //   getlist.updateTimeOrder = false;
+    // }
+    // data.splice(0, data.length);
+    // codegetlist(getlist).then(res => {
+    //   // console.log(res.data.data.codeList);
+    //   total.value = res.data.data.total;
+    //   res.data.data.codeList.forEach(e => {
+    //     const t = {
+    //       key: e.codeId,
+    //       id: e.codeId,
+    //       name: e.codeName,
+    //       description: e.codeDescription,
+    //       state: e.codeState,
+    //       time: e.updateTime,
+    //     };
+    //     data.push(t);
+    //   });
+    // });
+  };
+  // 发布
+  const release = (e: any) => {
+    console.log(e.id);
+    // 发布请求
+    // const codeIdList: string[] = [e.id];
+    // coderevise({ codeIdList: codeIdList, operation: 1 }).then(res => {
+    //   console.log(res);
+    //   // reset();
+    //   refresh();
+    // });
+  };
+  // 停用
+  const disable = (e: any) => {
+    console.log(e.id);
+    // 停用请求
+    // const codeIdList: string[] = [e.id];
+    // coderevise({ codeIdList: codeIdList, operation: 0 }).then(res => {
+    //   console.log(res);
+    //   // reset();
+    //   refresh();
+    // });
+  };
+  // 删除
+  const deleteItem = (e: any) => {
+    console.log(e.id);
+    // 删除请求
+    // data.splice(e.key, 1);
+    // codedelete(e).then(res => {
+    //   console.log(res);
+    //   // reset();
+    //   refresh();
+    // });
+  };
+
   // 多选
+  const btn1 = ref(true);
+  const btn2 = ref(true);
+
   const rowSelection = ref({
     checkStrictly: false,
     onChange: (selectedRowKeys: (string | number)[], selectedRows: DataItem[]) => {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      // 控制按钮
+      let len1 = 0; //选了多少个发布
+      let len2 = 0; //选了多少个停用
+      // let len3 = 0; //选了多少个未发布
+      selectedRows.forEach(i => {
+        // 停用
+        if (i.sstate == 1 || i.sstate == 3) {
+          len1++;
+        } else if (i.sstate == 2) {
+          len2++;
+        }
+      });
+      if (len1 == selectedRows.length && selectedRows.length > 0) {
+        btn2.value = false;
+        btn1.value = true;
+      } else if (len2 == selectedRows.length && selectedRows.length > 0) {
+        btn2.value = true;
+        btn1.value = false;
+      } else if (selectedRows.length == 0) {
+        btn2.value = true;
+        btn1.value = true;
+      } else {
+        btn2.value = true;
+        btn1.value = true;
+      }
     },
     onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
       console.log(record, selected, selectedRows);
@@ -106,15 +223,46 @@
     console.log(e);
     visible.value = false;
   };
+  // 分页逻辑
+  let current1 = ref<number>(1); //当前页码
+  let pageSize1 = ref<number>(5); //每页显示条数
+  let total = ref<number>(30);
+  //当前页码和每页显示条数发生改变,发送请求
+  const onChange = (page: number, pageSize: number) => {
+    console.log('Page: ', page, 'pageSize: ', pageSize);
+    // 页码发生改变发送请求
+    // getlist.page = page;
+    // getlist.pageSize = pageSize;
+    // data.splice(0, data.length);
+    // codegetlist(getlist).then(res => {
+    //   // console.log(res.data.data.codeList);
+    //   total.value = res.data.data.total;
+    //   res.data.data.codeList.forEach(e => {
+    //     const t = {
+    //       key: e.codeId,
+    //       id: e.codeId,
+    //       name: e.codeName,
+    //       description: e.codeDescription,
+    //       state: e.codeState,
+    //       time: e.updateTime,
+    //     };
+    //     data.push(t);
+    //   });
+    // });
+  };
+
   // 新增部分
   const visibleAdd = ref<boolean>(false);
 
   const afterVisibleChange = (bool: boolean) => {
     console.log('visible', bool);
   };
-
-  const showDrawerAdd = () => {
+  // 新增和编辑
+  const codeid = ref('');
+  const showDrawerAdd = (x: string) => {
     visibleAdd.value = true;
+    console.log(x);
+    codeid.value = x;
   };
 </script>
 <style scoped lang="less">
@@ -187,6 +335,16 @@
 
   .option {
     display: flex;
-    justify-content: space-around;
+    // justify-content: space-between;
+    a {
+      margin-right: 15px;
+    }
+  }
+  // 分页
+  .pagination {
+    // background-color: rgb(173, 76, 76);
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
   }
 </style>

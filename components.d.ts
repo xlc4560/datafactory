@@ -6,6 +6,7 @@ import '@vue/runtime-core';
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AAvatar: typeof import('ant-design-vue/es')['Avatar'];
+    ABadge: typeof import('ant-design-vue/es')['Badge'];
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb'];
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem'];
     AButton: typeof import('ant-design-vue/es')['Button'];
@@ -26,6 +27,7 @@ declare module '@vue/runtime-core' {
     AMenu: typeof import('ant-design-vue/es')['Menu'];
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem'];
     AModal: typeof import('ant-design-vue/es')['Modal'];
+    APagination: typeof import('ant-design-vue/es')['Pagination'];
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm'];
     ASelect: typeof import('ant-design-vue/es')['Select'];
     ASelectOption: typeof import('ant-design-vue/es')['SelectOption'];
