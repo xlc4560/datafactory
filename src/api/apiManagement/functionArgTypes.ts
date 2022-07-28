@@ -6,7 +6,8 @@ export interface GetApiListArgs {
   // 时间排序
   pageSize?: number | null;
   page: number;
-  updateTimeOrder: 0 | 1;
+  updateTimeOrder: 0 | 1 | null;
+  apiType?: string;
 }
 
 export interface UpdateApi {

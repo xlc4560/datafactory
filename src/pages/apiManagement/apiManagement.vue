@@ -8,7 +8,7 @@
       <!--  数据筛选部分-->
       <div class="backColor ApiManagement">
         <!-- 筛选组 -->
-        <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish" @finish-failed="handleFinishFailed">
+        <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish">
           <a-form-item label="接口来源:">
             <a-select v-model:value="formState.apiSource" class="width" :allow-clear="true" size="middle" :options="apiResourceOptions" placeholder="请选择" />
           </a-form-item>
@@ -55,9 +55,6 @@
               <template v-if="column.dataIndex === 'apiName'">
                 <a @click="apiDeatils(record)">{{ record.apiName }}</a>
               </template>
-              <template v-if="column.dataIndex === 'apiClassify'">
-                {{ record.apiClassify ? record.apiClassify : '暂无数据' }}
-              </template>
               <template v-if="column.dataIndex === 'apiState'">
                 <span class="isNopublish" :style="{ background: apiState[record.apiState].color }"></span>
                 {{ apiState[record.apiState].value }}
@@ -98,18 +95,40 @@
   import { usePagination } from 'vue-request';
   import { useRouter } from 'vue-router';
   // 引入表格配置
-  import { columns, apiState } from './types';
+  import { columns, apiState } from './data';
   // 引入自定义表单数据类型
   import type * as ApiType from './types';
   import ApiTest from './apiTest.vue';
   // 网络请求
   import * as request from '@/api/apiManagement';
-  // import { storeToRefs } from 'pinia';
+  import { storeToRefs } from 'pinia';
   // 从pinia中引入集中管理的状态
-  // import useStore from '@/store';
-  // const { useCategoryStore } = useStore();
-  // const { categoryName } = storeToRefs(useCategoryStore);
-  const order = ref<0 | 1>(0);
+  import useStore from '@/store';
+  const { useCategoryStore } = useStore();
+  const { fiterCategoryName } = storeToRefs(useCategoryStore);
+  // 将run封装到函数中避免多次调用重复传参
+  const useRun = () => {
+    run(
+      {
+        apiSource: formState.apiSource,
+        apiState: formState.apiState,
+        apiName: formState.apiName,
+        page: pageNumGlobal.value,
+        updateTimeOrder: order.value,
+        pageSize: pageSizeGlobal.value,
+        apiType: fiterCategoryName.value,
+      },
+      order.value,
+    );
+  };
+  watch(
+    fiterCategoryName,
+    () => {
+      useRun();
+    },
+    { deep: true },
+  );
+  const order = ref<0 | 1 | null>(0);
   const pageSizeGlobal = ref<number>(10);
   const pageNumGlobal = ref<number>(1);
   const apiId = ref<string>('');
@@ -136,33 +155,12 @@
   const ResetFields = () => {
     resetFields();
     order.value = 0;
-    run({
-      apiSource: formState.apiSource,
-      apiState: formState.apiState,
-      apiName: formState.apiName,
-      page: pageNumGlobal.value,
-      updateTimeOrder: order.value,
-      pageSize: pageSizeGlobal.value,
-    });
+    useRun();
   };
   const { resetFields } = useForm(formState);
   // 表单数据验证成功回调事件（筛选数据）（筛序数据回调）
   const handleFinish: FormProps['onFinish'] = () => {
-    run(
-      {
-        apiSource: formState.apiSource,
-        apiState: formState.apiState,
-        apiName: formState.apiName,
-        page: pageNumGlobal.value,
-        updateTimeOrder: order.value,
-        pageSize: pageSizeGlobal.value,
-      },
-      order.value,
-    );
-  };
-  // 表单数据验证失败回调事件
-  const handleFinishFailed: FormProps['onFinishFailed'] = errors => {
-    console.log(errors);
+    useRun();
   };
   // 控制按钮是否可用（操作按钮组）
   const isDisabled = ref<boolean>(true);
@@ -177,7 +175,7 @@
       pageSizeKey: 'pageSize',
     },
   });
-
+  // 分页组件配置项
   const pagination = computed(() => ({
     total: dataSource.value?.total,
     current: pageNumGlobal.value,
@@ -188,21 +186,11 @@
   }));
   // 当点击分页组件时，该回调被触发
   const handleTableChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
-    order.value = sorter.order === 'ascend' ? 1 : 0;
+    order.value = sorter.order === 'ascend' ? 1 : sorter.order === 'descend' ? 0 : null;
     pageSizeGlobal.value = pag.pageSize;
     pageNumGlobal.value = pag.current;
     // run触发usePagination中的queryData请求
-    run(
-      {
-        apiSource: formState.apiSource,
-        apiState: formState.apiState,
-        apiName: formState.apiName,
-        pageSize: pag.pageSize,
-        page: pag.current,
-        updateTimeOrder: sorter.order === 'ascend' ? 1 : 0,
-      },
-      sorter.order === 'ascend' ? 1 : 0,
-    );
+    useRun();
   };
   // Key在上方引入
   const state = reactive<{
@@ -251,32 +239,12 @@
   // 接口删除操作
   const deleteApi = async (record: { id: string }) => {
     await request.DeleteApi(record.id);
-    await run(
-      {
-        apiSource: formState.apiSource,
-        apiState: formState.apiState,
-        apiName: formState.apiName,
-        page: pageNumGlobal.value,
-        updateTimeOrder: order.value,
-        pageSize: pageSizeGlobal.value,
-      },
-      order.value,
-    );
+    useRun();
   };
   // 批量更改接口状态
   const updateApisState = async (operation: string | number, idList: string[]) => {
     await request.UpdateApiState({ operation: operation + '', idList });
-    await run(
-      {
-        apiSource: formState.apiSource,
-        apiState: formState.apiState,
-        apiName: formState.apiName,
-        page: pageNumGlobal.value,
-        updateTimeOrder: order.value,
-        pageSize: pageSizeGlobal.value,
-      },
-      order.value,
-    );
+    useRun();
   };
 </script>
 <style scoped lang="less">
@@ -312,12 +280,15 @@
         }
 
         .width {
-          width: 150px;
+          width: 10vw;
+          min-width: 150px;
+          max-width: 180px;
         }
 
         .formBtn {
           flex: 1;
-          // min-width: 200px;
+          margin-right: 30px;
+
           button {
             float: right;
 

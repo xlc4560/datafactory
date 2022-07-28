@@ -23,8 +23,8 @@ export const accountInfoApi = () => api.get<resType.GetAccountInfoModel>({ url: 
 export const getTest = () => api.get<resType.GetStr>({ url: Api.GET_TEST });
 export const getWth = () => api.get<resType.GetWth>({ url: Api.GET_WTH });
 // 获取接口列表数据函数
-export const GetApiList = (params: funType.GetApiListArgs, order = 0) => {
-  params.updateTimeOrder = order as 0 | 1;
+export const GetApiList = (params: funType.GetApiListArgs, order: number | null | undefined = 0) => {
+  params.updateTimeOrder = order as 0 | 1 | null;
   return api.post<resType.ApiList>({ url: Api.GET_API_LIST, data: params });
 };
 // 获取接口详情数据

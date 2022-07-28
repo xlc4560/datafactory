@@ -50,7 +50,7 @@
   // 从pinia中引入集中管理的状态
   import useStore from '@/store';
   const { useCategoryStore } = useStore();
-  const { categoryName } = storeToRefs(useCategoryStore);
+  const { fiterCategoryName } = storeToRefs(useCategoryStore);
   // 声明接收props值
   const props = defineProps({
     categorySchema: {
@@ -110,14 +110,9 @@
     searchKeyword.value = value;
     autoExpandParent.value = true;
   });
-  // 监视展开的key
-  watch(expandedKeys, () => {
-    console.log('expandedKeys', expandedKeys);
-  });
   // 监视选中的key
   watch(selectedKeys, () => {
-    categoryName.value = selectedKeys.value[0];
-    console.log('selectedKeys', selectedKeys);
+    fiterCategoryName.value = selectedKeys.value[0];
   });
   // 新增、编辑、删除（回调）
   const visible = ref<boolean>(false);
@@ -127,7 +122,7 @@
   const classifyUpdate = (type: number, categoryName: string, categoryCode?: string, ...other: any) => {
     operationType.value = type;
     visible.value = true;
-    console.log(categoryName, categoryCode, other);
+    // console.log(categoryName, categoryCode, other);
     // 0：新增，1：编辑，2：删除
     switch (type) {
       case 0:
@@ -222,6 +217,16 @@
       overflow: auto;
       width: 100% !important;
       flex: 1;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        // border-radius: 20px;
+        background-color: rgb(153, 153, 153);
+      }
 
       .ant-tree-treenode {
         display: flex;

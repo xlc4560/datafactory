@@ -6,7 +6,7 @@
         <a-breadcrumb-item v-for="item in routeMatch" :key="item.name">{{ item.meta.title }}</a-breadcrumb-item>
       </a-breadcrumb>
     </section>
-    <a-layout-content class="main" :style="{ margin: ['0', '20px', '20px'], minHeight: '84vh' }">
+    <a-layout-content class="main">
       <router-view />
     </a-layout-content>
   </a-layout>
@@ -25,9 +25,13 @@
 
 <style scoped lang="less">
   .content {
+    min-height: 94vh;
+
     .main {
       display: flex;
       flex-direction: column;
+      margin: 20px;
+      min-height: 84vh;
     }
 
     .divAndSectionPublic {

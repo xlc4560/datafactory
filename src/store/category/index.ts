@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 const useCategoryStore = defineStore('category', {
   state: () => ({
-    categoryName: '',
+    fiterCategoryName: '',
   }),
 });
 export default useCategoryStore;
