@@ -2,6 +2,8 @@
 import api from '@/utils/axios';
 import * as resType from '@/api/stopwatch/stopwatchResType';
 import * as funArgsType from '@/api/stopwatch/stopwatchFunArgsType';
+// //
+import * as FunArgsType from '@/api/standard/standardFunArgsType';
 enum Api {
   // 示例测试接口
   ACCOUNT_INFO = '/account/getAccountInfo',
@@ -17,6 +19,8 @@ enum Api {
   DELETE_STOPWATCH = '/code/delete/', // 删除码表
   GET_STOPWATCH_DETAILS = '/code/detail/', // 查看码表详情
   UPDATE_STOPWATCH_STATE = '/code/stateUpdate', // 码表状态修改
+  // ///////////////
+  STANDARD_SEARCH = '/standard/search', //检索数据标准列表
 }
 // 检索列表回调
 export const getStopwatchList = (params: funArgsType.GetStopwatchList) => {
@@ -53,4 +57,9 @@ export const getStopwatchDetails = (codeId: string) => {
 // 码表状态修改
 export const updateStopwatchState = (params: funArgsType.UpdateStopwatchState) => {
   return api.post<any>({ url: Api.UPDATE_STOPWATCH_STATE, data: params });
+};
+////////////////////////////////
+//检索数据标准列表
+export const standardSearch = (params: FunArgsType.StandardSearch) => {
+  return api.post<any>({ url: Api.STANDARD_SEARCH, data: params });
 };

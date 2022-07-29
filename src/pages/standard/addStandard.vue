@@ -1,69 +1,79 @@
 <template>
   <a-form :model="formStateAdd" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }" autocomplete="off" @finish="onFinish" @finish-failed="onFinishFailed">
-    <a-form-item label="中文名称" name="cname" :rules="[{ required: true, message: '请输入标准中文名称!' }]">
-      <a-input v-model:value="formStateAdd.cname" />
+    <a-form-item label="中文名称" name="standardCnName" :rules="[{ required: true, message: '请输入标准中文名称!' }]">
+      <a-input v-model:value="formStateAdd.standardCnName" />
     </a-form-item>
 
-    <a-form-item label="英文名称" name="ename" :rules="[{ required: true, message: '请输入标准英文名称!' }]">
-      <a-input v-model:value="formStateAdd.ename" />
+    <a-form-item label="英文名称" name="standardEnName" :rules="[{ required: true, message: '请输入标准英文名称!' }]">
+      <a-input v-model:value="formStateAdd.standardEnName" />
     </a-form-item>
 
-    <a-form-item label="标准说明" name="specification" :rules="[{ required: false, message: '请输入标准说明!' }]">
-      <a-input v-model:value="formStateAdd.specification" />
+    <a-form-item label="标准说明" name="standardExplain" :rules="[{ required: false, message: '请输入标准说明!' }]">
+      <a-input v-model:value="formStateAdd.standardExplain" />
     </a-form-item>
 
-    <a-form-item label="来源机构" name="Source" :rules="[{ required: true, message: '请选择来源机构!' }]">
-      <a-input v-model:value="formStateAdd.Source" />
+    <a-form-item label="来源机构" name="standardSourceOrganization" :rules="[{ required: true, message: '请选择来源机构!' }]">
+      <a-input v-model:value="formStateAdd.standardSourceOrganization" />
     </a-form-item>
 
-    <a-form-item label="是否为空" name="iskong" :rules="[{ required: true, message: '请选择是否为空!' }]">
+    <a-form-item label="是否为空" name="standardIsBlank" :rules="[{ required: true, message: '请选择是否为空!' }]">
       <!-- <a-input v-model:value="formState.iskong" /> -->
-      <a-select v-model:value="formStateAdd.iskong" placeholder="请选择是否为空" :options="optionsEmpty" @change="handleChangeEmpty"></a-select>
+      <a-select v-model:value="formStateAdd.standardIsBlank" placeholder="请选择是否为空" :options="optionsEmpty" @change="handleChangeEmpty"></a-select>
     </a-form-item>
 
-    <a-form-item label="数据类型" name="type" :rules="[{ required: true, message: 'Please input your username!' }]">
+    <a-form-item label="数据类型" name="standardType" :rules="[{ required: true, message: 'Please input your username!' }]">
       <!-- <a-input v-model:value="formState.type" /> -->
-      <a-select v-model:value="formStateAdd.type" placeholder="请选择" :options="optionsType" @change="handleChangeType"></a-select>
+      <a-select v-model:value="formStateAdd.standardType" placeholder="请选择" :options="optionsType" @change="handleChangeType"></a-select>
     </a-form-item>
     <!-- Int类型 -->
-    <div v-if="formStateAdd.type == 'Int'">
-      <a-form-item label="取值范围" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" style="width: 200px" />---
-        <a-input v-model:value="formStateAdd.specification" style="width: 200px" />
+    <div v-if="formStateAdd.standardType == 0">
+      <a-form-item label="取值范围" name="standardValueMin" :rules="[{ required: false, message: '请输入!' }]">
+        <div style="display: flex; justify-content: space-around; padding: 0">
+          <a-input v-model:value="formStateAdd.standardValueMin" style="width: 160px; height: 32.19px" />
+          <!-- <a-input v-model:value="formStateAdd.max" style="width: 200px" /> -->
+          <a-form-item name="standardValueMax" :rules="[{ required: false, message: '请输入!' }]">
+            <a-input v-model:value="formStateAdd.standardValueMax" style="width: 160px" />
+          </a-form-item>
+        </div>
       </a-form-item>
-      <a-form-item label="默认值" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" />
+      <a-form-item label="默认值" name="standardDefault" :rules="[{ required: false, message: '请输入!' }]">
+        <a-input v-model:value="formStateAdd.standardDefault" />
       </a-form-item>
     </div>
     <!-- Enum类型 -->
-    <div v-else-if="formStateAdd.type == 'Enum'">
-      <a-form-item label="枚举范围" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" />
+    <div v-else-if="formStateAdd.standardType == 1">
+      <a-form-item label="枚举范围" name="standardDataAccuracy" :rules="[{ required: false, message: '请输入!' }]">
+        <a-input v-model:value="formStateAdd.standardDataAccuracy" />
       </a-form-item>
-      <a-form-item label="默认值" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" />
+      <a-form-item label="默认值" name="standardDefault" :rules="[{ required: false, message: '请输入!' }]">
+        <a-input v-model:value="formStateAdd.standardDefault" />
       </a-form-item>
     </div>
     <!-- Float类型 -->
-    <div v-else-if="formStateAdd.type == 'Float'">
-      <a-form-item label="数据精度" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" />
+    <div v-else-if="formStateAdd.standardType == 2">
+      <a-form-item label="数据精度" name="standardDataAccuracy" :rules="[{ required: false, message: '请输入!' }]">
+        <a-input v-model:value="formStateAdd.standardDataAccuracy" />
       </a-form-item>
-      <a-form-item label="取值范围" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" style="width: 200px" />---
-        <a-input v-model:value="formStateAdd.specification" style="width: 200px" />
+      <a-form-item label="取值范围" name="standardValueMin" :rules="[{ required: false, message: '请输入!' }]">
+        <div style="display: flex; justify-content: space-around; padding: 0">
+          <a-input v-model:value="formStateAdd.standardValueMin" style="width: 160px; height: 32.19px" />
+          <!-- <a-input v-model:value="formStateAdd.max" style="width: 200px" /> -->
+          <a-form-item name="standardValueMax" :rules="[{ required: false, message: '请输入!' }]">
+            <a-input v-model:value="formStateAdd.standardValueMax" style="width: 160px" />
+          </a-form-item>
+        </div>
       </a-form-item>
-      <a-form-item label="默认值" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" />
+      <a-form-item label="默认值" name="standardDefault" :rules="[{ required: false, message: '请输入!' }]">
+        <a-input v-model:value="formStateAdd.standardDefault" />
       </a-form-item>
     </div>
     <!-- String类型 -->
-    <div v-else-if="formStateAdd.type == 'String'">
-      <a-form-item label="数据长度" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" />
+    <div v-else-if="formStateAdd.standardType == 3">
+      <a-form-item label="数据长度" name="standardDataLength" :rules="[{ required: false, message: '请输入!' }]">
+        <a-input v-model:value="formStateAdd.standardDataLength" />
       </a-form-item>
-      <a-form-item label="默认值" name="specification" :rules="[{ required: false, message: '请输入!' }]">
-        <a-input v-model:value="formStateAdd.specification" />
+      <a-form-item label="默认值" name="standardDefault" :rules="[{ required: false, message: '请输入!' }]">
+        <a-input v-model:value="formStateAdd.standardDefault" />
       </a-form-item>
     </div>
 

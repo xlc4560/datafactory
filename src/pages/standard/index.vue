@@ -2,26 +2,32 @@
   <!--  数据筛选部分-->
   <div class="backColor ApiManagement">
     <!-- 筛选组 -->
-    <a-form :model="formState" class="formAction" name="horizontal_login" layout="inline" autocomplete="off" @finish="onFinish" @finish-failed="onFinishFailed">
-      <a-form-item label="标准编号:" name="snumber" class="width">
-        <a-input v-model:value="formState.snumber"> </a-input>
+    <!--  @finish="onFinish" @finish-failed="onFinishFailed" -->
+    <a-form :model="formState" class="formAction" name="horizontal_login" layout="inline" autocomplete="off">
+      <a-form-item label="来源机构:" name="standardSourceOrganization" class="width">
+        <!-- <a-input v-model:value="formState.standardSourceOrganization"> </a-input> -->
+        <a-select v-model:value="formState.standardSourceOrganization" :options="optionsOz" @change="handleChangeOz"></a-select>
+      </a-form-item>
+      <a-form-item label="标准编号:" name="standardCode" class="width">
+        <a-input v-model:value="formState.standardCode"> </a-input>
       </a-form-item>
 
-      <a-form-item label="中文名称:" name="cname" class="width">
-        <a-input v-model:value="formState.cname"> </a-input>
+      <a-form-item label="中文名称:" name="standardCnName" class="width">
+        <a-input v-model:value="formState.standardCnName"> </a-input>
       </a-form-item>
 
-      <a-form-item label="英文名称:" name="ename" class="width">
-        <a-input v-model:value="formState.ename"> </a-input>
+      <a-form-item label="英文名称:" name="standardEnName" class="width">
+        <a-input v-model:value="formState.standardEnName"> </a-input>
       </a-form-item>
 
-      <a-form-item label="标准状态:" name="sstate" class="width">
-        <a-select v-model:value="formState.sstate" :options="options" @change="handleChange"></a-select>
+      <a-form-item label="标准状态:" name="standardState" class="width">
+        <a-select v-model:value="formState.standardState" :options="options" @change="handleChange"></a-select>
       </a-form-item>
 
       <a-form-item class="formBtn">
-        <a-button type="primary" html-type="submit">查询</a-button>
-        <a-button html-type="submit">重置</a-button>
+        <!-- <a-button type="primary" html-type="submit">查询</a-button> -->
+        <a-button type="primary" @click="search">查询</a-button>
+        <a-button @click="reset">重置</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -42,28 +48,28 @@
     <!-- 表格 -->
     <a-table :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 300 }" :row-selection="rowSelection" :pagination="false" @change="sorterChange">
       <template #bodyCell="{ column, text, record }">
-        <template v-if="column.dataIndex === 'id'">
+        <template v-if="column.dataIndex === 'standardCode'">
           <a @click="showModalDetails">{{ text }}</a>
         </template>
-        <template v-if="column.dataIndex === 'sstate'">
-          <a-badge v-if="text == '2'" status="success" />
+        <template v-if="column.dataIndex === 'standardState'">
+          <a-badge v-if="text == '1'" status="success" />
           <!-- <a-badge v-else-if="text == '1'" status="error" /> -->
-          <a-badge v-else-if="text == '1'" status="warning" />
-          <a-badge v-else-if="text == '3'" status="default" />
-          <span>{{ state[record.sstate] }}</span>
+          <a-badge v-else-if="text == '0'" status="warning" />
+          <a-badge v-else-if="text == '2'" status="default" />
+          <span>{{ state[record.standardState] }}</span>
         </template>
         <template v-if="column.key === 'operation'">
           <div class="option">
             <a-popconfirm title="请确认是否发布该接口" ok-text="确认" cancel-text="取消" @confirm="release(record)">
-              <a v-if="record.sstate == '1' || record.sstate == '3'">发布</a>
+              <a v-if="record.standardState == '0' || record.standardState == '2'">发布</a>
             </a-popconfirm>
             <a-popconfirm title="请确认是否停用该接口" ok-text="确认" cancel-text="取消" @confirm="disable(record)">
-              <a v-if="record.sstate == '2'">停用</a>
+              <a v-if="record.standardState == '1'">停用</a>
             </a-popconfirm>
-            <a v-if="record.sstate == '1' || record.sstate == '3'" @click="showDrawerAdd(record.id)">编辑</a>
+            <a v-if="record.standardState == '0' || record.standardState == '2'" @click="showDrawerAdd(record.standardCode)">编辑</a>
             <!-- <a @click="delete()">删除</a> -->
             <a-popconfirm title="确认删除?" ok-text="是" cancel-text="否" @confirm="deleteItem(record)">
-              <a v-if="record.sstate == '1'">删 除</a>
+              <a v-if="record.standardState == '0'">删 除</a>
             </a-popconfirm>
           </div>
         </template>
@@ -72,8 +78,8 @@
     <!-- 分页 -->
     <div class="pagination">
       <a-pagination
-        v-model:current="current1"
-        v-model:page-size="pageSize1"
+        v-model:current="page"
+        v-model:page-size="pageSize"
         :page-size-options="['5', '10', '20', '30']"
         show-size-changer
         show-quick-jumper
@@ -81,7 +87,7 @@
         :show-total="(total:any) => `共 ${total} 条数据`"
         @change="onChange"
       />
-      <!-- <a-pagination v-model:current="current1" v-model:page-size="pageSize1" :total="data.length" show-quick-jumper :show-total="total => `共 ${total} 条数据`" @change="onChange" /> -->
+      <!-- <a-pagination v-model:current="page" v-model:page-size="pageSize" :total="data.length" show-quick-jumper :show-total="total => `共 ${total} 条数据`" @change="onChange" /> -->
     </div>
   </div>
   <!-- 详情部分 -->
@@ -95,21 +101,37 @@
   </a-drawer>
 </template>
 <script lang="ts" setup>
-  import { formState, options, columns, data } from './standardData'; //搜索表单数据,下拉选择,表头,表数据
+  import { formState, options, optionsOz, columns, data } from './standardData'; //搜索表单数据,下拉选择,表头,表数据
   import { DataItem, state } from './standardType'; //类型定义,状态
   import type { SelectProps } from 'ant-design-vue';
   import StandardDetails from './standardDetails.vue';
   import AddStandard from './AddStandard.vue';
 
   // 搜索
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
-  };
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
+  // const onFinish = (values: any) => {
+  //   console.log('Success:', values);
+  // };
+  // const onFinishFailed = (errorInfo: any) => {
+  //   console.log('Failed:', errorInfo);
+  // };
+  const handleChangeOz: SelectProps['onChange'] = value => {
+    console.log(value); // { key: "lucy", label: "Lucy (101)" }
   };
   const handleChange: SelectProps['onChange'] = value => {
     console.log(value); // { key: "lucy", label: "Lucy (101)" }
+  };
+
+  const search = () => {
+    console.log(toRaw(formState));
+  };
+  // 重置
+  const reset = () => {
+    formState.standardSourceOrganization = '';
+    formState.standardCnName = '';
+    formState.standardCode = '';
+    formState.standardEnName = '';
+    formState.standardState = null;
+    search();
   };
   // 排序
   const sorterChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
@@ -128,7 +150,7 @@
     //     const t = {
     //       key: e.codeId,
     //       id: e.codeId,
-    //       name: e.codeName,
+    //       name: e.codstandardEnName,
     //       description: e.codeDescription,
     //       state: e.codeState,
     //       time: e.updateTime,
@@ -185,9 +207,9 @@
       // let len3 = 0; //选了多少个未发布
       selectedRows.forEach(i => {
         // 停用
-        if (i.sstate == 1 || i.sstate == 3) {
+        if (i.standardState == 1 || i.standardState == 3) {
           len1++;
-        } else if (i.sstate == 2) {
+        } else if (i.standardState == 2) {
           len2++;
         }
       });
@@ -224,9 +246,9 @@
     visible.value = false;
   };
   // 分页逻辑
-  let current1 = ref<number>(1); //当前页码
-  let pageSize1 = ref<number>(5); //每页显示条数
-  let total = ref<number>(30);
+  let page = ref<number>(1); //当前页码
+  let pageSize = ref<number>(20); //每页显示条数
+  let total = ref<number>(0);
   //当前页码和每页显示条数发生改变,发送请求
   const onChange = (page: number, pageSize: number) => {
     console.log('Page: ', page, 'pageSize: ', pageSize);
@@ -282,7 +304,7 @@
 
     .width {
       margin: 10px 30px;
-      width: 400px;
+      width: 300px;
     }
 
     .formBtn {

@@ -4,7 +4,18 @@
       <span>{{ i.title }}</span>
       <span>{{ i.value }}</span>
     </p>
+    <hr />
     <p v-for="(i, index) in dataInt" :key="index">
+      <span>{{ i.title }}</span>
+      <span>{{ i.value }}</span>
+    </p>
+    <hr />
+    <p v-for="(i, index) in dataFloat" :key="index">
+      <span>{{ i.title }}</span>
+      <span>{{ i.value }}</span>
+    </p>
+    <hr />
+    <p v-for="(i, index) in dataString" :key="index">
       <span>{{ i.title }}</span>
       <span>{{ i.value }}</span>
     </p>
@@ -27,12 +38,17 @@
     { title: '默认值:', value: '5' },
   ];
   // 类型为float
-  // const dataFloat = [
-  //   { title: '数据类型:', value: 'Float' },
-  //   { title: '数据精度:', value: '2' },
-  //   { title: '取值范围:', value: '取值范围最小值-88.88,取值范围最大值88.88' },
-  //   { title: '默认值:', value: '88.22' },
-  // ];
+  const dataFloat = [
+    { title: '数据类型:', value: 'Float' },
+    { title: '数据精度:', value: '2' },
+    { title: '取值范围:', value: '取值范围最小值-88.88,取值范围最大值88.88' },
+    { title: '默认值:', value: '88.22' },
+  ];
+  // 类型为string
+  const dataString = [
+    { title: '数据长度:', value: 'string' },
+    { title: '默认值:', value: '88.22' },
+  ];
 </script>
 <style scoped lang="less">
   span {

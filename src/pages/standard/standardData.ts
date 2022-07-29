@@ -3,34 +3,42 @@ import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 // 声明表单绑定数据
 export const formState = reactive<FormState>({
-  snumber: '',
-  cname: '',
-  ename: '',
-  sstate: null,
+  standardSourceOrganization: '',
+  standardCode: '',
+  standardCnName: '',
+  standardEnName: '',
+  standardState: null,
 });
 // 下拉选择
+//
+export const optionsOz = ref<SelectProps['options']>([
+  {
+    value: '数宜信',
+    label: '数宜信',
+  },
+]);
 export const options = ref<SelectProps['options']>([
   {
-    value: 1,
+    value: 0,
     label: '未发布',
   },
   {
-    value: 2,
+    value: 1,
     label: '已发布',
   },
   {
-    value: 3,
+    value: 2,
     label: '已停用',
   },
 ]);
 
 // 表格
 export const columns: TableColumnsType = [
-  { title: '标准编号', width: 250, dataIndex: 'id', key: 'name', fixed: 'left' },
-  { title: '中文名称', width: 250, dataIndex: 'cname', key: 'name', fixed: 'left' },
-  { title: '英文名称', width: 250, dataIndex: 'ename', key: 'age', fixed: 'left' },
+  { title: '标准编号', width: 250, dataIndex: 'standardCode', key: 'name', fixed: 'left' },
+  { title: '中文名称', width: 250, dataIndex: 'standardCnName', key: 'name', fixed: 'left' },
+  { title: '英文名称', width: 250, dataIndex: 'standardEnName', key: 'age', fixed: 'left' },
   { title: '数据类型', dataIndex: 'type', key: '1', width: 150 },
-  { title: '标准状态', dataIndex: 'sstate', key: '2', width: 150 },
+  { title: '标准状态', dataIndex: 'standardState', key: '2', width: 150 },
   { title: '更新时间', dataIndex: 'updateTime', key: '3', width: 150, sorter: true },
   {
     title: '操作',
@@ -42,50 +50,57 @@ export const columns: TableColumnsType = [
 export const data = reactive<DataItem[]>([
   {
     key: 'BZ00011',
-    id: 'BZ00011',
-    cname: '标准一',
-    ename: 'sadasdas',
+    standardCode: 'BZ00011',
+    standardCnName: '标准一',
+    standardEnName: 'sadasdas',
     type: 'Enum',
-    sstate: 1,
+    standardState: 1,
     updateTime: '2022-07-26',
   },
   {
     key: 'BZ00012',
-    id: 'BZ00012',
-    cname: '标准一',
-    ename: 'sadasdas',
+    standardCode: 'BZ00012',
+    standardCnName: '标准一',
+    standardEnName: 'sadasdas',
     type: 'Enum',
-    sstate: 1,
+    standardState: 1,
     updateTime: '2022-07-26',
   },
   {
     key: 'BZ00013',
-    id: 'BZ00013',
-    cname: '标准一',
-    ename: 'sadasdas',
+    standardCode: 'BZ00013',
+    standardCnName: '标准一',
+    standardEnName: 'sadasdas',
     type: 'Enum',
-    sstate: 2,
+    standardState: 2,
     updateTime: '2022-07-26',
   },
   {
     key: 'BZ00014',
-    id: 'BZ00014',
-    cname: '标准一',
-    ename: 'sadasdas',
+    standardCode: 'BZ00014',
+    standardCnName: '标准一',
+    standardEnName: 'sadasdas',
     type: 'Enum',
-    sstate: 3,
+    standardState: 0,
     updateTime: '2022-07-26',
   },
 ]);
 ///////////////////////////////////////
 // 新增标准
 export const formStateAdd = reactive<FormStateAdd>({
-  cname: '',
-  ename: '',
-  specification: '', //标准说明
-  Source: '', //来源机构
-  iskong: '', //是否可为空
-  type: '', //数据类型
+  codeId: null, //码表编号
+  standardCnName: '', //中文名称
+  standardDataAccuracy: null, //数据精度
+  standardDataLength: null, //数据长度
+  standardDefault: '', //默认值
+  standardEnName: '', //英文名称
+  standardExplain: '', //标准说明
+  standardIsBlank: null, //是否可为空：0不可为空，1可为空
+  standardSourceOrganization: '', //来源机构编码
+  standardState: null, //标准状态  0：未发布，1：已发布，2：已停用
+  standardType: null, //数据类型（0：int，1：enum，2：float，3：String）
+  standardValueMax: null, //取值范围-最大值
+  standardValueMin: null, //取值范围-最小值
 });
 // 下拉选择是否为空
 export const optionsEmpty = ref<SelectProps['options']>([
@@ -101,19 +116,19 @@ export const optionsEmpty = ref<SelectProps['options']>([
 // 选择状态
 export const optionsType = ref<SelectProps['options']>([
   {
-    value: 'Int',
+    value: 0,
     label: 'Int',
   },
   {
-    value: 'Enum',
+    value: 1,
     label: 'Enum',
   },
   {
-    value: 'Float',
+    value: 2,
     label: 'Float',
   },
   {
-    value: 'String',
+    value: 3,
     label: 'String',
   },
 ]);
