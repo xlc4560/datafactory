@@ -32,7 +32,9 @@ instance.interceptors.response.use(
   response => {
     const { code, data, msg } = response.data as { code: number; data: any; msg: string };
     if (code === 100200) {
-      antdMessage.success(msg, 1);
+      if (msg !== '返回成功') {
+        antdMessage.success(msg, 1);
+      }
     } else {
       antdMessage.error(msg, 1);
       return { code, data, msg };

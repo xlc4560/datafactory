@@ -24,7 +24,7 @@
                 <li @click="() => classifyUpdate(2, name, categoryCode, children, parentId)">删除</li>
               </ul>
             </template>
-            <more-outlined />
+            <more-outlined class="icon" />
           </a-popover>
         </div>
       </template>
@@ -269,7 +269,7 @@
         width: 100%;
         height: 100%;
         line-height: 40px;
-
+        // background-color: antiquewhite;
         .titleName {
           display: inline-block;
           overflow: hidden;
@@ -279,6 +279,10 @@
           white-space: nowrap; // 规定段落中的文本不进行换行
           cursor: pointer; // (鼠标)不同的光标
           line-height: 40px;
+        }
+
+        .icon {
+          float: right;
         }
       }
     }

@@ -25,13 +25,14 @@
 
 <style scoped lang="less">
   .content {
-    min-height: 94vh;
-
+    // min-height: 94vh;
+    // height: 100vh;
     .main {
       display: flex;
       flex-direction: column;
       margin: 20px;
-      min-height: 84vh;
+      // background-color: antiquewhite;
+      min-height: calc(100vh - 90px);
     }
 
     .divAndSectionPublic {

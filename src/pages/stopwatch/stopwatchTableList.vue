@@ -90,7 +90,6 @@
     total: dataSource.value?.total,
     current: pageGlobal.value,
     pageSize: sizeGlobal.value,
-    hideOnSinglePage: true,
     showQuickJumper: true,
     showSizeChanger: true,
     showTotal: () => `共${dataSource.value?.total}条`,
@@ -107,6 +106,8 @@
   };
   // 监视数据是否发生变化
   watch(props.stopwatchFilters, () => {
+    pageGlobal.value = 1;
+    sizeGlobal.value = 10;
     useRun();
   });
 

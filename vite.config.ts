@@ -37,19 +37,19 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       proxy: {
         // 码表管理
         '/code': {
-          target: 'http://10.8.21.132:6002',
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
         // 接口管理（宋杰龙）
         '/api': {
-          target: 'http://10.8.21.132:6002',
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
         // 分类（宋杰龙）
         '/category': {
-          target: 'http://10.8.21.132:6002',
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
         },
       },

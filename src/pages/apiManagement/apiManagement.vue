@@ -155,11 +155,15 @@
   const ResetFields = () => {
     resetFields();
     order.value = 0;
+    pageNumGlobal.value = 1;
+    pageSizeGlobal.value = 10;
     useRun();
   };
   const { resetFields } = useForm(formState);
   // 表单数据验证成功回调事件（筛选数据）（筛序数据回调）
   const handleFinish: FormProps['onFinish'] = () => {
+    pageNumGlobal.value = 1;
+    pageSizeGlobal.value = 10;
     useRun();
   };
   // 控制按钮是否可用（操作按钮组）

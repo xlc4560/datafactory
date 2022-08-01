@@ -266,8 +266,6 @@
         border-right: 5px solid transparent;
         border-bottom: 10px solid transparent;
         border-left: 5px solid transparent;
-        // // width: 0;
-        // // height: 0;
         content: '';
       }
     }
