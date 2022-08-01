@@ -11,7 +11,7 @@
   <div class="backColor baiscInfoFather">
     <basicInfoVue v-show="currentStep === 0" ref="basicInfoInstance" />
     <parameterConfigVue v-show="currentStep === 1" ref="parameterConfigInstance" />
-    <useSettingVue v-show="currentStep === 2" ref="useSettingInstance" />
+    <!-- <useSettingVue v-show="currentStep === 2" ref="useSettingInstance" /> -->
   </div>
   <!-- 数据提交、下一步 -->
   <div class="footer_v9rLv">
@@ -62,9 +62,9 @@
   // 获取basicInfoVue组件的实例
   const basicInfoInstance = ref<InstanceType<typeof basicInfoVue>>();
   const parameterConfigInstance = ref<InstanceType<typeof parameterConfigVue>>();
-  const useSettingInstance = ref<InstanceType<typeof useSettingVue>>();
+  // const useSettingInstance = ref<InstanceType<typeof useSettingVue>>();
   onMounted(() => {
-    console.log(basicInfoInstance);
+    console.log(parameterConfigInstance);
   });
 </script>
 

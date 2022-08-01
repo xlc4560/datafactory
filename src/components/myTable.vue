@@ -1,7 +1,7 @@
 <template>
   <div class="myTabel_yzDQ">
     <a-form ref="formRef" size="small" :model="dataFlat" name="basic">
-      <a-table :columns="tableColumns" size="small" :data-source="data" :pagination="false" :row-key="rowKey" :indent-size="0" :default-expand-all-rows="true">
+      <a-table :columns="tableColumns" size="small" :data-source="data" :pagination="false" :row-key="rowKey" :default-expand-all-rows="true">
         <template #title>
           <div class="paramTitle">
             <span class="titleStyle">{{ headerTitle }}</span>
@@ -28,7 +28,7 @@
               <a-button type="link" @click="formValidate(record, false)">保存</a-button>
               <a-button type="link" @click="dataCancel(record, false)">取消</a-button>
               <!-- 0: string, 1:Integer,2:number -->
-              <a-button v-if="[0, 1].includes(record.parameterType)" type="link">码值定义</a-button>
+              <a-button v-if="[0, 1].includes(record.parameterType)" type="link" @click="showModal">码值定义</a-button>
               <a-button v-else-if="[3, 4].includes(record.parameterType)" type="link" @click="createNewChildParameter(record, false)">添加下级</a-button>
             </template>
             <template v-else>
@@ -52,7 +52,7 @@
             <template v-else>
               <a-tooltip>
                 <template #title>{{ dataComputed(column, record) }}</template>
-                {{ dataComputed(column, record) ? (dataComputed(column, record).length > 9 ? dataComputed(column, record).substring(0, 9) + '...' : dataComputed(column, record)) : '' }}
+                <span style=" display: block; overflow: hidden;max-width: 150px; text-overflow: ellipsis; white-space: nowrap">{{ dataComputed(column, record) }}</span>
               </a-tooltip>
             </template>
           </template>
@@ -60,6 +60,28 @@
       </a-table>
     </a-form>
   </div>
+  <a-modal v-model:visible="visible" title="码值定义" width="1000px" @ok="handleOk">
+    <div class="" style="margin-bottom: 10px; padding-left: 25px">
+      <a-space size="small">
+        <a-button type="primary">新增码表码值</a-button>
+        <a-button type="primary">新增自定义码值</a-button>
+        <a-button type="primary">码表引用</a-button>
+      </a-space>
+    </div>
+    <div>
+      <a-table :columns="columns" :data-source="datasss" :pagination="false"> </a-table>
+    </div>
+    <div>
+      <a-form>
+        <a-form-item label="码表名称">
+          <a-input placeholder="请输入" />
+        </a-form-item>
+        <a-form-item label="码表说明">
+          <a-textarea placeholder="请输入" />
+        </a-form-item>
+      </a-form>
+    </div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -112,8 +134,6 @@
     value => {
       dataFlat.value = [];
       generateList(value);
-      console.log(data);
-      console.log(dataFlat);
     },
     { deep: true, immediate: true },
   );
@@ -239,10 +259,70 @@
       },
     );
   };
+  const visible = ref<boolean>(false);
+
+  const showModal = () => {
+    visible.value = true;
+  };
+
+  const handleOk = (e: MouseEvent) => {
+    console.log(e);
+    visible.value = false;
+  };
   // 暴露组件实例对象供父组件使用
   defineExpose({
     formRef,
   });
+  const columns = [
+    {
+      name: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Tags',
+      key: 'tags',
+      dataIndex: 'tags',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+    },
+  ];
+
+  const datasss = [
+    {
+      key: '1',
+      name: 'John Brown',
+      age: 32,
+      address: 'New York No. 1 Lake Park',
+      tags: ['nice', 'developer'],
+    },
+    {
+      key: '2',
+      name: 'Jim Green',
+      age: 42,
+      address: 'London No. 1 Lake Park',
+      tags: ['loser'],
+    },
+    {
+      key: '3',
+      name: 'Joe Black',
+      age: 32,
+      address: 'Sidney No. 1 Lake Park',
+      tags: ['cool', 'teacher'],
+    },
+  ];
 </script>
 
 <style scoped lang="less">
@@ -269,17 +349,17 @@
       line-height: 32px;
     }
 
-    // :deep(.ant-form-item-explain::before) {
-    //   position: absolute;
-    //   top: 42px;
-    //   right: 20px;
-    //   display: block;
-    //   border-top: 10px solid rgb(255, 255, 255);
-    //   border-right: 5px solid transparent;
-    //   border-bottom: 10px solid transparent;
-    //   border-left: 5px solid transparent;
-    //   content: '';
-    // }
+    :deep(.ant-form-item-explain::before) {
+      position: absolute;
+      top: 42px;
+      right: 20px;
+      display: block;
+      border-top: 10px solid rgb(255, 255, 255);
+      border-right: 5px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 5px solid transparent;
+      content: '';
+    }
 
     .paramTitle {
       display: flex;

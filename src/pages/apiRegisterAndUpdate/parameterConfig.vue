@@ -1,7 +1,16 @@
 <template>
   <div style="background-color: rgb(240, 242, 245)">
-    <myTableVue :my-nanoid="tableConfig.nanoid_" :table-columns="tableConfig.inputParametercolumns" header-title="输入参数" :table-data-child="tableConfig.inputParameterData" :table-data="data" />
     <myTableVue
+      ref="InputParameterInstance"
+      :my-nanoid="tableConfig.nanoid_"
+      :table-columns="tableConfig.inputParametercolumns"
+      header-title="输入参数"
+      :table-data-child="tableConfig.inputParameterData"
+      :table-data="data"
+      :is-render-json-import-btn="false"
+    />
+    <myTableVue
+      ref="RequestBodyInstance"
       :my-nanoid="tableConfig.nanoid_"
       :table-columns="tableConfig.requestBodycolumns"
       header-title="请求body"
@@ -10,6 +19,7 @@
       :is-render-json-import-btn="true"
     />
     <myTableVue
+      ref="ResponseBodyInstance"
       :my-nanoid="tableConfig.nanoid_"
       :table-columns="tableConfig.responsecolumns"
       header-title="返回参数"
@@ -56,6 +66,14 @@
       parameterId: tableConfig.nanoid_(),
     },
   ];
+  const InputParameterInstance = ref<InstanceType<typeof myTableVue>>();
+  const RequestBodyInstance = ref<InstanceType<typeof myTableVue>>();
+  const ResponseBodyInstance = ref<InstanceType<typeof myTableVue>>();
+  defineExpose({
+    InputParameterInstance,
+    RequestBodyInstance,
+    ResponseBodyInstance,
+  });
 </script>
 
 <style scoped lang="less"></style>

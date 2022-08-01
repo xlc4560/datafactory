@@ -40,8 +40,8 @@
       <div class="title___2CoZR"> API参数 </div>
       <a-form-item label="协议" name="apiProtocol">
         <a-select v-model:value="apiInfo.apiBasic.apiProtocol" placeholder="请选择协议">
-          <a-select-option key="0">http</a-select-option>
-          <a-select-option key="1">https</a-select-option>
+          <a-select-option key="0">HTTP</a-select-option>
+          <a-select-option key="1">HTTPS</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item label="IP端口" name="apiIpPort">
