@@ -1,4 +1,59 @@
 import type * as ApiType from './types';
+// 固定配置项（接口列表展示页）
+const columns = [
+  {
+    title: '接口名称',
+    dataIndex: 'apiName',
+    width: '10%',
+    ellipsis: true,
+    minWidth: '100px',
+    // maxWidth: '120px',
+  },
+  {
+    title: '接口描述',
+    dataIndex: 'apiDescription',
+    ellipsis: true,
+  },
+  {
+    title: '接口分类',
+    dataIndex: 'categoryName',
+    ellipsis: true,
+    minWidth: '100px',
+  },
+  {
+    title: '接口来源',
+    dataIndex: 'apiSource',
+    ellipsis: true,
+    width: '100px',
+  },
+  {
+    title: 'API状态',
+    dataIndex: 'apiState',
+    ellipsis: true,
+    width: '100px',
+    maxWidth: '120px',
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updateTime',
+    sorter: true,
+    ellipsis: true,
+  },
+  {
+    title: '操作',
+    dataIndex: 'apiOperation',
+    width: '260px',
+  },
+];
+// 数据apiState 键值对标识，用于渲染不同的文字与颜色
+const apiState: { value: string; color: string }[] = [
+  { value: '已停用', color: '#ff4d4f' },
+  { value: '草稿', color: '#18c9e4' },
+  { value: '未发布', color: '#faad14' },
+  { value: '已发布', color: '#52c41a' },
+  { value: '已停用', color: '#ff4d4f' },
+];
+export { columns, apiState };
 // 接口状态(用于渲染select框)
 export const apiStateOptions: { value: number; lable: string }[] = [
   { value: 4, lable: '已停用' },
@@ -21,7 +76,7 @@ export const dataSource2 = [
   },
 ];
 
-// 表格配置项
+// 表格配置项(详情展示页中的表格)
 export const apiDetails_columns = [
   {
     title: '参数名称',

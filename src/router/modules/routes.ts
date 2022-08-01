@@ -41,6 +41,14 @@ export default {
           },
           component: () => import('@/pages/apiManagement/ManualReg.vue'),
         },
+        {
+          path: 'publishApi',
+          name: 'publishApi',
+          component: () => import('@/pages/apiRegisterAndUpdate/index.vue'),
+          meta: {
+            title: '发布接口',
+          },
+        },
       ],
     },
     {
