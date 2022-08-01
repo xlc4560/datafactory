@@ -3,16 +3,16 @@
   <a-button @click="closeDrawer">取消</a-button> -->
 
   <a-form class="form" :model="addDataSource" :label-col="{ span: 4 }" :wrapper-col="{ span: 15 }" @finish="onFinish">
-    <a-form-item label="数据库类型" name="dbType" :rules="rules.dbType">
-      <a-select v-model:value="addDataSource.dbType" allow-clear>
-        <a-select-option v-for="i in dbtype" :key="i.id" :value="i.id">{{ i.value }}</a-select-option>
+    <a-form-item label="数据库类型" name="dataSourceType" :rules="rules.dataSourceType">
+      <a-select v-model:value="addDataSource.dataSourceType" allow-clear>
+        <a-select-option v-for="i in dataSourceType" :key="i.id" :value="i.value">{{ i.value }}</a-select-option>
       </a-select>
     </a-form-item>
     <a-form-item label="数据源名称" name="dataSourceName" class="formitem" :rules="rules.dataSourceName">
       <a-input v-model:value="addDataSource.dataSourceName" allow-clear></a-input>
     </a-form-item>
-    <a-form-item label="JDBC URL" name="jdbcURL" class="formitem" :rules="rules.jdbcURL">
-      <a-input v-model:value="addDataSource.jdbcURL" allow-clear></a-input>
+    <a-form-item label="JDBC URL" name="dataSourceUrl" class="formitem" :rules="rules.dataSourceUrl">
+      <a-input v-model:value="addDataSource.dataSourceUrl" allow-clear></a-input>
       <a-tooltip placement="topRight">
         <template #title>
           <div>地址：端口/数据库名,例如：</div>
@@ -21,11 +21,11 @@
         <question-circle-outlined class="questionIcon" />
       </a-tooltip>
     </a-form-item>
-    <a-form-item label="驱动类名" name="driverName" :rules="rules.driverName">
-      <a-input v-model:value="addDataSource.driverName" allow-clear></a-input>
+    <a-form-item label="驱动类名" name="dataSourceDriverClassName" :rules="rules.dataSourceDriverClassName">
+      <a-input v-model:value="addDataSource.dataSourceDriverClassName" allow-clear></a-input>
     </a-form-item>
-    <a-form-item label="连接参数配置" name="connectConfig">
-      <a-input v-model:value="addDataSource.connectConfig" allow-clear></a-input>
+    <a-form-item label="连接参数配置" name="dataSourceConnectParameter">
+      <a-input v-model:value="addDataSource.dataSourceConnectParameter" allow-clear></a-input>
       <a-tooltip placement="topRight">
         <template #title>
           <div>「例如：</div>
@@ -34,17 +34,17 @@
         <question-circle-outlined class="questionIcon" />
       </a-tooltip>
     </a-form-item>
-    <a-form-item label="用户名" name="userName" :rules="rules.userName">
-      <a-input v-model:value="addDataSource.userName" allow-clear></a-input>
+    <a-form-item label="用户名" name="dataSourceUsername" :rules="rules.dataSourceUsername">
+      <a-input v-model:value="addDataSource.dataSourceUsername" allow-clear></a-input>
     </a-form-item>
-    <a-form-item label="密码" name="password">
-      <a-input v-model:value="addDataSource.password" type="password" allow-clear></a-input>
+    <a-form-item label="密码" name="dataSourcePassword">
+      <a-input v-model:value="addDataSource.dataSourcePassword" type="password" allow-clear></a-input>
     </a-form-item>
     <a-form-item label="数据源描述" name="dataSourceDescription">
       <a-textarea v-model:value="addDataSource.dataSourceDescription"></a-textarea>
     </a-form-item>
 
-    <a-button type="primary" class="connectTest">连通测试</a-button>
+    <a-button type="primary" class="connectTest" @click="connecttest">连通测试</a-button>
 
     <a-divider />
     <div class="footer">
@@ -57,45 +57,73 @@
   //引入图标
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
   import { message } from 'ant-design-vue';
-  //定义值
-  interface addDataSource {
-    dbType: number;
-    dataSourceName: string;
-    jdbcURL: string;
-    driverName: string;
-    connectConfig: string;
-    userName: string;
-    password: string;
-    dataSourceDescription: string;
-  }
-  const addDataSource = ref<addDataSource>({
-    dbType: 0,
-    dataSourceName: 'dataSourceName',
-    jdbcURL: 'jdbcURL',
-    driverName: 'driverName',
-    connectConfig: 'connectConfig',
-    userName: 'userName',
-    password: 'password',
-    dataSourceDescription: 'dataSourceDescription',
-  });
-
+  import { AddDataSource, EditDataSource, DetailDataSource, ConnectTest } from '@/api/dbManagement/index';
   //数据库类型
-  const dbtype = reactive([
+  const dataSourceType = reactive([
     { id: 0, value: 'MySQL' },
     { id: 1, value: 'MongoDB' },
     { id: 2, value: 'ElasticSearch' },
   ]);
   //验证规则
   const rules = reactive({
-    dbType: [{ required: true, message: '请选择数据库类型' }],
+    dataSourceType: [{ required: true, message: '请选择数据库类型' }],
     dataSourceName: [
       { required: true, message: '请输入数据源名称' },
       { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/, message: '支持中英文大小写、数字和下划线' },
     ],
-    jdbcURL: [{ required: true, message: '请输入JDBC URL' }],
-    driverName: [{ required: true, message: '请输入驱动类名' }],
-    userName: [{ required: true, message: '请输入用户名' }],
+    dataSourceUrl: [{ required: true, message: '请输入JDBC URL' }],
+    dataSourceDriverClassName: [{ required: true, message: '请输入驱动类名' }],
+    dataSourceUsername: [{ required: true, message: '请输入用户名' }],
   });
+
+  //定义值
+  interface addDataSource {
+    id?: number;
+    dataSourceType: string; //数据库类型
+    dataSourceName: string; //数据源名称
+    dataSourceUrl: string; //连接地址
+    dataSourceDriverClassName: string; //驱动类名
+    dataSourceConnectParameter: string; //连接参数
+    dataSourceUsername: string; //用户名
+    dataSourcePassword: string; //密码
+    dataSourceDescription: string; //数据源描述
+  }
+  interface connectTest {
+    dataSourceDriverClassName: string; //驱动类名
+    dataSourcePassword: string; //密码
+    dataSourceUrl: string; //URL
+    dataSourceUsername: string; //用户名
+  }
+  const addDataSource = ref<addDataSource>({
+    dataSourceType: 'MySQL',
+    dataSourceName: 'dataSourceName',
+    dataSourceUrl: 'jdbc:mysql://localhost:3306/data_factory',
+    dataSourceDriverClassName: 'com.mysql.cj.jdbc.Driver',
+    dataSourceConnectParameter: 'dataSourceConnectParameter',
+    dataSourceUsername: 'root',
+    dataSourcePassword: 'doge2218',
+    dataSourceDescription: 'dataSourceDescription',
+  });
+  //数据源连接测试数据定义
+  const connectTest = ref<connectTest>({
+    dataSourceDriverClassName: '',
+    dataSourceUrl: '',
+    dataSourceUsername: '',
+    dataSourcePassword: '',
+  });
+
+  //数据源连接测试
+  const connecttest = () => {
+    connectTest.value.dataSourceDriverClassName = addDataSource.value.dataSourceDriverClassName;
+    connectTest.value.dataSourceUrl = addDataSource.value.dataSourceUrl;
+    connectTest.value.dataSourceUsername = addDataSource.value.dataSourceUsername;
+    connectTest.value.dataSourcePassword = addDataSource.value.dataSourcePassword;
+
+    console.log(toRaw(connectTest.value));
+    ConnectTest(connectTest.value).then(res => {
+      console.log(res);
+    });
+  };
 
   // 组件传值、关闭抽屉
   const prop = defineProps({
@@ -103,27 +131,64 @@
       type: Boolean,
       default: false,
     },
-    codeid: {
+    dbid: {
       type: String,
       default: '',
     },
   });
   const props = toRefs(prop);
-  const codeid = ref('');
-  codeid.value = props.codeid.value;
-  console.log(codeid.value);
+  const dbid = ref<string>('');
+  dbid.value = props.dbid.value;
+  console.log(dbid.value);
 
-  const emit = defineEmits(['changevisible']);
+  const emit = defineEmits(['changevisible', 'showlist']);
   const closeDrawer = () => {
     props.changevisible.value = false;
     emit('changevisible', props.changevisible.value);
   };
+  const showlist = () => {
+    emit('showlist');
+  };
+
+  if (dbid.value != 'new') {
+    DetailDataSource(Number(dbid.value)).then(res => {
+      console.log(res);
+      addDataSource.value.id = res.id;
+      addDataSource.value.dataSourceName = res.dataSourceName;
+      addDataSource.value.dataSourceDescription = res.dataSourceDescription;
+      addDataSource.value.dataSourceUrl = res.dataSourceUrl;
+      addDataSource.value.dataSourceDriverClassName = res.dataSourceDriverClassName;
+      addDataSource.value.dataSourcePassword = res.dataSourcePassword;
+      addDataSource.value.dataSourceUsername = res.dataSourceUsername;
+      addDataSource.value.dataSourceType = res.dataSourceType;
+      addDataSource.value.dataSourceConnectParameter = res.dataSourceConnectParameter;
+    });
+  }
 
   //提交
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
-    message.success('添加完成');
-    closeDrawer();
+  const onFinish = () => {
+    if (dbid.value != 'new') {
+      //编辑数据源
+      EditDataSource(toRaw(addDataSource.value)).then(res => {
+        console.log(res);
+        if (res === 1) {
+          // message.success('编辑完成');
+          closeDrawer();
+          showlist();
+        }
+      });
+    } else {
+      //新增数据源
+      AddDataSource(toRaw(addDataSource.value)).then(res => {
+        console.log(res);
+        if (res === 1) {
+          // console.log('新增数据源', toRaw(addDataSource.value));
+          // message.success('添加完成');
+          closeDrawer();
+          showlist();
+        }
+      });
+    }
   };
 </script>
 <style scoped>
@@ -133,6 +198,7 @@
   }
   /* 底部按钮 */
   .footer {
+    margin-right: 5%;
     text-align: right;
   }
   /* 连通测试按钮 */

@@ -4,10 +4,10 @@
     <div class="backColor ApiManagement">
       <a-form name="customized_form_controls" layout="inline" class="formAction">
         <a-form-item name="name" label="数据源名称:">
-          <a-input v-model:value="formState.dbname" class="width" placeholder="请输入" />
+          <a-input v-model:value="formState.dataSourceName" class="width" placeholder="请输入" />
         </a-form-item>
         <a-form-item name="state" label="应用状态:">
-          <a-select v-model:value="formState.dbstate" placeholder="请选择" label-in-value class="width">
+          <a-select v-model:value="formState.dataSourceState" placeholder="请选择" value-in-label class="width">
             <a-select-option v-for="item in dbStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
           </a-select>
         </a-form-item>
@@ -25,35 +25,33 @@
       </div>
       <!-- 新增数据源抽屉 -->
       <a-drawer :visible="visible" size="large" title="新增数据源" :destroy-on-close="true" @close="onClose">
-        <addDataSource :visible="visible" :codeid="codeid" @changevisible="changevisible"></addDataSource>
+        <addDataSource :visible="visible" :dbid="dbid" @changevisible="changevisible" @showlist="showlist"></addDataSource>
       </a-drawer>
       <!-- 表格 -->
       <div class="antdTable">
         <a-table :columns="columns" :data-source="data" :pagination="false">
           <template #bodyCell="{ column, record }">
-            <template v-if="column.dataIndex === 'code_state'">
-              <span class="isNopublish" :style="{ background: dbState[record.code_state].color }"></span>
-              {{ dbState[record.code_state].value }}
+            <template v-if="column.dataIndex === 'dataSourceState'">
+              <span class="isNopublish" :style="{ background: dataSourceState[record.dataSourceState].color }"></span>
+              {{ dataSourceState[record.dataSourceState].value }}
             </template>
 
             <!-- 编辑部分 -->
-            <template v-if="column.dataIndex === 'code_operation'">
+            <template v-if="column.dataIndex === 'db_operation'">
               <div>
-                <a-popconfirm @confirm="release(record)">
-                  <a class="a">连通测试</a>
+                <a class="a" @click="connected(record)">连通测试</a>
+
+                <a-popconfirm title="请确认是否停用该数据库" ok-text="确认" cancel-text="取消" @confirm="disable(record)">
+                  <a v-if="record.dataSourceState === 1" class="a">停用</a>
                 </a-popconfirm>
 
-                <a-popconfirm title="请确认是否停用该接口" ok-text="确认" cancel-text="取消" @confirm="disable(record)">
-                  <a v-if="record.code_state === 2" class="a">停用</a>
+                <a-popconfirm title="请确认是否发布该数据库" ok-text="确认" cancel-text="取消" @confirm="release(record)">
+                  <a v-if="record.dataSourceState === 0 || record.dataSourceState === 2" class="a">发布</a>
                 </a-popconfirm>
 
-                <a-popconfirm title="请确认是否发布该接口" ok-text="确认" cancel-text="取消" @confirm="release(record)">
-                  <a v-if="record.code_state === 1 || record.code_state === 3" class="a">发布</a>
-                </a-popconfirm>
+                <a v-if="record.dataSourceState === 0 || record.dataSourceState === 2" class="a" @click="addData(record.key)">编辑</a>
 
-                <a v-if="record.code_state === 1 || record.code_state === 3" class="a" @click="addData('edit')">编辑</a>
-
-                <a-popconfirm v-if="record.code_state === 1" title="请确认是否删除该接口?" ok-text="是" cancel-text="否" @confirm="confirm(record.key)" @cancel="cancel">
+                <a-popconfirm v-if="record.dataSourceState === 0" title="请确认是否删除该数据库?" ok-text="是" cancel-text="否" @confirm="confirm(record.key)">
                   <a class="a">删除</a>
                 </a-popconfirm>
               </div>
@@ -71,55 +69,173 @@
 <script lang="ts" setup>
   // 引入新增数据源组件
   import addDataSource from './addDataSource.vue';
-  import type { SelectProps, TableProps, Pagination } from 'ant-design-vue';
   // 引入表格配置
-  import { columns, data, dbState, dbStateOptions } from './dbtypes';
+  import { columns, dataSourceState, dbStateOptions } from './dbtypes';
   // 引入自定义表单数据类型
   import type * as DBType from './dbtypes';
-  const current1 = ref<number>(1); //当前页码
-  const pageSize1 = ref<number>(5); //每页显示条数
+  import { dbList, dbRevise, dbDelete, dbTest, dbDetail } from '@/api/dbManagement/index'; //获取接口列表,删除接口,修改状态,详情
+  import { GETDBList } from './model';
+
+  //定义列表数据
+  const data = ref([]);
+  // 获取数据库列表数据类型
+  const dbLi: GETDBList = {
+    dataSourceName: '',
+    dataSourceState: '',
+    dataSourceType: '',
+    oderByDate: 0,
+    page: 1,
+    size: 5,
+    updateTime: '',
+    dataSourceUrl: '',
+  };
+
+  //请求列表的方法
+  function showlist() {
+    data.value = [];
+    dbList(dbLi).then(res => {
+      res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
+        let t = {
+          key: i.id,
+          dataSourceName: i.dataSourceName,
+          dataSourceType: i.dataSourceType,
+          dataSourceUrl: i.dataSourceUrl,
+          dataSourceState: i.dataSourceState,
+          updateTime: i.updateTime,
+        };
+        data.value.push(t);
+      });
+      total.value = res.total;
+    });
+  }
+  //进页面调用一次（初始列表）
+  showlist();
+
+  let current1 = ref<number>(1); //当前页码
+  let pageSize1 = ref<number>(5); //每页显示条数
   const total = ref<number>(0);
-  total.value = data.length;
 
   // 声明表单绑定数据
   const formState = reactive<DBType.FormState>({
-    dbstate: null, //应用状态
-    dbname: null, //数据库名称
+    dataSourceState: null, //应用状态
+    dataSourceName: '', //数据源名称
   });
 
-  // 发送请求获取列表详情
+  // 发送请求获取列表详情(重置)
   const reset = () => {
-    state.value = '';
-
-    console.log(state.value);
-
-    // 发送请求查询
+    formState.dataSourceState = null;
+    formState.dataSourceName = '';
+    // 发送请求
+    //调用列表
+    showlist();
   };
+  //连通测试
+  const connected = (e: any) => {
+    //详情
+    dbDetail(e.key).then(res => {
+      console.log(res);
+      //测试
+      dbTest({
+        dataSourceDriverClassName: res.dataSourceDriverClassName,
+        dataSourcePassword: res.dataSourcePassword,
+        dataSourceUrl: res.dataSourceUrl,
+        dataSourceUsername: res.dataSourceUsername,
+      }).then(res1 => {
+        console.log(res1);
+      });
+    });
+  };
+  //查询
   const inquire = () => {
-    console.log(state.value);
-
+    console.log(formState.dataSourceName, formState.dataSourceState);
     // 发送请求查询
+    data.value = [];
+    dbList({
+      page: current1.value,
+      size: pageSize1.value,
+      updateTime: '',
+      dataSourceUrl: '',
+      dataSourceType: '',
+      dataSourceName: formState.dataSourceName,
+      dataSourceState: formState.dataSourceState,
+    }).then(res => {
+      res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
+        let t = {
+          key: i.id,
+          dataSourceName: i.dataSourceName,
+          dataSourceType: i.dataSourceType,
+          dataSourceUrl: i.dataSourceUrl,
+          dataSourceState: i.dataSourceState,
+          updateTime: i.updateTime,
+        };
+        data.value.push(t);
+      });
+      total.value = res.total;
+    });
   };
   // 发布
-  const release = e => {
-    console.log(e.id);
+  const release = (e: { key: any }) => {
+    formState.dataSourceState = null;
+    formState.dataSourceName = '';
     // 发布请求
+    dbRevise({ id: e.key, dataSourceState: 1 }).then(res => {
+      console.log(res);
+      //调用列表
+      showlist();
+    });
   };
   // 停用
-  const disable = e => {
-    console.log(e.id);
+  const disable = (e: { key: any }) => {
+    formState.dataSourceState = null;
+    formState.dataSourceName = '';
     // 停用请求
+    dbRevise({ id: e.key, dataSourceState: 2 }).then(res => {
+      //调用列表
+      showlist();
+    });
   };
+
   // 删除
-  const confirm = e => {
-    console.log(e);
+  const confirm = (e: { key: any }) => {
+    formState.dataSourceState = null;
+    formState.dataSourceName = '';
     // 删除请求
+    dbDelete(e).then(res => {
+      console.log(e.key);
+      //调用列表
+      showlist();
+    });
   };
 
   //当前页码和每页显示条数发生改变,发送请求
-  const onChange = (page: number, pageSize: number) => {
-    console.log('Page: ', page, 'pageSize: ', pageSize);
+  const onChange = (page: number, size: number) => {
+    console.log('Page: ', page, 'pageSize: ', size);
+    current1.value = page;
+    pageSize1.value = size;
     // 页码发生改变发送请求
+    data.value = [];
+    dbList({
+      page: current1.value,
+      size: pageSize1.value,
+      updateTime: '',
+      dataSourceUrl: '',
+      dataSourceType: '',
+      dataSourceName: formState.dataSourceName,
+      dataSourceState: formState.dataSourceState,
+    }).then(res => {
+      console.log(res);
+      res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
+        let t = {
+          key: i.id,
+          dataSourceName: i.dataSourceName,
+          dataSourceType: i.dataSourceType,
+          dataSourceUrl: i.dataSourceUrl,
+          dataSourceState: i.dataSourceState,
+          updateTime: i.updateTime,
+        };
+        data.value.push(t);
+      });
+    });
   };
 
   //抽屉组件
@@ -127,11 +243,10 @@
   const onClose = () => {
     visible.value = false;
   };
-  const codeid = ref('');
+  const dbid = ref<string>();
   const addData = (x: string) => {
     visible.value = true;
-    // console.log(x);
-    codeid.value = x;
+    dbid.value = x.toString();
   };
   const changevisible = (val: { data: boolean }) => {
     visible.value = val.data;
