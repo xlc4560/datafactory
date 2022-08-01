@@ -2,7 +2,7 @@
 import api from '@/utils/axios';
 import * as dataSource from '@/api/dbManagement/dataSource';
 import { GetAccountInfoModel } from '@/api/apiManagement/resType';
-import { GETDBList, GetDBListModel, GetDBRevise } from '@/pages/dbManagement/model';
+import { GETDBList, GetDBListModel, GetDBRevise, GetDBTest } from '@/pages/dbManagement/model';
 
 enum Api {
   // 示例测试接口
@@ -14,7 +14,7 @@ enum Api {
 
   // 开发接口
   DB_LIST = '/dataSource/list', //数据库列表
-  DB_DELETE = '/dataSource/delete/{id}', //删除
+  DB_DELETE = '/dataSource/delete/', //删除
   DB_REVISE = '/dataSource/stateUpdate', //修改状态
   DB_TEST = '/dataSource/connectTest', //连接测试
   DB_DETAIL = 'dataSource/detail/', //详情
