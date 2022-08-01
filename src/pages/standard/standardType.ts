@@ -12,7 +12,7 @@ export interface DataItem {
   standardCode: string; //标准编号
   standardCnName: string; //中文名称
   standardEnName: string; //英文名称
-  type: string; //数据类型
+  standardType: string; //数据类型
   standardState: number; //标准状态
   updateTime: string; //更新时间
 }
@@ -21,6 +21,14 @@ export enum state {
   '未发布' = 0,
   '已发布' = 1,
   '已停用' = 2,
+}
+// 数据类型
+export enum type {
+  // 0：int，1：enum，2：float，3：String
+  'int' = 0,
+  'enum' = 1,
+  'float' = 2,
+  'String' = 3,
 }
 ///////////////////////////////////////
 // 新增标准

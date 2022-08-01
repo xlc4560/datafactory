@@ -7,6 +7,7 @@ export interface StandardSearch {
   standardEnName?: string; //英文名
   standardSourceOrganization?: string; //来源机构分类编码
   standardState?: number; //标准状态
+  updateTimeOrder?: number; //时间排序 0：降序（默认）1：升序
 }
 //添加数据标准
 export interface StandardAdd {

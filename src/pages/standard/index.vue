@@ -51,6 +51,9 @@
         <template v-if="column.dataIndex === 'standardCode'">
           <a @click="showModalDetails">{{ text }}</a>
         </template>
+        <template v-if="column.dataIndex === 'standardType'">
+          <span>{{ type[record.standardType] }}</span>
+        </template>
         <template v-if="column.dataIndex === 'standardState'">
           <a-badge v-if="text == '1'" status="success" />
           <!-- <a-badge v-else-if="text == '1'" status="error" /> -->
@@ -102,10 +105,12 @@
 </template>
 <script lang="ts" setup>
   import { formState, options, optionsOz, columns, data } from './standardData'; //搜索表单数据,下拉选择,表头,表数据
-  import { DataItem, state } from './standardType'; //类型定义,状态
+  import { DataItem, state, type } from './standardType'; //类型定义,状态,类型
   import type { SelectProps } from 'ant-design-vue';
   import StandardDetails from './standardDetails.vue';
   import AddStandard from './AddStandard.vue';
+  import { standardSearch } from '@/api/standard/standard';
+  // standardSearch
 
   // 搜索
   // const onFinish = (values: any) => {
@@ -114,6 +119,30 @@
   // const onFinishFailed = (errorInfo: any) => {
   //   console.log('Failed:', errorInfo);
   // };
+  // 封装获取表格列表数据方法
+  // console.log(toRaw(formState));
+  const standardSearchList = (page: number, pageSize: number, updateTimeOrder?: number, formState?: object) => {
+    let search = { ...formState, page: page, pageSize: pageSize, updateTimeOrder: updateTimeOrder };
+    standardSearch(search).then(res => {
+      console.log(res);
+      total.value = res.total;
+      data.splice(0, data.length);
+      res.records.forEach((i: any) => {
+        let t = {
+          key: i.standardCode,
+          standardCode: i.standardCode,
+          standardCnName: i.standardCnName,
+          standardEnName: i.standardEnName,
+          standardType: i.standardType,
+          standardState: i.standardState,
+          updateTime: i.updateTime,
+        };
+        data.push(t);
+      });
+    });
+  };
+  standardSearchList(1, 20);
+
   const handleChangeOz: SelectProps['onChange'] = value => {
     console.log(value); // { key: "lucy", label: "Lucy (101)" }
   };
@@ -123,6 +152,7 @@
 
   const search = () => {
     console.log(toRaw(formState));
+    standardSearchList(1, 20, 0, toRaw(formState));
   };
   // 重置
   const reset = () => {
@@ -131,33 +161,16 @@
     formState.standardCode = '';
     formState.standardEnName = '';
     formState.standardState = null;
-    search();
+    standardSearchList(1, 20, 0, toRaw(formState));
   };
   // 排序
   const sorterChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
     console.log('params', sorter.order);
-    // if (sorter.order == 'ascend') {
-    //   getlist.updateTimeOrder = true;
-    // }
-    // if (sorter.order == 'descend' || sorter.order == null) {
-    //   getlist.updateTimeOrder = false;
-    // }
-    // data.splice(0, data.length);
-    // codegetlist(getlist).then(res => {
-    //   // console.log(res.data.data.codeList);
-    //   total.value = res.data.data.total;
-    //   res.data.data.codeList.forEach(e => {
-    //     const t = {
-    //       key: e.codeId,
-    //       id: e.codeId,
-    //       name: e.codstandardEnName,
-    //       description: e.codeDescription,
-    //       state: e.codeState,
-    //       time: e.updateTime,
-    //     };
-    //     data.push(t);
-    //   });
-    // });
+    if (sorter.order == 'ascend') {
+      standardSearchList(1, 20, 1, toRaw(formState));
+    } else if (sorter.order == 'descend') {
+      standardSearchList(1, 20, 0, toRaw(formState));
+    }
   };
   // 发布
   const release = (e: any) => {
@@ -253,24 +266,7 @@
   const onChange = (page: number, pageSize: number) => {
     console.log('Page: ', page, 'pageSize: ', pageSize);
     // 页码发生改变发送请求
-    // getlist.page = page;
-    // getlist.pageSize = pageSize;
-    // data.splice(0, data.length);
-    // codegetlist(getlist).then(res => {
-    //   // console.log(res.data.data.codeList);
-    //   total.value = res.data.data.total;
-    //   res.data.data.codeList.forEach(e => {
-    //     const t = {
-    //       key: e.codeId,
-    //       id: e.codeId,
-    //       name: e.codeName,
-    //       description: e.codeDescription,
-    //       state: e.codeState,
-    //       time: e.updateTime,
-    //     };
-    //     data.push(t);
-    //   });
-    // });
+    standardSearchList(page, pageSize, 0, toRaw(formState));
   };
 
   // 新增部分

@@ -52,6 +52,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
+        // 数据标准目录
+        '/standard': {
+          target: 'http://10.8.21.202:6002',
+          changeOrigin: true,
+          // rewrite: path => path.replace(/^\/code/, '/code'),
+        },
       },
     },
     plugins: [
