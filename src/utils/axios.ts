@@ -69,5 +69,11 @@ export function get<T>({ url, params }: { url: string; params?: object }): Promi
 export function post<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
   return instance.post(url, data, config);
 }
+export function put<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
+  return instance.put(url, data, config);
+}
+export function del<T>({ url, data }: { url: string; data?: any }): Promise<T> {
+  return instance.delete(url, data);
+}
 
-export default { get, post };
+export default { get, post, put, del };

@@ -6,22 +6,22 @@
     <a-form :model="formState" class="formAction" name="horizontal_login" layout="inline" autocomplete="off">
       <a-form-item label="来源机构:" name="standardSourceOrganization" class="width">
         <!-- <a-input v-model:value="formState.standardSourceOrganization"> </a-input> -->
-        <a-select v-model:value="formState.standardSourceOrganization" :options="optionsOz" @change="handleChangeOz"></a-select>
+        <a-select v-model:value="formState.standardSourceOrganization" :options="optionsOz" placeholder="请选择" @change="handleChangeOz"></a-select>
       </a-form-item>
       <a-form-item label="标准编号:" name="standardCode" class="width">
-        <a-input v-model:value="formState.standardCode"> </a-input>
+        <a-input v-model:value="formState.standardCode" placeholder="请输入"> </a-input>
       </a-form-item>
 
       <a-form-item label="中文名称:" name="standardCnName" class="width">
-        <a-input v-model:value="formState.standardCnName"> </a-input>
+        <a-input v-model:value="formState.standardCnName" placeholder="请输入"> </a-input>
       </a-form-item>
 
       <a-form-item label="英文名称:" name="standardEnName" class="width">
-        <a-input v-model:value="formState.standardEnName"> </a-input>
+        <a-input v-model:value="formState.standardEnName" placeholder="请输入"> </a-input>
       </a-form-item>
 
       <a-form-item label="标准状态:" name="standardState" class="width">
-        <a-select v-model:value="formState.standardState" :options="options" @change="handleChange"></a-select>
+        <a-select v-model:value="formState.standardState" placeholder="请选择" :options="options" @change="handleChange"></a-select>
       </a-form-item>
 
       <a-form-item class="formBtn">
@@ -207,9 +207,9 @@
       // let len3 = 0; //选了多少个未发布
       selectedRows.forEach(i => {
         // 停用
-        if (i.standardState == 1 || i.standardState == 3) {
+        if (i.standardState == 0 || i.standardState == 2) {
           len1++;
-        } else if (i.standardState == 2) {
+        } else if (i.standardState == 1) {
           len2++;
         }
       });

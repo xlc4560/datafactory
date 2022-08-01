@@ -1,6 +1,6 @@
 // 搜索数据类型
 export interface FormState {
-  standardSourceOrganization: string; //来源机构分类编码
+  standardSourceOrganization: string | null; //来源机构分类编码
   standardCode: string; //标准编号
   standardCnName: string; //中文名称
   standardEnName: string; //英文名称

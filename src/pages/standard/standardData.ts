@@ -3,7 +3,7 @@ import type { SelectProps } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 // 声明表单绑定数据
 export const formState = reactive<FormState>({
-  standardSourceOrganization: '',
+  standardSourceOrganization: null,
   standardCode: '',
   standardCnName: '',
   standardEnName: '',
