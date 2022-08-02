@@ -21,11 +21,12 @@ const columns = [
     title: '数据源名称',
     dataIndex: 'dataSourceName',
     ellipsis: true,
+    width: '20%',
   },
   {
     title: '数据库类型',
     dataIndex: 'dataSourceType',
-    // width: '20%',
+    width: '10%',
   },
   {
     title: '连接信息',
@@ -37,13 +38,14 @@ const columns = [
     title: '应用状态',
     dataIndex: 'dataSourceState',
     ellipsis: true,
-    width: '10%',
+    width: '9%',
   },
   {
     title: '更新时间',
     dataIndex: 'updateTime',
     sorter: true,
     ellipsis: true,
+    width: '15%',
   },
   {
     title: '操作',

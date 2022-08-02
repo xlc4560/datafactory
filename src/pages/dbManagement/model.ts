@@ -99,14 +99,14 @@ export interface dataSource {
 
 // 数据库列表
 export interface GETDBList {
-  updateTime: string; //更新时间
-  dataSourceUrl: string; //连接信息
-  dataSourceType: string; //数据源类型
+  updateTime?: string; //更新时间
+  dataSourceUrl?: string; //连接信息
+  dataSourceType?: string; //数据源类型
   dataSourceState?: string; //0:已停用 1:草稿 2:未发布 3:已发布
-  dataSourceName: string; //数据源名称
+  dataSourceName?: string; //数据源名称
   oderByDate?: number; //0：降序（默认） 1：升序
-  page: number; //页码
-  size: number; //每页显示条数
+  page?: number; //页码
+  size?: number; //每页显示条数
 }
 
 //应用状态修改

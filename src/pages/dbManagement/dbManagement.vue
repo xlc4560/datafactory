@@ -29,7 +29,7 @@
       </a-drawer>
       <!-- 表格 -->
       <div class="antdTable">
-        <a-table :columns="columns" :data-source="data" :pagination="false">
+        <a-table :columns="columns" :data-source="data" :pagination="false" @change="sorterChange">
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'dataSourceState'">
               <span class="isNopublish" :style="{ background: dataSourceState[record.dataSourceState].color }"></span>
@@ -118,9 +118,52 @@
   // 声明表单绑定数据
   const formState = reactive<DBType.FormState>({
     dataSourceState: null, //应用状态
-    dataSourceName: '', //数据源名称
+    dataSourceName: '', //数据源名称f
   });
 
+  //排序
+  const sorterChange = (pagination, filters, sorter) => {
+    // console.log(sorter.order);
+    if (sorter.order === 'ascend') {
+      console.log('升序');
+      console.log(current1.value);
+
+      dbList({ oderByDate: 1, page: current1.value, size: 5 }).then(res => {
+        console.log(res);
+        data.value = [];
+        res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
+          let t = {
+            key: i.id,
+            dataSourceName: i.dataSourceName,
+            dataSourceType: i.dataSourceType,
+            dataSourceUrl: i.dataSourceUrl,
+            dataSourceState: i.dataSourceState,
+            updateTime: i.updateTime,
+          };
+          data.value.push(t);
+        });
+        total.value = res.total;
+      });
+    } else if (sorter.order === 'descend') {
+      console.log('降序');
+      dbList({ oderByDate: 0, page: current1.value, size: 5 }).then(res => {
+        console.log(res);
+        data.value = [];
+        res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
+          let t = {
+            key: i.id,
+            dataSourceName: i.dataSourceName,
+            dataSourceType: i.dataSourceType,
+            dataSourceUrl: i.dataSourceUrl,
+            dataSourceState: i.dataSourceState,
+            updateTime: i.updateTime,
+          };
+          data.value.push(t);
+        });
+        total.value = res.total;
+      });
+    }
+  };
   // 发送请求获取列表详情(重置)
   const reset = () => {
     formState.dataSourceState = null;
@@ -128,19 +171,21 @@
     // 发送请求
     //调用列表
     showlist();
+    current1.value = 1;
   };
   //连通测试
   const connected = (e: any) => {
     //详情
     dbDetail(e.key).then(res => {
       console.log(res);
-      //测试
-      dbTest({
+      let t = {
         dataSourceDriverClassName: res.dataSourceDriverClassName,
         dataSourcePassword: res.dataSourcePassword,
         dataSourceUrl: res.dataSourceUrl,
         dataSourceUsername: res.dataSourceUsername,
-      }).then(res1 => {
+      };
+      //测试
+      dbTest(t).then(res1 => {
         console.log(res1);
       });
     });
