@@ -29,7 +29,6 @@
 <script setup lang="ts">
   import basicInfoVue from './basicInfo.vue';
   import parameterConfigVue from './parameterConfig.vue';
-  import useSettingVue from './useSetting.vue';
   import { apiInfoType } from './dataType';
   import { storeToRefs } from 'pinia';
   // 从pinia中引入集中管理的状态
@@ -64,7 +63,7 @@
   const parameterConfigInstance = ref<InstanceType<typeof parameterConfigVue>>();
   // const useSettingInstance = ref<InstanceType<typeof useSettingVue>>();
   onMounted(() => {
-    console.log(parameterConfigInstance);
+    // console.log(parameterConfigInstance);
   });
 </script>
 

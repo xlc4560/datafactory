@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: rgb(240, 242, 245)">
+  <div class="parameterConfigStyle">
     <myTableVue
       ref="InputParameterInstance"
       :my-nanoid="tableConfig.nanoid_"
@@ -76,4 +76,10 @@
   });
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+  .parameterConfigStyle {
+    // background-color: rgb(42, 107, 205);
+    padding-bottom: 30px;
+    background-color: rgb(240, 242, 245);
+  }
+</style>

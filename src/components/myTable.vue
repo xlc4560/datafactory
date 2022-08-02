@@ -37,22 +37,26 @@
             </template>
           </template>
           <template v-else>
-            <a-form-item
-              v-if="record.isEdit"
-              has-feedback
-              :name="[index, column.dataIndex]"
-              :rules="[{ required: ['参数名称', '参数位置', '数据类型', '是否必填'].includes(column.title), message: '该选项为必填' }]"
-            >
-              <a-input v-if="['参数名称', '默认值', '参数描述', '参数说明'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请输入" />
-              <a-select v-else-if="['参数位置', '数据类型', '是否必填'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请选择">
-                <a-select-option v-for="item in column.selectOption" :key="item.key">{{ item.label }}</a-select-option>
-              </a-select>
-            </a-form-item>
-
+            <template v-if="record.isEdit && !['默认值', '是否必填'].includes(column.title)">
+              <a-form-item has-feedback :name="[index, column.dataIndex]" :rules="[{ required: ['参数名称', '参数位置', '数据类型', '是否必填'].includes(column.title), message: '该选项为必填' }]">
+                <a-input v-if="['参数名称', '参数描述', '参数说明'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请输入" />
+                <a-select v-else-if="['参数位置', '数据类型'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请选择" @change="selectChange(record)">
+                  <a-select-option v-for="item in column.selectOption" :key="item.key">{{ item.label }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </template>
+            <template v-else-if="record.isEdit && ['默认值', '是否必填'].includes(column.title) && ![3, 4].includes(record.parameterType)">
+              <a-form-item has-feedback :name="[index, column.dataIndex]" :rules="[{ required: ['参数名称', '参数位置', '数据类型', '是否必填'].includes(column.title), message: '该选项为必填' }]">
+                <a-input v-if="['默认值'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请输入" />
+                <a-select v-else-if="['是否必填'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请选择" @change="selectChange(record)">
+                  <a-select-option v-for="item in column.selectOption" :key="item.key">{{ item.label }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </template>
             <template v-else>
               <a-tooltip>
                 <template #title>{{ dataComputed(column, record) }}</template>
-                <span style=" display: block; overflow: hidden;max-width: 150px; text-overflow: ellipsis; white-space: nowrap">{{ dataComputed(column, record) }}</span>
+                <span style="display: block; overflow: hidden; max-width: 150px; text-overflow: ellipsis; white-space: nowrap">{{ dataComputed(column, record) }}</span>
               </a-tooltip>
             </template>
           </template>
@@ -140,31 +144,26 @@
   // 表格row-key配置
   const rowKey = (record: { parameterId: string }): string => record.parameterId;
   // 处理数据（将指定字段转换成汉字）
+  enum TypeEnum {
+    String,
+    Integer,
+    number,
+    Object,
+    Array,
+  }
+  enum RequireEnum {
+    '否',
+    '是',
+  }
   const dataComputed = (column: any, record: any): string => {
     if (column.dataIndex === 'parameterPosition') {
       return record.parameterPosition === 0 ? 'query' : record[column.dataIndex] === 1 ? 'header' : '';
     } else if (column.dataIndex === 'parameterType') {
-      let str = '';
-      switch (record.parameterType) {
-        case 0:
-          str = 'String';
-          break;
-        case 1:
-          str = 'Integer';
-          break;
-        case 2:
-          str = 'number';
-          break;
-        case 3:
-          str = 'Object';
-          break;
-        case 4:
-          str = 'Array';
-          break;
-      }
-      return str;
+      return TypeEnum[record.parameterType as number];
     } else if (column.dataIndex === 'parameterRequire') {
-      return record.parameterRequire ? '是' : '否';
+      return [3, 4].includes(record.parameterType) ? '-' : RequireEnum[record.parameterRequire as number];
+    } else if (column.dataIndex === 'parameterDefault') {
+      return [3, 4].includes(record.parameterType) ? '-' : record[column.dataIndex];
     } else return record[column.dataIndex];
   };
   // 获取表单组件实例
@@ -259,6 +258,16 @@
       },
     );
   };
+  // select框change事件
+  const selectChange = (record: inputParameterDataType) => {
+    // if ([3, 4].includes(record.parameterType as number)) {
+    //   record.parameterRequire = null;
+    //   record.parameterDefault = '';
+    // }
+    // else ([0, 1, 2].includes(record.parameterType as number)){
+    // }
+  };
+
   const visible = ref<boolean>(false);
 
   const showModal = () => {

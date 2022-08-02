@@ -278,15 +278,16 @@
 
         .formAction {
           display: flex;
+          flex-flow: row wrap;
           margin: 20px;
           padding: 0 10px;
           width: 100%;
-        }
-
-        .width {
-          width: 10vw;
-          min-width: 150px;
-          max-width: 180px;
+          // background-color: antiquewhite;
+          .width {
+            width: 10vw;
+            // min-width: 150px;
+            max-width: 180px;
+          }
         }
 
         .formBtn {
