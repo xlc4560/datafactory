@@ -7,8 +7,8 @@
           <a-input v-model:value="formState.dataSourceName" class="width" placeholder="请输入" />
         </a-form-item>
         <a-form-item name="state" label="应用状态:">
-          <a-select v-model:value="formState.dataSourceState" placeholder="请选择" value-in-label class="width">
-            <a-select-option v-for="item in dbStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
+          <a-select v-model:value="formState.dataSourceState" placeholder="请选择" value-in-label class="width" :options="dbStateOptions">
+            <!-- <a-select-option v-for="item in dbStateOptions" :key="item.value">{{ item.lable }}</a-select-option> -->
           </a-select>
         </a-form-item>
         <a-form-item class="formBtn">

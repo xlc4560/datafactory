@@ -56,7 +56,6 @@
 <script lang="ts" setup>
   //引入图标
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
-  import { message } from 'ant-design-vue';
   import { AddDataSource, EditDataSource, DetailDataSource, ConnectTest } from '@/api/dbManagement/index';
   //数据库类型
   const dataSourceType = reactive([
@@ -170,7 +169,7 @@
     if (dbid.value != 'new') {
       //编辑数据源
       EditDataSource(toRaw(addDataSource.value)).then(res => {
-        console.log(res);
+        // console.log(res);
         if (res === 1) {
           // message.success('编辑完成');
           closeDrawer();
@@ -180,7 +179,7 @@
     } else {
       //新增数据源
       AddDataSource(toRaw(addDataSource.value)).then(res => {
-        console.log(res);
+        // console.log(res);
         if (res === 1) {
           // console.log('新增数据源', toRaw(addDataSource.value));
           // message.success('添加完成');

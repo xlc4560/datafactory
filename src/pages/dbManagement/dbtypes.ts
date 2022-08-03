@@ -9,10 +9,10 @@ interface FormState {
 export type { FormState };
 
 // 数据库应用状态(用于渲染select框)
-const dbStateOptions: { value: number; lable: string }[] = [
-  { value: 0, lable: '未发布' },
-  { value: 1, lable: '已发布' },
-  { value: 2, lable: '已停用' },
+const dbStateOptions: { value: number; label: string }[] = [
+  { value: 0, label: '未发布' },
+  { value: 1, label: '已发布' },
+  { value: 2, label: '已停用' },
 ];
 
 // 固定配置项（表格配置，表头）
