@@ -89,27 +89,29 @@ export const data = reactive<DataItem[]>([
 // 新增标准
 export const formStateAdd = reactive<FormStateAdd>({
   codeId: null, //码表编号
+  // codeName: '', //编码名称
+  standardCode: '',
   standardCnName: '', //中文名称
   standardDataAccuracy: null, //数据精度
   standardDataLength: null, //数据长度
   standardDefault: '', //默认值
   standardEnName: '', //英文名称
   standardExplain: '', //标准说明
-  standardIsBlank: null, //是否可为空：0不可为空，1可为空
+  standardIsBlank: '', //是否可为空：0不可为空，1可为空
   standardSourceOrganization: '', //来源机构编码
   standardState: null, //标准状态  0：未发布，1：已发布，2：已停用
-  standardType: null, //数据类型（0：int，1：enum，2：float，3：String）
+  standardType: '', //数据类型（0：int，1：enum，2：float，3：String）
   standardValueMax: null, //取值范围-最大值
   standardValueMin: null, //取值范围-最小值
 });
 // 下拉选择是否为空
 export const optionsEmpty = ref<SelectProps['options']>([
   {
-    value: '0',
+    value: 0,
     label: '可为空',
   },
   {
-    value: '1',
+    value: 1,
     label: '不可为空',
   },
 ]);

@@ -9,6 +9,7 @@ enum Api {
   STANDARD_DETAIL = '/standard/detail/', //数据标准详情查询
   STANDARD_REVISE = '/standard/revise', //数据标准状态修改
   STANDARD_DEL = '/standard/', //删除数据标准
+  CODE_SELECTRELEASELIST = '/code/selectReleaseList', //码表已发布列表
 }
 
 //检索数据标准列表
@@ -20,7 +21,8 @@ export const standardAdd = (params: FunArgsType.StandardAdd) => {
   return api.post<any>({ url: Api.STANDARD_ADD, data: params });
 };
 // 编辑数据标准
-export const standardUpdateStandard = (params: FunArgsType.StandardUpdateStandard) => {
+// FunArgsType.StandardUpdateStandard
+export const standardUpdateStandard = (params: any) => {
   return api.put<any>({ url: Api.STANDARD_UPDATESTANDARD, data: params });
 };
 //数据标准详情查询
@@ -34,4 +36,8 @@ export const standardRevise = (params: FunArgsType.StandardRevise) => {
 //删除数据标准
 export const standardDel = (standardCode: string) => {
   return api.del<any>({ url: Api.STANDARD_DEL + standardCode });
+};
+// 码表已发布列表
+export const codeSWelectReleaseList = () => {
+  return api.get<any>({ url: Api.CODE_SELECTRELEASELIST });
 };

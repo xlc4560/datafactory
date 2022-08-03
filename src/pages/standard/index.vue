@@ -36,8 +36,12 @@
     <!-- 按钮操作组 -->
     <div class="tableactionGroup">
       <div class="tableactionGroup-item">
-        <a-button class="li" :disabled="btn2">批量发布</a-button>
-        <a-button class="li" :disabled="btn1">批量停用</a-button>
+        <a-popconfirm title="是否批量发布数据标准？" ok-text="确认" cancel-text="取消" @confirm="batchRelease">
+          <a-button class="li" :disabled="btn2">批量发布</a-button>
+        </a-popconfirm>
+        <a-popconfirm title="是否批量停用数据标准？" ok-text="确认" cancel-text="取消" @confirm="batchDisable">
+          <a-button class="li" :disabled="btn1">批量停用</a-button>
+        </a-popconfirm>
       </div>
       <div class="tableactionGroup-item">
         <a-button class="li">导入模板下载</a-button>
@@ -49,7 +53,7 @@
     <a-table :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 300 }" :row-selection="rowSelection" :pagination="false" @change="sorterChange">
       <template #bodyCell="{ column, text, record }">
         <template v-if="column.dataIndex === 'standardCode'">
-          <a @click="showModalDetails">{{ text }}</a>
+          <a @click="showModalDetails(record)">{{ text }}</a>
         </template>
         <template v-if="column.dataIndex === 'standardType'">
           <span>{{ type[record.standardType] }}</span>
@@ -94,13 +98,13 @@
     </div>
   </div>
   <!-- 详情部分 -->
-  <a-modal v-model:visible="visible" title="Basic Modal" @ok="handleOk">
-    <StandardDetails></StandardDetails>
+  <a-modal v-model:visible="visible" :destroy-on-close="true" title="Basic Modal" @ok="handleOk">
+    <StandardDetails :standardcode="standardCode" :visible="visible"></StandardDetails>
   </a-modal>
 
   <!-- 新增部分 -->
   <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" size="large" class="custom-class" style="color: red" title="新增标准" placement="right" @after-visible-change="afterVisibleChange">
-    <AddStandard :codeid="codeid"></AddStandard>
+    <AddStandard :codeid="codeid" @visible="svisible2"></AddStandard>
   </a-drawer>
 </template>
 <script lang="ts" setup>
@@ -109,7 +113,7 @@
   import type { SelectProps } from 'ant-design-vue';
   import StandardDetails from './standardDetails.vue';
   import AddStandard from './AddStandard.vue';
-  import { standardSearch } from '@/api/standard/standard';
+  import { standardSearch, standardRevise, standardDel } from '@/api/standard/standard'; //列表,状态修改,删除
   // standardSearch
 
   // 搜索
@@ -161,42 +165,59 @@
     formState.standardCode = '';
     formState.standardEnName = '';
     formState.standardState = null;
-    standardSearchList(1, 20, 0, toRaw(formState));
+    page.value = 1;
+    standardSearchList(1, pageSize.value, 0, toRaw(formState));
   };
   // 排序
   const sorterChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
     console.log('params', sorter.order);
     if (sorter.order == 'ascend') {
-      standardSearchList(1, 20, 1, toRaw(formState));
+      standardSearchList(1, pageSize.value, 1, toRaw(formState));
     } else if (sorter.order == 'descend') {
-      standardSearchList(1, 20, 0, toRaw(formState));
+      standardSearchList(1, pageSize.value, 0, toRaw(formState));
     }
   };
   // 发布
   const release = (e: any) => {
-    console.log(e.id);
+    console.log(e.key);
     // 发布请求
-    // const codeIdList: string[] = [e.id];
-    // coderevise({ codeIdList: codeIdList, operation: 1 }).then(res => {
-    //   console.log(res);
-    //   // reset();
-    //   refresh();
-    // });
+    const codeIdList: string[] = [e.key];
+    standardRevise({ standardCodeList: codeIdList, operation: 1 }).then(res => {
+      console.log(res);
+      reset();
+    });
+  };
+  // 批量发布
+  const batchRelease = () => {
+    console.log('批量发布');
+    // 发送批量发布请求
+    standardRevise({ standardCodeList: tableliID, operation: 1 }).then(res => {
+      console.log(res);
+      reset();
+    });
   };
   // 停用
   const disable = (e: any) => {
-    console.log(e.id);
+    console.log(e.key);
     // 停用请求
-    // const codeIdList: string[] = [e.id];
-    // coderevise({ codeIdList: codeIdList, operation: 0 }).then(res => {
-    //   console.log(res);
-    //   // reset();
-    //   refresh();
-    // });
+    const codeIdList: string[] = [e.key];
+    standardRevise({ standardCodeList: codeIdList, operation: 0 }).then(res => {
+      console.log(res);
+      reset();
+    });
+  };
+  // 批量停用
+  const batchDisable = () => {
+    console.log('批量停用');
+    // 发送批量停用请求
+    standardRevise({ standardCodeList: tableliID, operation: 0 }).then(res => {
+      console.log(res);
+      reset();
+    });
   };
   // 删除
   const deleteItem = (e: any) => {
-    console.log(e.id);
+    console.log(e.key);
     // 删除请求
     // data.splice(e.key, 1);
     // codedelete(e).then(res => {
@@ -204,16 +225,23 @@
     //   // reset();
     //   refresh();
     // });
+    standardDel(e.key).then(res => {
+      console.log(res);
+      reset();
+    });
   };
 
   // 多选
   const btn1 = ref(true);
   const btn2 = ref(true);
-
+  let tableliID: string[] = reactive([]);
   const rowSelection = ref({
     checkStrictly: false,
-    onChange: (selectedRowKeys: (string | number)[], selectedRows: DataItem[]) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    onChange: (selectedRowKeys: string[], selectedRows: DataItem[]) => {
+      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      console.log(selectedRowKeys);
+
+      tableliID = selectedRowKeys;
       // 控制按钮
       let len1 = 0; //选了多少个发布
       let len2 = 0; //选了多少个停用
@@ -240,18 +268,20 @@
         btn1.value = true;
       }
     },
-    onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
-      console.log(record, selected, selectedRows);
-    },
-    onSelectAll: (selected: boolean, selectedRows: DataItem[], changeRows: DataItem[]) => {
-      console.log(selected, selectedRows, changeRows);
-    },
+    // onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
+    //   console.log(record, selected, selectedRows);
+    // },
+    // onSelectAll: (selected: boolean, selectedRows: DataItem[], changeRows: DataItem[]) => {
+    //   console.log(selected, selectedRows, changeRows);
+    // },
   });
   // 详情
   const visible = ref<boolean>(false);
-
-  const showModalDetails = () => {
+  const standardCode = ref<string>('');
+  const showModalDetails = (record: any) => {
     visible.value = true;
+    console.log(record.key);
+    standardCode.value = record.key;
   };
 
   const handleOk = (e: MouseEvent) => {
@@ -271,9 +301,16 @@
 
   // 新增部分
   const visibleAdd = ref<boolean>(false);
-
+  // 关闭
   const afterVisibleChange = (bool: boolean) => {
     console.log('visible', bool);
+  };
+  const svisible2 = (val: any) => {
+    visibleAdd.value = val.value;
+    visibleAdd.value = false;
+    console.log('关闭关闭');
+    console.log(visibleAdd.value);
+    reset();
   };
   // 新增和编辑
   const codeid = ref('');
@@ -282,6 +319,12 @@
     console.log(x);
     codeid.value = x;
   };
+  // 子组件控制关闭
+  // const svisible2 = (val: any) => {
+  //   console.log('关闭');
+  //   visible.value = val.value;
+  // };
+  // // svisible2();
 </script>
 <style scoped lang="less">
   .backColor {

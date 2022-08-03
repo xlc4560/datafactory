@@ -28,9 +28,11 @@ export interface StandardAdd {
 // 编辑数据标准
 export interface StandardUpdateStandard {
   codeId?: string | null; //码表编码
+
   standardCnName: string; //中文名
   standardDataAccuracy?: number | null; //数据精度
   standardDataLength?: number | null; //数据长度
+  standardCode?: string;
   standardDefault: string; //默认值
   standardEnName: string; //英文名
   standardExplain: string; //说明

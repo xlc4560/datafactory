@@ -34,16 +34,18 @@ export enum type {
 // 新增标准
 export interface FormStateAdd {
   codeId?: string | null; //码表编号
+  codeName?: string; //码表名称
+  standardCode?: string;
   standardCnName: string; //中文名称
   standardDataAccuracy?: number | null; //数据精度
   standardDataLength?: number | null; //数据长度
   standardDefault?: string | null; //默认值
   standardEnName: string; //英文名称
   standardExplain?: string | null; //标准说明
-  standardIsBlank: number | null; //是否可为空：0不可为空，1可为空
+  standardIsBlank: number | null | string; //是否可为空：0不可为空，1可为空
   standardSourceOrganization: string; //来源机构编码
-  standardState: number | null; //标准状态  0：未发布，1：已发布，2：已停用
-  standardType: number | null; //数据类型（0：int，1：enum，2：float，3：String）
+  standardState: number | null | string; //标准状态  0：未发布，1：已发布，2：已停用
+  standardType: number | null | string; //数据类型（0：int，1：enum，2：float，3：String）
   standardValueMax?: number | null; //取值范围-最大值
   standardValueMin?: number | null; //取值范围-最小值
 }
