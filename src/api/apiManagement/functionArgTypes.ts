@@ -46,7 +46,7 @@ export interface apiParameter {
   parameterDescription?: string;
   parameterDefault: string;
 }
-// 用于注册函数
+// 用于注册接口测试
 export interface ApiTest {
   apiPath: string;
   apiName: string;
@@ -68,7 +68,7 @@ export interface ApiTest {
     parameterValue?: string;
   }[];
 }
-// 用于注册函数
+// 用于注册接口
 export interface register {
   checkOperation: number | string | null;
   id: number | null;
@@ -97,18 +97,17 @@ export interface register {
 // 用于接口验证函数
 export interface ApiCheck {
   apiBasic: {
-    id: number | null | string;
+    id?: number | null | string;
     apiName: string;
     apiSource: string;
-    apiType: string;
     apiProtocol: number | null; // 接口协议(0:http 1:https)
     apiMethod: number | null; // 请求方式请求方式(0:get 1:post)
     apiIpPort: string;
-
+    apiType: string | null;
     apiPath: string;
 
     apiTimeout: number | null;
     apiDescription?: string;
-    checkOperation: number | null;
+    checkOperation?: number | null;
   };
 }

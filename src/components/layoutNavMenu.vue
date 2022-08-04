@@ -1,6 +1,6 @@
 <template>
-  <a-layout-sider v-model:collapsed="collapsed" collapsible class="placeholderLabel" collapsed-width="40"></a-layout-sider>
-  <a-layout-sider v-model:collapsed="collapsed" collapsible class="navMenu" collapsed-width="40">
+  <a-layout-sider v-model:collapsed="collapsed" collapsible class="placeholderLabel" collapsed-width="30"></a-layout-sider>
+  <a-layout-sider v-model:collapsed="collapsed" collapsible class="navMenu" collapsed-width="30">
     <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline" :style="{ height: '100%', borderRight: 0 }" @open-change="clickMenu" @click="clickMenu">
       <template v-for="item in menuData" :key="item.key">
         <a-sub-menu v-if="item.children" :key="item.key">

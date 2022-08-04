@@ -30,7 +30,7 @@
     .main {
       display: flex;
       flex-direction: column;
-      margin: 20px;
+      margin: 2vh;
       // background-color: antiquewhite;
       min-height: calc(100vh - 90px);
     }

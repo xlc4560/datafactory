@@ -4,7 +4,6 @@
     <a-steps :current="currentStep" class="formAction">
       <a-step title="基本信息" />
       <a-step title="参数配置" />
-      <a-step title="调用配置" />
     </a-steps>
   </div>
   <!-- 基本信息填写表单部分 -->
@@ -16,17 +15,24 @@
   <!-- 数据提交、下一步 -->
   <div class="footer_v9rLv">
     <a-space :size="12" style="float: right">
-      <a-popconfirm title="请确认是否取消此次接口编辑?" ok-text="是" cancel-text="否">
+      <!-- @confirm="" -->
+      <a-popconfirm title="是否取消此次接口编辑?" ok-text="是" cancel-text="否">
         <a-button class="btn">取 消</a-button>
       </a-popconfirm>
-      <a-button html-type="submit" class="btn"> 保存并退出 </a-button>
-      <a-button type="primary" class="btn" @click="goNextStep">下一步</a-button>
+      <a-popconfirm title="是否保存为未发布并退出?" ok-text="是" cancel-text="否" @confirm="saveApi(2)">
+        <a-button class="btn"> 保存为未发布 </a-button>
+      </a-popconfirm>
+      <a-popconfirm title="是否保存为草稿并退出?" ok-text="是" cancel-text="否" @confirm="saveApi(1)">
+        <a-button class="btn"> 保存为草稿 </a-button>
+      </a-popconfirm>
+      <a-button v-if="currentStep < 1" type="primary" class="btn" @click="goNextStep">下一步</a-button>
       <a-button v-if="currentStep >= 1" type="primary" class="btn" @click="goBackStep">上一步</a-button>
     </a-space>
   </div>
 </template>
 
 <script setup lang="ts">
+  import { ApiCheck, apiDraft } from '@/api/apiManagement';
   import basicInfoVue from './basicInfo.vue';
   import parameterConfigVue from './parameterConfig.vue';
   import { apiInfoType } from './dataType';
@@ -39,16 +45,14 @@
 
   const currentStep = ref<0 | 1 | 2>(0);
   // 下一步
-  const goNextStep = () => {
-    basicInfoInstance.value?.basicform?.validate().then(
-      () => {
-        message.success('数据格式校验成功', 1);
-        currentStep.value++;
-      },
-      error => {
-        message.warning('数据格式校验失败', 1);
-      },
-    );
+  const goNextStep = async () => {
+    try {
+      await basicInfoInstance.value?.basicform?.validate();
+      await ApiCheck({ apiBasic: { ...apiInfo.value.apiBasic } });
+      currentStep.value++;
+    } catch (error) {
+      message.warning('数据格式校验失败', 1);
+    }
   };
   // 上一步
   const goBackStep = () => {
@@ -58,13 +62,22 @@
   const getApibasicInfo = (data: apiInfoType['apiBasic']) => {
     apiInfo.value.apiBasic = data;
   };
-  // 获取basicInfoVue组件的实例
+  // 获取basicInfoVue组件的实例 用于触发表单验证
   const basicInfoInstance = ref<InstanceType<typeof basicInfoVue>>();
   const parameterConfigInstance = ref<InstanceType<typeof parameterConfigVue>>();
-  // const useSettingInstance = ref<InstanceType<typeof useSettingVue>>();
-  onMounted(() => {
-    // console.log(parameterConfigInstance);
-  });
+
+  // 保存回调
+  const saveApi = async (apiState: number) => {
+    try {
+      // 表单验证
+      await basicInfoInstance.value?.basicform?.validate();
+      // 开始存入数据库
+      apiInfo.value.apiBasic.apiState = apiState;
+      await apiDraft(apiInfo.value);
+    } catch (error) {
+      message.warning('数据格式校验失败', 1);
+    }
+  };
 </script>
 
 <style scoped lang="less">
@@ -90,7 +103,7 @@
     right: 0;
     bottom: 0;
     padding-top: 8px;
-    width: calc(100vw - 210px);
+    width: 100vw;
     height: 48px;
     background-color: rgb(255, 255, 255);
     box-shadow: 0 -5px 30px 5px rgb(219, 219, 219);

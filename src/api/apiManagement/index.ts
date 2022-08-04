@@ -2,6 +2,7 @@
 import api from '@/utils/axios';
 import * as resType from './resType';
 import * as funType from './functionArgTypes';
+import { apiInfoType, inputParameterDataType } from '@/pages/apiRegisterAndUpdate/dataType';
 enum Api {
   ACCOUNT_INFO = '/account/getAccountInfo',
   SESSION_TIMEOUT = '/user/sessionTimeout',
@@ -66,7 +67,6 @@ export const ApiCheck = (params: funType.ApiCheck) => {
   return api.post({
     url: Api.API_CHECK,
     data: {
-      id: params.apiBasic.id,
       apiName: params.apiBasic.apiName,
       apiSource: params.apiBasic.apiSource,
       apiProtocol: params.apiBasic.apiProtocol,
@@ -74,9 +74,27 @@ export const ApiCheck = (params: funType.ApiCheck) => {
       apiPath: params.apiBasic.apiPath,
       apiMethod: params.apiBasic.apiMethod,
       apiTimeout: params.apiBasic.apiTimeout,
+      apiType: params.apiBasic.apiType,
     },
   });
 };
 
 // 测试接口（用于测试网络请求及代理配置是否成功）
 export const gettest = () => api.post({ url: Api.GET_TEST });
+
+// 新增接口2.0 宋杰龙版本
+export const apiDraft = (params: apiInfoType) => {
+  const parameters: inputParameterDataType[] = [];
+  const arrayFlat = (data: inputParameterDataType[]) => {
+    data.forEach((item: inputParameterDataType) => {
+      parameters.push(item);
+      if (item.children?.length) {
+        arrayFlat(item.children);
+      }
+    });
+  };
+  arrayFlat(params.requestBody);
+  arrayFlat(params.responseBody);
+  console.log(parameters.concat(params.inputParameters));
+  return api.post<object>({ url: Api.REGISTER_API, data: { ...params.apiBasic, parameters: parameters.concat(params.inputParameters) } });
+};

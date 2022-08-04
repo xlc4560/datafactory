@@ -1,7 +1,7 @@
 <template>
   <div class="apiManagementFather">
     <!-- 分类区 -->
-    <div class="category" style="position: absolute; width: 240px; height: 100%; background-color: white">
+    <div class="category">
       <classification category-schema="接口分类" />
     </div>
     <div class="tableBox">
@@ -9,18 +9,18 @@
       <div class="backColor ApiManagement">
         <!-- 筛选组 -->
         <a-form layout="inline" :model="formState" class="formAction" @finish="handleFinish">
-          <a-form-item label="接口来源:">
-            <a-select v-model:value="formState.apiSource" class="width" :allow-clear="true" size="middle" :options="apiResourceOptions" placeholder="请选择" />
+          <a-form-item label="接口来源:" class="formItemWidth">
+            <a-select v-model:value="formState.apiSource" :allow-clear="true" size="middle" :options="apiResourceOptions" placeholder="请选择" />
           </a-form-item>
-          <a-form-item label="api状态:">
+          <a-form-item label="api状态:" class="formItemWidth">
             <!-- :options="apiStateOptions"
           :field-names="{ label: 'label', value: 'value' }" -->
-            <a-select v-model:value="formState.apiState" class="width" :allow-clear="true" size="middle" placeholder="请选择">
+            <a-select v-model:value="formState.apiState" :allow-clear="true" size="middle" placeholder="请选择">
               <a-select-option v-for="item in apiStateOptions" :key="item.value">{{ item.lable }}</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item label="接口名称:">
-            <a-input v-model:value="formState.apiName" class="width" placeholder="请输入" />
+          <a-form-item label="接口名称:" class="formItemWidth">
+            <a-input v-model:value="formState.apiName" placeholder="请输入" />
           </a-form-item>
           <a-form-item class="formBtn">
             <a-button type="primary" html-type="submit">查 询</a-button>
@@ -278,27 +278,25 @@
 
         .formAction {
           display: flex;
-          flex-flow: row wrap;
+          flex-flow: row nowrap;
           margin: 20px;
           padding: 0 10px;
           width: 100%;
-          // background-color: antiquewhite;
-          .width {
-            width: 10vw;
-            // min-width: 150px;
-            max-width: 180px;
+
+          .formItemWidth {
+            flex: 2;
           }
-        }
 
-        .formBtn {
-          flex: 1;
-          margin-right: 30px;
+          .formBtn {
+            flex: 3;
+            margin-right: 30px;
 
-          button {
-            float: right;
+            button {
+              float: right;
 
-            &:nth-child(1) {
-              margin: 0 0 0 10px;
+              &:nth-child(1) {
+                margin: 0 0 0 10px;
+              }
             }
           }
         }
