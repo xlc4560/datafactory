@@ -138,16 +138,18 @@
   const props = toRefs(prop);
   const dbid = ref<string>('');
   dbid.value = props.dbid.value;
-  console.log(dbid.value);
+  const changevisible = ref<boolean>();
+  changevisible.value = props.changevisible.value;
 
-  const emit = defineEmits(['changevisible', 'showlist']);
+  const emit = defineEmits(['changevisible', 'reset']);
   const closeDrawer = () => {
-    props.changevisible.value = false;
-    emit('changevisible', props.changevisible.value);
+    changevisible.value = false;
+    emit('changevisible', changevisible.value);
   };
-  const showlist = () => {
-    emit('showlist');
-  };
+
+  function showlist() {
+    emit('reset');
+  }
 
   if (dbid.value != 'new') {
     DetailDataSource(Number(dbid.value)).then(res => {

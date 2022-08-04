@@ -1,12 +1,15 @@
 //数据库管理
 
 // 常用类型
-interface FormState {
-  dataSourceState: number | null;
-  dataSourceName: string | null;
+interface dataSourceList {
+  page?: number | null;
+  size?: number | null;
+  oderByDate?: number | null;
+  dataSourceState?: number | null;
+  dataSourceName?: string | null;
 }
 
-export type { FormState };
+export type { dataSourceList };
 
 // 数据库应用状态(用于渲染select框)
 const dbStateOptions: { value: number; label: string }[] = [

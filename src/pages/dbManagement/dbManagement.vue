@@ -4,10 +4,10 @@
     <div class="backColor ApiManagement">
       <a-form name="customized_form_controls" layout="inline" class="formAction">
         <a-form-item name="name" label="数据源名称:">
-          <a-input v-model:value="formState.dataSourceName" class="width" placeholder="请输入" />
+          <a-input v-model:value="dataSourceList.dataSourceName" class="width" placeholder="请输入" />
         </a-form-item>
         <a-form-item name="state" label="应用状态:">
-          <a-select v-model:value="formState.dataSourceState" placeholder="请选择" value-in-label class="width" :options="dbStateOptions">
+          <a-select v-model:value="dataSourceList.dataSourceState" placeholder="请选择" value-in-label class="width" :options="dbStateOptions">
             <!-- <a-select-option v-for="item in dbStateOptions" :key="item.value">{{ item.lable }}</a-select-option> -->
           </a-select>
         </a-form-item>
@@ -25,7 +25,7 @@
       </div>
       <!-- 新增数据源抽屉 -->
       <a-drawer :visible="visible" size="large" title="新增数据源" :destroy-on-close="true" @close="onClose">
-        <addDataSource :visible="visible" :dbid="dbid" @changevisible="changevisible" @showlist="showlist"></addDataSource>
+        <addDataSource :visible="visible" :dbid="dbid" @changevisible="changevisible" @reset="reset"></addDataSource>
       </a-drawer>
       <!-- 表格 -->
       <div class="antdTable">
@@ -74,26 +74,28 @@
   // 引入自定义表单数据类型
   import type * as DBType from './dbtypes';
   import { dbList, dbRevise, dbDelete, dbTest, dbDetail } from '@/api/dbManagement/index'; //获取接口列表,删除接口,修改状态,详情
-  import { GETDBList } from './model';
 
   //定义列表数据
   const data = ref([]);
-  // 获取数据库列表数据类型
-  const dbLi: GETDBList = {
-    dataSourceName: '',
-    dataSourceState: '',
-    dataSourceType: '',
-    oderByDate: 0,
+
+  //定义检索数据参数
+  let current1 = ref<number>(1); //当前页码
+  let pageSize1 = ref<number>(5); //每页显示条数
+  let total = ref<number>();
+
+  //初始检索数据参数对象
+  const dataSourceList = reactive<DBType.dataSourceList>({
     page: 1,
     size: 5,
-    updateTime: '',
-    dataSourceUrl: '',
-  };
+    oderByDate: null,
+    dataSourceState: null, //应用状态
+    dataSourceName: '', //数据源名称f
+  });
 
-  //请求列表的方法
-  function showlist() {
+  //检索数据源方法
+  function showlist1(dataSourceList: DBType.dataSourceList) {
     data.value = [];
-    dbList(dbLi).then(res => {
+    dbList(dataSourceList).then(res => {
       res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
         let t = {
           key: i.id,
@@ -108,76 +110,56 @@
       total.value = res.total;
     });
   }
+
   //进页面调用一次（初始列表）
-  showlist();
+  showlist1(dataSourceList);
 
-  let current1 = ref<number>(1); //当前页码
-  let pageSize1 = ref<number>(5); //每页显示条数
-  const total = ref<number>(0);
-
-  // 声明表单绑定数据
-  const formState = reactive<DBType.FormState>({
-    dataSourceState: null, //应用状态
-    dataSourceName: '', //数据源名称f
-  });
-
-  //排序
-  const sorterChange = (pagination, filters, sorter) => {
-    // console.log(sorter.order);
-    if (sorter.order === 'ascend') {
-      console.log('升序');
-      console.log(current1.value);
-
-      dbList({ oderByDate: 1, page: current1.value, size: 5 }).then(res => {
-        console.log(res);
-        data.value = [];
-        res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
-          let t = {
-            key: i.id,
-            dataSourceName: i.dataSourceName,
-            dataSourceType: i.dataSourceType,
-            dataSourceUrl: i.dataSourceUrl,
-            dataSourceState: i.dataSourceState,
-            updateTime: i.updateTime,
-          };
-          data.value.push(t);
-        });
-        total.value = res.total;
-      });
-    } else if (sorter.order === 'descend') {
-      console.log('降序');
-      dbList({ oderByDate: 0, page: current1.value, size: 5 }).then(res => {
-        console.log(res);
-        data.value = [];
-        res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
-          let t = {
-            key: i.id,
-            dataSourceName: i.dataSourceName,
-            dataSourceType: i.dataSourceType,
-            dataSourceUrl: i.dataSourceUrl,
-            dataSourceState: i.dataSourceState,
-            updateTime: i.updateTime,
-          };
-          data.value.push(t);
-        });
-        total.value = res.total;
-      });
-    }
+  //查询
+  const inquire = () => {
+    // console.log(dataSourceList);
+    current1.value = 1;
+    dataSourceList.page = current1.value;
+    // 发送请求查询
+    showlist1(dataSourceList);
   };
-  // 发送请求获取列表详情(重置)
+
+  // 重置列表
   const reset = () => {
-    formState.dataSourceState = null;
-    formState.dataSourceName = '';
-    // 发送请求
-    //调用列表
-    showlist();
+    dataSourceList.dataSourceState = null;
+    dataSourceList.dataSourceName = '';
+    showlist1(dataSourceList);
     current1.value = 1;
   };
+
+  //排序
+  const sorterChange = (pagination: any, filters: any, sorter: any) => {
+    // console.log(sorter.order);
+    if (sorter.order === 'ascend') {
+      dataSourceList.oderByDate = 1;
+      dataSourceList.page = current1.value;
+      showlist1(dataSourceList);
+    } else {
+      dataSourceList.oderByDate = 0;
+      dataSourceList.page = current1.value;
+      showlist1(dataSourceList);
+    }
+  };
+
+  //当前页码和每页显示条数发生改变,发送请求
+  const onChange = (page: number, size: number) => {
+    // console.log('Page: ', page, 'pageSize: ', size);
+    current1.value = page;
+    pageSize1.value = size;
+    dataSourceList.page = current1.value;
+    dataSourceList.size = pageSize1.value;
+    // 页码发生改变发送请求
+    showlist1(dataSourceList);
+  };
+
   //连通测试
   const connected = (e: any) => {
     //详情
     dbDetail(e.key).then(res => {
-      console.log(res);
       let t = {
         dataSourceDriverClassName: res.dataSourceDriverClassName,
         dataSourcePassword: res.dataSourcePassword,
@@ -190,96 +172,48 @@
       });
     });
   };
-  //查询
-  const inquire = () => {
-    console.log(formState.dataSourceName, formState.dataSourceState);
-    // 发送请求查询
-    data.value = [];
-    dbList({
-      page: current1.value,
-      size: pageSize1.value,
-      updateTime: '',
-      dataSourceUrl: '',
-      dataSourceType: '',
-      dataSourceName: formState.dataSourceName,
-      dataSourceState: formState.dataSourceState,
-    }).then(res => {
-      res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
-        let t = {
-          key: i.id,
-          dataSourceName: i.dataSourceName,
-          dataSourceType: i.dataSourceType,
-          dataSourceUrl: i.dataSourceUrl,
-          dataSourceState: i.dataSourceState,
-          updateTime: i.updateTime,
-        };
-        data.value.push(t);
-      });
-      total.value = res.total;
-    });
-  };
+
   // 发布
   const release = (e: { key: any }) => {
-    formState.dataSourceState = null;
-    formState.dataSourceName = '';
-    // 发布请求
+    dataSourceList.dataSourceState = null;
+    dataSourceList.dataSourceName = '';
+    current1.value = 1;
+    dataSourceList.page = current1.value;
+
+    // 发布请求;
     dbRevise({ id: e.key, dataSourceState: 1 }).then(res => {
       console.log(res);
       //调用列表
-      showlist();
+      showlist1(dataSourceList);
     });
   };
+
   // 停用
   const disable = (e: { key: any }) => {
-    formState.dataSourceState = null;
-    formState.dataSourceName = '';
+    dataSourceList.dataSourceState = null;
+    dataSourceList.dataSourceName = '';
+    current1.value = 1;
+    dataSourceList.page = current1.value;
     // 停用请求
     dbRevise({ id: e.key, dataSourceState: 2 }).then(res => {
+      console.log(res);
       //调用列表
-      showlist();
+      showlist1(dataSourceList);
     });
   };
 
   // 删除
-  const confirm = (e: { key: any }) => {
-    formState.dataSourceState = null;
-    formState.dataSourceName = '';
+  const confirm = (e: number) => {
+    dataSourceList.dataSourceState = null;
+    dataSourceList.dataSourceName = '';
+    current1.value = 1;
+    dataSourceList.page = current1.value;
+    console.log(e);
     // 删除请求
     dbDelete(e).then(res => {
-      console.log(e.key);
-      //调用列表
-      showlist();
-    });
-  };
-
-  //当前页码和每页显示条数发生改变,发送请求
-  const onChange = (page: number, size: number) => {
-    console.log('Page: ', page, 'pageSize: ', size);
-    current1.value = page;
-    pageSize1.value = size;
-    // 页码发生改变发送请求
-    data.value = [];
-    dbList({
-      page: current1.value,
-      size: pageSize1.value,
-      updateTime: '',
-      dataSourceUrl: '',
-      dataSourceType: '',
-      dataSourceName: formState.dataSourceName,
-      dataSourceState: formState.dataSourceState,
-    }).then(res => {
       console.log(res);
-      res.list.forEach((i: { id: any; dataSourceName: any; dataSourceType: any; dataSourceUrl: any; dataSourceState: any; updateTime: any }) => {
-        let t = {
-          key: i.id,
-          dataSourceName: i.dataSourceName,
-          dataSourceType: i.dataSourceType,
-          dataSourceUrl: i.dataSourceUrl,
-          dataSourceState: i.dataSourceState,
-          updateTime: i.updateTime,
-        };
-        data.value.push(t);
-      });
+      //调用列表
+      showlist1(dataSourceList);
     });
   };
 
