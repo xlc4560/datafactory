@@ -43,21 +43,21 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         // 吴正东（接口管理）
         '/dataApi/api': {
           // target: 'http://10.8.22.173:8081',
-          target: 'http://10.8.21.158:6002',
+          target: 'http://10.8.21.143:6002',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/dataApi/, ''),
         },
         // 码表管理
         '/code': {
           // target: 'http://10.8.21.220:6002',
-          target: 'http://10.8.21.158:6002',
+          target: 'http://10.8.21.143:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
         // 数据标准目录
         '/standard': {
           // target: 'http://10.8.21.202:6002',
-          target: 'http://10.8.21.158:6002',
+          target: 'http://10.8.21.143:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },

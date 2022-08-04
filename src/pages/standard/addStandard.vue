@@ -25,8 +25,9 @@
       <!-- <a-input v-model:value="formState.type" /> -->
       <a-select v-model:value="formStateAdd.standardType" placeholder="请选择" :options="optionsType" @change="handleChangeType"></a-select>
     </a-form-item>
+
     <!-- Int类型 -->
-    <div v-if="formStateAdd.standardType == 0">
+    <div v-if="formStateAdd.standardType === 0">
       <a-form-item label="取值范围" name="standardValueMin" :rules="[{ required: false, message: '请输入!' }]">
         <div style="display: flex; justify-content: space-around; padding: 0">
           <a-input v-model:value="formStateAdd.standardValueMin" style="width: 160px; height: 32.19px" />
@@ -41,7 +42,7 @@
       </a-form-item>
     </div>
     <!-- Enum类型 -->
-    <div v-else-if="formStateAdd.standardType == 1">
+    <div v-else-if="formStateAdd.standardType === 1">
       <a-form-item label="枚举范围" name="codeId" :rules="[{ required: false, message: '请输入!' }]">
         <!-- <a-input v-model:value="formStateAdd.standardDataAccuracy" /> -->
         <a-select v-model:value="formStateAdd.codeId" mode="combobox" style="width: 100%" placeholder="请选择" :options="options" @change="handleChange"></a-select>
@@ -51,7 +52,7 @@
       </a-form-item>
     </div>
     <!-- Float类型 -->
-    <div v-else-if="formStateAdd.standardType == 2">
+    <div v-else-if="formStateAdd.standardType === 2">
       <a-form-item
         label="数据精度"
         name="standardDataAccuracy"
@@ -76,7 +77,7 @@
       </a-form-item>
     </div>
     <!-- String类型 -->
-    <div v-else-if="formStateAdd.standardType == 3">
+    <div v-else-if="formStateAdd.standardType === 3">
       <a-form-item
         label="数据长度"
         name="standardDataLength"
@@ -169,16 +170,19 @@
       // 新增
       standardAdd(values).then(res => {
         console.log(res);
-        onClose();
+        if (res == '') {
+          onClose();
+        }
       });
     } else {
       console.log('修改');
       // 修改
       console.log(formStateAdd);
-
       standardUpdateStandard(formStateAdd).then(res => {
-        console.log(res);
-        onClose();
+        console.log('修改11' + res);
+        if (res == '') {
+          onClose();
+        }
       });
     }
   };

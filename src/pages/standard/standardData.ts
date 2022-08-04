@@ -100,7 +100,7 @@ export const formStateAdd = reactive<FormStateAdd>({
   standardIsBlank: '', //是否可为空：0不可为空，1可为空
   standardSourceOrganization: '', //来源机构编码
   standardState: null, //标准状态  0：未发布，1：已发布，2：已停用
-  standardType: '', //数据类型（0：int，1：enum，2：float，3：String）
+  standardType: null, //数据类型（0：int，1：enum，2：float，3：String）
   standardValueMax: null, //取值范围-最大值
   standardValueMin: null, //取值范围-最小值
 });
