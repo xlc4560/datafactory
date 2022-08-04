@@ -35,11 +35,13 @@ declare module '@vue/runtime-core' {
     ATabPane: typeof import('ant-design-vue/es')['TabPane'];
     ATabs: typeof import('ant-design-vue/es')['Tabs'];
     ATextarea: typeof import('ant-design-vue/es')['Textarea'];
+    AUpload: typeof import('ant-design-vue/es')['Upload'];
     LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
     LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
     LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
     RouterLink: typeof import('vue-router')['RouterLink'];
     RouterView: typeof import('vue-router')['RouterView'];
+    Upload: typeof import('./src/components/upload.vue')['default'];
   }
 }
 

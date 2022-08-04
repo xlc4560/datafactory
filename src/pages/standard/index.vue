@@ -37,16 +37,20 @@
     <div class="tableactionGroup">
       <div class="tableactionGroup-item">
         <a-popconfirm title="是否批量发布数据标准？" ok-text="确认" cancel-text="取消" @confirm="batchRelease">
-          <a-button class="li" :disabled="btn2">批量发布</a-button>
+          <a-button class="li" :disabled="btnpublish">批量发布</a-button>
         </a-popconfirm>
         <a-popconfirm title="是否批量停用数据标准？" ok-text="确认" cancel-text="取消" @confirm="batchDisable">
-          <a-button class="li" :disabled="btn1">批量停用</a-button>
+          <a-button class="li" :disabled="btndisable">批量停用</a-button>
         </a-popconfirm>
       </div>
       <div class="tableactionGroup-item">
-        <a-button class="li">导入模板下载</a-button>
-        <a-button class="li">标准导入</a-button>
-        <a-button class="li" type="primary" @click="showDrawerAdd('new')">新增标准</a-button>
+        <!-- <a-button class="li">导入模板下载</a-button>
+        <a-button class="li">标准导入</a-button> -->
+        <!-- 上传下载组件 -->
+        <div class="li">
+          <upload></upload>
+          <a-button class="li-i" type="primary" @click="showDrawerAdd('new')">新增标准</a-button>
+        </div>
       </div>
     </div>
     <!-- 表格 -->
@@ -114,6 +118,8 @@
   import StandardDetails from './standardDetails.vue';
   import AddStandard from './AddStandard.vue';
   import { standardSearch, standardRevise, standardDel } from '@/api/standard/standard'; //列表,状态修改,删除
+  // 上传
+  import upload from '@/components/upload.vue';
   // standardSearch
 
   // 搜索
@@ -232,8 +238,8 @@
   };
 
   // 多选
-  const btn1 = ref(true);
-  const btn2 = ref(true);
+  const btndisable = ref(true);
+  const btnpublish = ref(true);
   let tableliID: string[] = reactive([]);
   const rowSelection = ref({
     checkStrictly: false,
@@ -255,17 +261,17 @@
         }
       });
       if (len1 == selectedRows.length && selectedRows.length > 0) {
-        btn2.value = false;
-        btn1.value = true;
+        btnpublish.value = false;
+        btndisable.value = true;
       } else if (len2 == selectedRows.length && selectedRows.length > 0) {
-        btn2.value = true;
-        btn1.value = false;
+        btnpublish.value = true;
+        btndisable.value = false;
       } else if (selectedRows.length == 0) {
-        btn2.value = true;
-        btn1.value = true;
+        btnpublish.value = true;
+        btndisable.value = true;
       } else {
-        btn2.value = true;
-        btn1.value = true;
+        btnpublish.value = true;
+        btndisable.value = true;
       }
     },
     // onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
@@ -375,7 +381,12 @@
 
       .tableactionGroup-item {
         .li {
+          display: flex;
           margin: 10px 10px;
+          // background-color: rgb(231, 109, 109);
+          .li-i {
+            margin: 0px 10px;
+          }
         }
       }
     }
