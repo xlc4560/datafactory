@@ -150,6 +150,8 @@
     apiSource: null,
     apiState: null,
     apiName: '',
+    code_state: null,
+    code_name: null,
   });
   // 用于重置表单
   const ResetFields = () => {

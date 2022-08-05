@@ -20,6 +20,9 @@ enum Api {
   API_CHECK = '/api/verify', // 信息校验
 }
 
+//获取码表列表数据
+export const codegetlist = (params: GETLIST) => api.post<GetAccountInfoModel>({ url: Api.CODE_LIST, data: params });
+
 export const accountInfoApi = () => api.get<resType.GetAccountInfoModel>({ url: Api.ACCOUNT_INFO });
 export const getTest = () => api.get<resType.GetStr>({ url: Api.GET_TEST });
 export const getWth = () => api.get<resType.GetWth>({ url: Api.GET_WTH });

@@ -3,6 +3,20 @@ export interface GetApiListArgs {
   apiSource?: string | null;
   apiState?: number | null;
   apiName?: string | null;
+  //码表
+  code_state: number | null;
+  code_name: string | null;
+
+  // 时间排序
+  pageSize?: number | null;
+  pageNum: number;
+  order: 0 | 1;
+}
+export interface GetApiListArgs {
+  //码表
+  code_state: number | null;
+  code_name: string | null;
+
   // 时间排序
   pageSize?: number | null;
   page: number;

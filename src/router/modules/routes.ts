@@ -26,8 +26,16 @@ export default {
           },
         },
         {
-          path: 'ApiRegister',
-          name: 'ApiRegister',
+          path: 'dbManagement',
+          name: 'dbManagement',
+          component: () => import('@/pages/dbManagement/dbManagement.vue'),
+          meta: {
+            title: '数据库管理',
+          },
+        },
+        {
+          path: 'ManualReg',
+          name: 'ManualReg',
           meta: {
             title: '人工注册',
           },

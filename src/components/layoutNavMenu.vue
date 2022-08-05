@@ -62,7 +62,7 @@
         },
         {
           subName: '数据库管理',
-          key: '/api2',
+          key: '/DataFactory/DataSourceManagement/dbManagement',
         },
       ],
     },
