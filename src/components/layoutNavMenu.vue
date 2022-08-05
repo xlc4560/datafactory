@@ -75,6 +75,10 @@
           subName: '码表管理',
           key: '/DataFactory/DataStandardsManagement/stopwatch',
         },
+        {
+          subName: '数据标准目录',
+          key: '/DataFactory/DataStandardsManagement/standard',
+        },
       ],
     },
   ]);

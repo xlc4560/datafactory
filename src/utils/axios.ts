@@ -73,11 +73,15 @@ export function get<T>({ url, params }: { url: string; params?: AxiosRequestConf
 export function post<T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }): Promise<T> {
   return instance.post(url, data, config);
 }
-// 箭头函数写法
+export function del<T>({ url, data }: { url: string; data?: any }): Promise<T> {
+  return instance.delete(url, data);
+}
 export const put: <T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }) => Promise<T> = ({ url, data, config }) => {
   return instance.put(url, data, config);
 };
 export const _delete: <T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }) => Promise<T> = ({ url, config }) => {
   return instance.delete(url, config);
 };
-export default { get, post, put, _delete };
+export default { get, post, put, del,  _delete  };
+
+
