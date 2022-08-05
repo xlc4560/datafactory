@@ -30,11 +30,23 @@
   import { UploadOutlined } from '@ant-design/icons-vue';
   import type { UploadProps } from 'ant-design-vue';
   import axios from 'axios';
+  let prop = defineProps({
+    uploadLink: {
+      type: String,
+      default: 'http://10.8.21.143:6002/code/downloadTemplate',
+    },
+    downloadLink: {
+      type: String,
+      default: 'http://10.8.21.143:6002/code/importCode',
+    },
+  });
   // 需要传入下载上传地址
   // 下载链接
-  const uploadLink = ref<string>('http://10.8.21.143:6002/code/downloadTemplate');
+  const uploadLink = ref<string>('');
+  uploadLink.value = prop.uploadLink || '';
   // 上传链接
-  const downloadLink = ref<string>('http://10.8.21.143:6002/code/importCode');
+  const downloadLink = ref<string>('');
+  downloadLink.value = prop.downloadLink || '';
 
   // 标准导入
   const handleOkin = (e: MouseEvent) => {
