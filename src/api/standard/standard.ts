@@ -35,7 +35,7 @@ export const standardRevise = (params: FunArgsType.StandardRevise) => {
 };
 //删除数据标准
 export const standardDel = (standardCode: string) => {
-  return api.del<any>({ url: Api.STANDARD_DEL + standardCode });
+  return api._delete<any>({ url: Api.STANDARD_DEL + standardCode });
 };
 // 码表已发布列表
 export const codeSWelectReleaseList = () => {

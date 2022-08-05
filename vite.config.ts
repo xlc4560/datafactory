@@ -62,6 +62,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '/standard': {
           // target: 'http://10.8.21.202:6002',
           target: 'http://10.8.21.143:6002',
+        },
         // 分类（宋杰龙）
         '/category': {
           target: 'http://124.223.17.68:6002',
