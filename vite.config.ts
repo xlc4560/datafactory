@@ -54,7 +54,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         // 数据标准目录
         '/standard': {
           // target: 'http://10.8.21.202:6002',
-          target: 'http://10.8.21.143:6002',
+          target: 'http://10.8.21.126:6002',
         },
         // 分类（宋杰龙）
         '/category': {
@@ -64,7 +64,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         },
         //数据库管理
         '/dataSource': {
-          target: 'http://10.8.21.220:6002',
+          target: 'http://10.8.21.126:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/database/, ''),
         },
