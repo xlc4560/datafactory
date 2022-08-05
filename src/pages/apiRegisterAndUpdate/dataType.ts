@@ -10,19 +10,34 @@ export interface columnsType {
   maxWidth?: string;
   ellipsis?: boolean;
 }
+export interface codeType {
+  [key: string]: any;
+  codeDescription?: string;
+  codeName?: string;
+  codeConfig?: {
+    codeId?: string;
+    codeConfigDescription?: string;
+    codeConfigName?: string;
+    codeConfigValue?: string;
+    isEdit?: boolean;
+  }[];
+}
+
 export interface inputParameterDataType {
   [key: string]: any;
-  parameterName: string;
+  parameterName?: string;
   parameterPosition?: number | null;
-  parameterType: number | null;
+  parameterType?: number | null;
   parameterRequire?: number | null;
   parameterDefault?: string;
   parameterDescription?: string;
-  id: string;
-  parameterPid: string;
-  isEdit: boolean;
+  id?: string;
+  parameterPid?: string;
+  isEdit?: boolean;
   parameterIdParentId?: string | null;
   children?: inputParameterDataType[];
+  codeId?: string | null;
+  code?: codeType;
 }
 export interface apiBasicType {
   apiType: string | null;
@@ -35,16 +50,6 @@ export interface apiBasicType {
   apiMethod: number | null;
   apiTimeout: number | null;
   apiState?: number;
-}
-export interface codeType {
-  [key: string]: any;
-  codeConfig: {
-    codeConfigDescription?: string;
-    codeConfigName: string;
-    codeConfigValue: string;
-  };
-  codeDescription?: string;
-  codeName: string;
 }
 export interface apiParameterType {
   parameterName: string;

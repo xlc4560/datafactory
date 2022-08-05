@@ -4,13 +4,13 @@
       <a-space size="small">
         <a-button type="primary" @click="showCodeModal('新增码表码值')">新增码表码值</a-button>
         <a-button type="primary" @click="createNewCodeValue">新增自定义码值</a-button>
-        <a-button type="primary" :disabled="TableData.length > 0" @click="showCodeModal('码表引用')">码表引用</a-button>
+        <a-button type="primary" :disabled="codeValueTableData.length > 0" @click="showCodeModal('码表引用')">码表引用</a-button>
       </a-space>
     </div>
 
     <a-card :bordered="false" class="codeValueCard">
-      <a-form ref="codeValueTableFormInstance" :model="TableData">
-        <a-table :columns="codeValueModalTableColumns" size="small" :data-source="TableData" :pagination="false">
+      <a-form ref="codeValueTableFormInstance" :model="currentParameter?.code?.codeConfig">
+        <a-table :columns="codeValueModalTableColumns" size="small" :data-source="currentParameter?.code?.codeConfig" :pagination="false">
           <template #bodyCell="{ column, record, index }">
             <template v-if="column.dataIndex === 'operation'">
               <a-button v-if="!record.isEdit" type="link" @click="editCodeValue(record)">编辑</a-button>
@@ -19,7 +19,7 @@
             </template>
             <template v-else>
               <template v-if="record.isEdit">
-                <a-form-item :name="[index, column.dataIndex]" has-feedback :rules="[{ required: ['codeName', 'codeValue'].includes(column.dataIndex), message: '请输入必填项' }]">
+                <a-form-item :name="[index, column.dataIndex]" has-feedback :rules="[{ required: ['codeConfigName', 'codeConfigValue'].includes(column.dataIndex), message: '请输入必填项' }]">
                   <a-input v-model:value="record[column.dataIndex]" placeholder="请输入" allow-clear />
                 </a-form-item>
               </template>
@@ -30,103 +30,104 @@
     </a-card>
 
     <div class="codeValueForm">
-      <a-form ref="codeValueFooterFormInstance" :model="codeValueFormData" :label-col="{ span: 3 }">
+      <a-form ref="codeValueFooterFormInstance" :model="currentParameter?.code" :label-col="{ span: 3 }">
         <a-form-item name="codeName" label="码表名称" :rules="[{ required: true, message: '请输入码表名称!' }]">
-          <a-input v-model:value="codeValueFormData.codeName" placeholder="请输入" />
+          <a-input v-model:value="currentParameter.code.codeName" placeholder="请输入" />
         </a-form-item>
         <a-form-item label="码表说明">
-          <a-textarea v-model:value="codeValueFormData.codeDescription" placeholder="请输入" />
+          <a-textarea v-model:value="currentParameter.code.codeDescription" placeholder="请输入" />
         </a-form-item>
       </a-form>
     </div>
   </a-modal>
-  <a-modal :visible="isCodeModalVisible" :title="codeModalTitle" style="top: 29vh" width="1000px" @cancel="closeCodeModal">
-    <a-form>
-      <a-form-item label="码表选择" :wrapper-col="{ span: 10 }" :rules="[{ required: true, message: '请选择!' }]">
-        <a-select show-search placeholder="请选择"> </a-select>
+  <a-modal :visible="isCodeModalVisible" :title="codeModalTitle" style="top: 29vh" width="1000px" @ok="codeModalOk" @cancel="closeCodeModal">
+    <a-form ref="codeValueModalForm" :model="selectedFormDataValue">
+      <a-form-item label="码表选择" name="selectedValue" :wrapper-col="{ span: 10 }" :rules="[{ required: true, message: '请选择!' }]">
+        <a-select
+          v-model:value="selectedFormDataValue.selectedValue"
+          show-search
+          :filter-option="filterOption"
+          :options="selectCodeOptions"
+          :field-names="{ label: 'codeName', value: 'codeId' }"
+          placeholder="请选择"
+          allow-clear
+          @dropdown-visible-change="selectChange"
+          @select="selectedHooks"
+        >
+        </a-select>
       </a-form-item>
     </a-form>
     <div style="overflow: auto">
-      <a-table size="small" :columns="codeModalTableColumns" :data-source="SimulationData" :pagination="false"> </a-table>
+      <a-table size="small" :row-selection="codeModalTableIsSelect" :row-key="rowKey" :columns="codeModalTableColumns" :data-source="codeValueModalTableData" :pagination="false"> </a-table>
     </div>
   </a-modal>
 </template>
 
 <script setup lang="ts">
   import { FormInstance, message } from 'ant-design-vue';
-  import { codeValueModalTableColumns, SimulationData, codeModalTableColumns } from './tableConfig';
+  // 自定义
+  import { getReleaseCodeList, getStopwatchDetails } from '@/api/stopwatch/stopwatch';
+  import type { tableDatatype, codeConfigType } from './dataType';
+  import { codeModalTableColumns, codeValueModalTableColumns } from './tableConfig';
   // pinia数据
   import { storeToRefs } from 'pinia';
   import useStore from '@/store';
   const { useApiRegisterAndUpdateStore } = useStore();
-  const { apiInfo } = storeToRefs(useApiRegisterAndUpdateStore);
-  // 接收来自父组件的值
+  const { currentParameter } = storeToRefs(useApiRegisterAndUpdateStore);
+  // 接收来自父组件的值  props值
   const props = defineProps({
     isShow: {
       type: Boolean,
       default: false,
     },
   });
-  // 接收父组件中给当前自定义的方法
+  // 接收父组件中给当前自定义的方法  emit事件
   const emits = defineEmits(['closeModal']);
-  // 点击确定按钮更改父组件中的数据
+  // 表格数据
+  const codeValueTableData = ref<tableDatatype[]>([]);
+  const codeValueModalTableData = ref<codeConfigType[] | undefined>([]);
+  // 获取表单实例
+  const codeValueTableFormInstance = ref<FormInstance>(); // 表格中的表单实例
+  const codeValueFooterFormInstance = ref<FormInstance>(); // 表格下方的表单实例
+  const codeValueModalForm = ref<FormInstance>(); // 弹窗中的表格实例
+  // 控制该组件中的弹窗是否显示
+  const isCodeModalVisible = ref<boolean>(false);
+  // 控制该组件中弹窗的title
+  const codeModalTitle = ref<string>('');
+  // 控制该组件中的表格是否可选,以及可选的回调是什么
+  const codeModalTableIsSelect = ref<null | { selectedRowKeys: any; onChange: (selectedRowKey: number[]) => void }>(null);
+  // 码表select框数据 （组件中的弹窗会使用到，用于渲染select的下拉框）
+  const selectCodeOptions = ref<{ codeId?: string; codeName?: string }[]>([]);
+  // 选中的数据 （组件中的弹窗会使用，记录下拉框选中的数据）
+  const selectedFormDataValue = reactive<{ selectedValue: string }>({ selectedValue: '' });
+  // 选中的数据（弹窗中选中表格字段的数据）
+  const selectedRowKeys = ref<number[]>([]);
+  // 点击确定按钮触发父组件中的closeModal方法
   const handleOk = async () => {
     try {
       await codeValueTableFormInstance.value?.validate();
+      await codeValueFooterFormInstance.value?.validate();
       // 关闭码值定义弹窗
       emits('closeModal');
     } catch (error) {
       message.warning('请填写完整', 1);
     }
   };
-  // 模拟数据
-  const TableData = ref<any>([
-    {
-      codeId: '1345',
-      codeName: 'xxxx',
-      codeValue: '13456',
-      codeDescription: 'dbfaaksjbfaj',
-      isEdit: false,
-    },
-    {
-      codeId: '4877',
-      codeName: 'xxxx',
-      codeValue: '13456',
-      codeDescription: 'dbfaaksjbfaj',
-      isEdit: true,
-    },
-  ]);
-  // 对话框中表单的绑定数据
-  const codeValueFormData = reactive<{ codeName: string; codeDescription?: string }>({
-    codeName: '',
-    codeDescription: '',
-  });
-  // 获取表单实例
-  const codeValueTableFormInstance = ref<FormInstance>(); // 表格中的表单实例
-  const codeValueFooterFormInstance = ref<FormInstance>(); // 表格下方的表单实例
-  const isCodeModalVisible = ref<boolean>(false);
-  const codeModalTitle = ref<string>('');
-  // 展示码表弹窗
-  const showCodeModal = (title: string) => {
-    isCodeModalVisible.value = true;
-    codeModalTitle.value = title;
-  };
   // 新增自定义码值
   const createNewCodeValue = () => {
-    TableData.value.push({
+    currentParameter.value?.code?.codeConfig?.push({
+      codeConfigDescription: '',
+      codeConfigName: '',
+      codeConfigValue: '',
       codeId: '',
-      codeName: '',
-      codeValue: '',
-      codeDescription: '',
       isEdit: true,
     });
-    console.log(TableData);
   };
   // 编辑回调
   const editCodeValue = async (record: any) => {
     try {
       await codeValueTableFormInstance.value?.validate();
-      TableData.value.forEach((i: any) => (i.isEdit = false));
+      codeValueTableData.value.forEach((i: any) => (i.isEdit = false));
       record.isEdit = true;
     } catch (error) {
       message.warning('请填写完整!', 1);
@@ -143,11 +144,64 @@
   };
   // 删除回调
   const deleteCodeValue = async (record: any) => {
-    TableData.value.splice(TableData.value.indexOf(record), 1);
+    currentParameter.value?.code?.codeConfig?.splice(currentParameter.value?.code?.codeConfig?.indexOf(record), 1);
+  };
+
+  // 展示码表弹窗
+  const showCodeModal = (title: string) => {
+    isCodeModalVisible.value = true;
+    codeModalTitle.value = title;
+    if (title === '新增码表码值') {
+      codeModalTableIsSelect.value = { selectedRowKeys, onChange: onSelectChange };
+    } else {
+      codeModalTableIsSelect.value = null;
+    }
   };
   // 关闭码表弹窗
   const closeCodeModal = () => {
     isCodeModalVisible.value = false;
+    codeValueModalTableData.value = [];
+    selectedFormDataValue.selectedValue = '';
+  };
+  // 自定义码表的key
+  const rowKey = (record: codeConfigType) => record.id;
+  // 获取码表select框数据（select框下拉回调）
+  const selectChange = async () => {
+    selectCodeOptions.value = await getReleaseCodeList();
+  };
+  // 搜索功能
+  const filterOption = (inputValue: string, option: { codeId: string; codeName: string }) => {
+    return option.codeName.includes(inputValue);
+  };
+  // select框选中回调
+  const selectedHooks = async (value: string, option: { codeId: string; codeName: string }) => {
+    codeValueModalTableData.value = (await getStopwatchDetails(option.codeId)).codeConfig;
+  };
+  // table的字段选中状态改变时触发
+  const onSelectChange = (selectedRowKey: number[]) => {
+    selectedRowKeys.value = selectedRowKey;
+  };
+  // 确定回调
+  const codeModalOk = async () => {
+    try {
+      await codeValueModalForm.value?.validate();
+      if (codeModalTitle.value === '新增码表码值') {
+        if (selectedRowKeys.value.length === 0) {
+          message.error('请选择编码!', 1);
+        } else {
+          selectedRowKeys.value.forEach((key: number) => {
+            codeValueModalTableData.value?.forEach((data: codeConfigType) => {
+              if (key === data.id) {
+                currentParameter.value?.code?.codeConfig?.push({ ...data, isEdit: false });
+              }
+            });
+          });
+          closeCodeModal();
+        }
+      } else {
+        currentParameter.value ? (currentParameter.value.codeId = selectedFormDataValue.selectedValue) : (currentParameter.value = {});
+      }
+    } catch (error) {}
   };
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="menuSider">
     <div class="dataSourceTitle">
-      <span>数据资产表目录</span>
+      <span>接口分类</span>
       <plus-circle-outlined @click="() => classifyUpdate(0, searchKeyword, '0')" />
     </div>
     <div class="searchInput">

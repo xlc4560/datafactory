@@ -137,7 +137,7 @@
   // 路由跳转到人工注册页
   const goApiRegister = () => {
     router.push({
-      path: '/DataFactory/DataSourceManagement/ManualReg',
+      path: '/DataFactory/DataSourceManagement/ApiRegister',
     });
   };
   // 表格row-key配置项
@@ -228,7 +228,7 @@
   // 接口编辑按钮
   const updateApi = async (id: string) => {
     router.push({
-      name: 'ManualRegEdit',
+      name: 'ApiUpdate',
       params: {
         id,
       },

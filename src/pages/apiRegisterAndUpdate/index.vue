@@ -42,7 +42,11 @@
   import { message } from 'ant-design-vue';
   const { useApiRegisterAndUpdateStore } = useStore();
   const { apiInfo } = storeToRefs(useApiRegisterAndUpdateStore);
-
+  const router = useRouter();
+  const route = useRoute();
+  if (route.params.id) {
+    console.log(route.params.id);
+  }
   const currentStep = ref<0 | 1 | 2>(0);
   // 下一步
   const goNextStep = async () => {
@@ -70,7 +74,13 @@
   const saveApi = async (apiState: number) => {
     try {
       // 表单验证
-      await basicInfoInstance.value?.basicform?.validate();
+      if (currentStep.value === 0) {
+        await basicInfoInstance.value?.basicform?.validate();
+      } else {
+        await parameterConfigInstance.value?.InputParameterInstance?.formRef?.validate();
+        await parameterConfigInstance.value?.RequestBodyInstance?.formRef?.validate();
+        await parameterConfigInstance.value?.ResponseBodyInstance?.formRef?.validate();
+      }
       // 开始存入数据库
       apiInfo.value.apiBasic.apiState = apiState;
       await apiDraft(apiInfo.value);

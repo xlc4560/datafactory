@@ -9,20 +9,25 @@ export const changeIsEdit = (data_: inputParameterDataType[], edit: boolean) => 
     }
   });
 };
-// 码值定义弹窗中table的配置
-export const codeValueModalTableColumns = [
+
+// 新增码表码值与码表引用弹窗表格配置(弹窗中弹窗的表格)
+export const codeModalTableColumns = [
   {
     title: '码值取值',
-    dataIndex: 'codeValue',
+    dataIndex: 'codeConfigValue',
   },
   {
     title: '码值名称',
-    dataIndex: 'codeName',
+    dataIndex: 'codeConfigName',
   },
   {
     title: '码值含义',
-    dataIndex: 'codeDescription',
+    dataIndex: 'codeConfigDescription',
   },
+];
+// 码值定义弹窗中table的配置
+export const codeValueModalTableColumns = [
+  ...codeModalTableColumns,
   {
     title: '操作',
     dataIndex: 'operation',
@@ -31,19 +36,3 @@ export const codeValueModalTableColumns = [
 ];
 // 模拟数据
 export const SimulationData = [];
-
-// 新增码表码值与码表引用弹窗表格配置
-export const codeModalTableColumns = [
-  {
-    title: '码值取值',
-    dataIndex: 'codeValue',
-  },
-  {
-    title: '码值名称',
-    dataIndex: 'codeName',
-  },
-  {
-    title: '码值含义',
-    dataIndex: 'codeDescription',
-  },
-];

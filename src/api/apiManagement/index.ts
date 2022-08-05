@@ -78,10 +78,6 @@ export const ApiCheck = (params: funType.ApiCheck) => {
     },
   });
 };
-
-// 测试接口（用于测试网络请求及代理配置是否成功）
-export const gettest = () => api.post({ url: Api.GET_TEST });
-
 // 新增接口2.0 宋杰龙版本
 export const apiDraft = (params: apiInfoType) => {
   const parameters: inputParameterDataType[] = [];
@@ -95,6 +91,8 @@ export const apiDraft = (params: apiInfoType) => {
   };
   arrayFlat(params.requestBody);
   arrayFlat(params.responseBody);
-  console.log(parameters.concat(params.inputParameters));
   return api.post<object>({ url: Api.REGISTER_API, data: { ...params.apiBasic, parameters: parameters.concat(params.inputParameters) } });
 };
+
+// 测试接口（用于测试网络请求及代理配置是否成功）
+export const gettest = () => api.post({ url: Api.GET_TEST });

@@ -28,7 +28,7 @@
               <a-button type="link" @click="formValidate(record, false)">保存</a-button>
               <a-button type="link" @click="dataCancel(record, false)">取消</a-button>
               <!-- 0: string, 1:Integer,2:number -->
-              <a-button v-if="[0, 1].includes(record.parameterType)" type="link" @click="showCodeValueModal">码值定义</a-button>
+              <a-button v-if="[0, 1].includes(record.parameterType)" type="link" @click="showCodeValueModal(record)">码值定义</a-button>
               <a-button v-else-if="[3, 4].includes(record.parameterType)" type="link" @click="createNewChildParameter(record, false)">添加下级</a-button>
             </template>
             <template v-else>
@@ -99,7 +99,7 @@
   import { storeToRefs } from 'pinia';
   import useStore from '@/store';
   const { useApiRegisterAndUpdateStore } = useStore();
-  const { apiInfo } = storeToRefs(useApiRegisterAndUpdateStore);
+  const { apiInfo, currentParameter } = storeToRefs(useApiRegisterAndUpdateStore);
   const props = defineProps({
     headerTitle: {
       type: String,
@@ -147,7 +147,7 @@
   watch(
     apiInfo.value[props.tableDataName],
     (value: inputParameterDataType[]) => {
-      console.log(value);
+      // console.log(value);
       dataFlat.value = [];
       generateList(value);
     },
@@ -214,10 +214,6 @@
       } else {
         formRef.value?.resetFields();
         record.isEdit = edit;
-        // if (record.parameterName === '') {
-        //   console.log(record);
-        //   deleteRecord(record, apiInfo.value[props.tableDataName]);
-        // }
       }
     }
   };
@@ -252,11 +248,15 @@
       message.warning('请正确填写字段!', 1);
     }
   };
-  // select框change事件
+  // select框change事件 用于验证是否
   const recordGlobal = ref<inputParameterDataType>();
   const selectChange = (record: inputParameterDataType) => {
     recordGlobal.value = record;
+    if ([3, 4].includes(record.parameterType as number)) {
+      record.parameterRequire = 1;
+    }
   };
+  // 自定义验证规则
   const checkChildren = async (_rule: Rule, value: number | string) => {
     if (typeof value === 'number') {
       if (recordGlobal.value?.children?.length && [0, 1, 2].includes(value)) {
@@ -268,8 +268,14 @@
   };
   // 控制弹窗是否显示
   const isShowModal = ref<boolean>(false);
-  const showCodeValueModal = () => {
+  const showCodeValueModal = (record: inputParameterDataType) => {
     isShowModal.value = true;
+    currentParameter.value = record;
+    if (!currentParameter.value.code) {
+      currentParameter.value.code = {};
+      currentParameter.value.code.codeConfig = [];
+      currentParameter.value.code.codeName = '';
+    }
   };
   const closeModal = () => {
     isShowModal.value = false;
