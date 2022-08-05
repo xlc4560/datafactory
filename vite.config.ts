@@ -35,17 +35,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // proxy: createProxy(VITE_PROXY),
       // 配置代理服务器
       proxy: {
-        '/weather': {
-          target: 'http://wthrcdn.etouch.cn',
+        // 接口管理（宋杰龙）
+        '/api': {
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/weather/, ''),
-        },
-        // 吴正东（接口管理）
-        '/dataApi/api': {
-          // target: 'http://10.8.22.173:8081',
-          target: 'http://10.8.21.143:6002',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/dataApi/, ''),
+          // rewrite: path => path.replace(/^\/code/, '/code'),
         },
         // 码表管理
         '/code': {
@@ -58,8 +52,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '/standard': {
           // target: 'http://10.8.21.202:6002',
           target: 'http://10.8.21.143:6002',
+        },
+        // 分类（宋杰龙）
+        '/category': {
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
-          // rewrite: path => path.replace(/^\/code/, '/code'),
         },
       },
     },

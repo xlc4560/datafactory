@@ -7,7 +7,7 @@ import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
   // baseURL: '',
-  timeout: 3000,
+  timeout: 6000,
 });
 // 请求拦截
 instance.interceptors.request.use(
@@ -32,9 +32,12 @@ instance.interceptors.response.use(
   response => {
     const { code, data, msg } = response.data as { code: number; data: any; msg: string };
     if (code === 100200) {
-      antdMessage.success(msg, 1);
+      if (msg !== '返回成功') {
+        antdMessage.success(msg, 1);
+      }
     } else {
       antdMessage.error(msg, 1);
+      return { code, data, msg };
     }
     // switch (code) {
     //   case 100200:
@@ -64,10 +67,10 @@ instance.interceptors.response.use(
   },
 );
 
-export function get<T>({ url, params }: { url: string; params?: object }): Promise<T> {
+export function get<T>({ url, params }: { url: string; params?: AxiosRequestConfig<any> }): Promise<T> {
   return instance.get(url, params);
 }
-export function post<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
+export function post<T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }): Promise<T> {
   return instance.post(url, data, config);
 }
 // 箭头函数写法

@@ -16,23 +16,37 @@ export interface GetWth {
 
 // 请求api接口列表的响应值类型
 export interface ApiList {
-  apiBasics: { id: number; apiName: string; apiSource: string; apiState: number; updateTime: string; pageSize: number; pageNum: number; apiDescription: string; apiType: string; totalNum: number }[];
-  totalNum: number;
+  records: {
+    id: number;
+    apiName: string;
+    apiSource: string;
+    apiState: number;
+    updateTime: string;
+    pageSize: number;
+    pageNum: number;
+    apiDescription: string;
+    apiType: string;
+    totalNum: number;
+    categoryName: string;
+  }[];
+  total: number;
 }
 export interface ApiDetails {
-  id: number;
-  apiName: string;
-  apiSource: string;
-  apiType: string;
-  apiProtocol: number; // 接口协议(0:http 1:https)
-  apiMethod: number; // 请求方式请求方式(0:get 1:post)
-  apiIpPort: string;
-  apiPath: string;
-  apiState: number;
-  apiResponse: string;
-  apiTimeout: number;
-  apiRequestBody?: string;
-  apiDescription?: string;
+  apiBasic: {
+    id: number;
+    apiName: string;
+    apiSource: string;
+    apiType: string;
+    apiProtocol: number; // 接口协议(0:http 1:https)
+    apiMethod: number; // 请求方式请求方式(0:get 1:post)
+    apiIpPort: string;
+    apiPath: string;
+    apiState: number;
+    apiResponse: string;
+    apiTimeout: number;
+    apiRequestBody?: string;
+    apiDescription?: string;
+  };
   apiParameter?: {
     parameterApiId: number;
     parameterName: string;
