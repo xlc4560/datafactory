@@ -58,7 +58,7 @@
         },
         {
           subName: '已发布接口',
-          key: '/api1',
+          key: '/DataFactory/DataSourceManagement/publishApi',
         },
         {
           subName: '数据库管理',

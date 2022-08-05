@@ -5,6 +5,7 @@ export const stopwatch_columns = [
     dataIndex: 'codeId',
     key: 'codeId',
     width: '10%',
+    minWidth: '100px',
   },
   {
     title: '码表名称',
@@ -12,18 +13,21 @@ export const stopwatch_columns = [
     key: 'codeName',
     ellipsis: true,
     width: '15%',
+    minWidth: '100px',
   },
   {
     title: '码表说明',
     dataIndex: 'codeDescription',
     key: 'codeDescription',
     ellipsis: true,
+    minWidth: '100px',
   },
   {
     title: '码表状态',
     key: 'codeState',
     dataIndex: 'codeState',
     width: '10%',
+    minWidth: '100px',
   },
   {
     title: '更新时间',
@@ -31,6 +35,7 @@ export const stopwatch_columns = [
     key: 'updateTime',
     sorter: true,
     width: '15%',
+    minWidth: '100px',
   },
   {
     title: '操作',
