@@ -126,7 +126,8 @@ export const inputParameterData = reactive<inputParameterDataType>({
   parameterRequire: null,
   parameterDefault: '',
   parameterDescription: '',
-  parameterId: nanoid_(),
+  id: nanoid_(),
+  parameterPid: '0',
   isEdit: true,
 });
 export const requestBodycolumns = [
@@ -205,8 +206,9 @@ export const requestBodyData = reactive<inputParameterDataType>({
   parameterRequire: null,
   parameterDefault: '',
   parameterDescription: '',
+  id: nanoid_(),
+  parameterPid: '0',
   isEdit: true,
-  parameterId: nanoid_(),
 });
 export const responsecolumns = [
   {
@@ -255,11 +257,12 @@ export const responsecolumns = [
 ];
 export const responseData = reactive<inputParameterDataType>({
   parameterName: '',
-  parameterPosition: null,
+  parameterPosition: 3,
   parameterType: null,
   parameterRequire: null,
   parameterDefault: '',
   parameterDescription: '',
+  id: nanoid_(),
+  parameterPid: '0',
   isEdit: true,
-  parameterId: nanoid_(),
 });

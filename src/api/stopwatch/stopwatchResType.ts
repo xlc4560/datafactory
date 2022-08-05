@@ -12,14 +12,15 @@ export interface StopwatchListRes {
   }[];
 }
 // 码表详情响应类型
+export interface codeConfigType {
+  id?: number;
+  codeId?: string;
+  codeConfigName: string;
+  codeConfigValue: string;
+  codeConfigDescription: string;
+}
 export interface StopwatchDetailsRes {
-  codeConfig?: {
-    id?: number;
-    codeId?: string;
-    codeConfigName: string;
-    codeConfigValue: string;
-    codeConfigDescription: string;
-  }[];
+  codeConfig?: codeConfigType[];
   codeId: string;
   codeName: string;
 }
