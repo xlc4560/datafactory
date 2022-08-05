@@ -38,7 +38,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '/weather': {
           target: 'http://wthrcdn.etouch.cn',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/weather/, ''),
+          // rewrite: path => path.replace(/^\/weather/, ''),
         },
         // 吴正东（接口管理）
         '/dataApi/api': {
@@ -50,7 +50,13 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '/code': {
           target: 'http://10.8.21.220:6002',
           changeOrigin: true,
-          // rewrite: path => path.replace(/^\/code/, '/code'),
+          rewrite: path => path.replace(/^\/code/, '/code'),
+        },
+        //数据库管理
+        '/dataSource': {
+          target: 'http://10.8.21.220:6002',
+          changeOrigin: true,
+          // rewrite: path => path.replace(/^\/database/, ''),
         },
       },
     },
