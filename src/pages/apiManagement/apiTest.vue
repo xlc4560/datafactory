@@ -71,7 +71,7 @@
     },
   });
   // 用于接收接口测试响应数据
-  const ApiDataRes = ref<any>();
+  const ApiDataRes = ref<any>({});
   // 接口测试抽屉
   const onClose = () => {
     emit('onClose', false);
@@ -104,19 +104,19 @@
       descriptions: [
         {
           label: '接口名称',
-          value: apiInfo.value?.apiName,
+          value: apiInfo.value?.apiBasic?.apiName,
         },
         {
           label: 'Request URL',
-          value: (apiInfo.value?.apiProtocol === 0 ? 'http://' : 'https://') + apiInfo.value?.apiIpPort + apiInfo.value?.apiPath,
+          value: (apiInfo.value?.apiBasic?.apiProtocol === 0 ? 'http://' : 'https://') + apiInfo.value?.apiBasic?.apiIpPort + apiInfo.value?.apiBasic?.apiPath,
         },
         {
           label: '请求方式',
-          value: apiInfo.value?.apiMethod === 0 ? 'get' : apiInfo.value?.apiMethod === 1 ? 'post' : '无数据',
+          value: apiInfo.value?.apiBasic?.apiMethod === 0 ? 'get' : apiInfo.value?.apiBasic?.apiMethod === 1 ? 'post' : '无数据',
         },
       ],
       apiParameter,
-      apiRequestBody: ref<string>(apiInfo.value?.apiRequestBody),
+      apiRequestBody: ref<string>(apiInfo.value?.apiBasic?.apiRequestBody),
     };
   });
 
@@ -126,15 +126,30 @@
       delete item.id;
       delete item.parameterApiId;
     });
-    ApiDataRes.value = await request.ApiTest({
-      apiPath: computedApiInfo.value.descriptions[1].value,
-      apiName: apiInfo.value?.apiName,
-      apiMethod: apiInfo.value?.apiMethod,
-      apiRequestBody: computedApiInfo.value.apiRequestBody.value,
-      apiParameter: computedApiInfo.value.apiParameter.value,
-    });
+    try {
+      ApiDataRes.value = await request.ApiTest({
+        apiIpPort: apiInfo.value?.apiBasic?.apiIpPort,
+        apiPath: apiInfo.value?.apiBasic?.apiPath,
+        apiName: apiInfo.value?.apiBasic?.apiName,
+        apiMethod: apiInfo.value?.apiBasic?.apiMethod,
+        apiRequestBody: computedApiInfo.value.apiRequestBody.value,
+        apiProtocol: apiInfo.value?.apiBasic?.apiProtocol,
+        apiParameterList: computedApiInfo.value.apiParameter.value,
+        apiTimeout: apiInfo.value?.apiBasic?.apiTimeout,
+      });
+    } catch (error) {
+      ApiDataRes.value = error;
+    }
 
-    ApiDataRes.value = JSON.parse(ApiDataRes.value);
+    if (typeof ApiDataRes.value == 'string') {
+      try {
+        ApiDataRes.value = JSON.parse(ApiDataRes.value);
+      } catch (e) {
+        ApiDataRes.value = e;
+        return false;
+      }
+    }
+    // ApiDataRes.value = JSON.parse(ApiDataRes.value);
   };
   const columns = [
     {

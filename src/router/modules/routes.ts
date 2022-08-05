@@ -39,15 +39,23 @@ export default {
           meta: {
             title: '人工注册',
           },
-          component: () => import('@/pages/apiManagement/ManualReg.vue'),
+          component: () => import('@/pages/apiRegisterAndUpdate/index.vue'),
         },
         {
-          path: 'ManualReg/:id',
-          name: 'ManualRegEdit',
+          path: 'ApiRegister/:id',
+          name: 'ApiUpdate',
           meta: {
             title: '编辑',
           },
-          component: () => import('@/pages/apiManagement/ManualReg.vue'),
+          component: () => import('@/pages/apiRegisterAndUpdate/index.vue'),
+        },
+        {
+          path: 'publishApi',
+          name: 'publishApi',
+          component: () => import('@/pages/apiRegisterAndUpdate/index.vue'),
+          meta: {
+            title: '发布接口',
+          },
         },
       ],
     },
@@ -66,6 +74,14 @@ export default {
           component: () => import('@/pages/stopwatch/index.vue'),
           meta: {
             title: '码表管理',
+          },
+        },
+        {
+          path: 'standard',
+          name: 'standard',
+          component: () => import('@/pages/standard/index.vue'),
+          meta: {
+            title: '数据标准目录',
           },
         },
       ],
