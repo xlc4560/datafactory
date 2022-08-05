@@ -29,7 +29,7 @@ export const GetApiList = (params: funType.GetApiListArgs, order: number | null 
   return api.post<resType.ApiList>({ url: Api.GET_API_LIST, data: params });
 };
 // 获取接口详情数据
-export const GetApiDetails = (id: string) => api.post<resType.ApiDetails>({ url: Api.GET_API_DETAILS + id });
+export const GetApiDetails = (id: string) => api.post<apiInfoType>({ url: Api.GET_API_DETAILS + id });
 // 接口状态修改
 export const UpdateApiState = ({ operation, idList }: { operation: string; idList: string[] }) => api.post<any>({ url: Api.API_STATE_UPDATE, data: { operation, idList } });
 
@@ -75,6 +75,7 @@ export const ApiCheck = (params: funType.ApiCheck) => {
       apiMethod: params.apiBasic.apiMethod,
       apiTimeout: params.apiBasic.apiTimeout,
       apiType: params.apiBasic.apiType,
+      id: params.apiBasic.id ? params.apiBasic.id : null,
     },
   });
 };

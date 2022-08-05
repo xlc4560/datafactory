@@ -8,8 +8,8 @@
   </div>
   <!-- 基本信息填写表单部分 -->
   <div class="backColor baiscInfoFather">
-    <basicInfoVue v-show="currentStep === 0" ref="basicInfoInstance" />
-    <parameterConfigVue v-show="currentStep === 1" ref="parameterConfigInstance" />
+    <basicInfoVue v-if="currentStep === 0" ref="basicInfoInstance" />
+    <parameterConfigVue v-if="currentStep === 1" ref="parameterConfigInstance" />
     <!-- <useSettingVue v-show="currentStep === 2" ref="useSettingInstance" /> -->
   </div>
   <!-- 数据提交、下一步 -->
@@ -32,11 +32,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ApiCheck, apiDraft } from '@/api/apiManagement';
+  import { ApiCheck, apiDraft, GetApiDetails } from '@/api/apiManagement';
   import basicInfoVue from './basicInfo.vue';
   import parameterConfigVue from './parameterConfig.vue';
   import { apiInfoType } from './dataType';
   import { storeToRefs } from 'pinia';
+  import { apiInfoDefault } from './basicInfoConfig';
   // 从pinia中引入集中管理的状态
   import useStore from '@/store';
   import { message } from 'ant-design-vue';
@@ -45,7 +46,15 @@
   const router = useRouter();
   const route = useRoute();
   if (route.params.id) {
-    console.log(route.params.id);
+    (async () => {
+      const res = await GetApiDetails(route.params.id as string);
+      apiInfo.value.apiBasic = res.apiBasic;
+      apiInfo.value.inputParameters = res.apiParameter ? res.apiParameter : [];
+      apiInfo.value.requestBody = res.requestBody ? res.requestBody : [];
+      apiInfo.value.responseBody = res.responseBody ? res.responseBody : [];
+    })();
+  } else {
+    apiInfo.value = apiInfoDefault;
   }
   const currentStep = ref<0 | 1 | 2>(0);
   // 下一步
@@ -84,6 +93,9 @@
       // 开始存入数据库
       apiInfo.value.apiBasic.apiState = apiState;
       await apiDraft(apiInfo.value);
+      router.push({
+        path: '/DataFactory/DataSourceManagement/ApiManagement',
+      });
     } catch (error) {
       message.warning('数据格式校验失败', 1);
     }

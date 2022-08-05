@@ -147,7 +147,7 @@
   watch(
     apiInfo.value[props.tableDataName],
     (value: inputParameterDataType[]) => {
-      // console.log(value);
+      console.log(apiInfo.value[props.tableDataName]);
       dataFlat.value = [];
       generateList(value);
     },
