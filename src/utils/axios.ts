@@ -2,6 +2,7 @@
  *   axios二次封装
  */
 import { message as antdMessage } from 'ant-design-vue';
+import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
@@ -69,11 +70,11 @@ export function get<T>({ url, params }: { url: string; params?: object }): Promi
 export function post<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
   return instance.post(url, data, config);
 }
-export function put<T>({ url, data, config }: { url: string; data?: any; config?: object }): Promise<T> {
+// 箭头函数写法
+export const put: <T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }) => Promise<T> = ({ url, data, config }) => {
   return instance.put(url, data, config);
-}
-export function del<T>({ url, data }: { url: string; data?: any }): Promise<T> {
-  return instance.delete(url, data);
-}
-
-export default { get, post, put, del };
+};
+export const _delete: <T>({ url, data, config }: { url: string; data?: any; config?: AxiosRequestConfig<any> }) => Promise<T> = ({ url, config }) => {
+  return instance.delete(url, config);
+};
+export default { get, post, put, _delete };
