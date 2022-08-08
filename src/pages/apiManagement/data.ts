@@ -61,6 +61,11 @@ export const apiStateOptions: { value: number; lable: string }[] = [
   { value: 2, lable: '未发布' },
   { value: 3, lable: '已发布' },
 ];
+export const codeStateOptions: { value: number; lable: string }[] = [
+  { value: 3, lable: '已停用' },
+  { value: 1, lable: '未发布' },
+  { value: 2, lable: '已发布' },
+];
 // select框下拉数据
 // 接口来源
 export const apiResourceOptions: ApiType.apiSource[] = [{ value: '数据服务' }, { value: '指标管理' }, { value: '决策引擎' }, { value: '数据工厂' }];
@@ -107,5 +112,23 @@ export const apiDetails_columns = [
     title: '说明',
     dataindex: 'parameterDescription',
     key: 'parameterDescription',
+  },
+];
+// 码表 表格配置项
+export const codeDetails_columns = [
+  {
+    title: '码表取值',
+    dataIndex: 'code_config_value',
+    key: 'code_config_value',
+  },
+  {
+    title: '码表名称',
+    dataIndex: 'code_config_name',
+    key: 'code_config_name',
+  },
+  {
+    title: '码表含义',
+    dataIndex: 'code_config_description',
+    key: 'code_config_description',
   },
 ];

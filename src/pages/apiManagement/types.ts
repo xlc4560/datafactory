@@ -3,6 +3,10 @@ interface FormState {
   apiSource: string | null;
   apiState: number | null;
   apiName: string | null;
+
+  //码表
+  code_state: number | null;
+  code_name: string | null;
 }
 type APIParams = {
   results: number;
@@ -49,5 +53,12 @@ interface dataSource {
   apiSource: string;
   apiState: number;
   updateTime: string;
+
+  //码表
+  code_id: string;
+  code_name: string;
+  code_description: string;
+  code_state: number;
+  update_time: string;
 }
 export type { FormState, APIParams, APIResult, Key, apiSource, dataSource };

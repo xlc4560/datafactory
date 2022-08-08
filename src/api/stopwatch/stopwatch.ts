@@ -11,7 +11,7 @@ enum Api {
   GET_WTH = '/weather/weather_mini?city=%E9%87%8D%E5%BA%86', // 获取天气数据(仅测试)
 
   // 开发接口
-  GET_STOPWATCH_LIST = '/code/list/', // 获取码表列表数据
+  GET_STOPWATCH_LIST = '/code/getList', // 获取码表列表数据
   ADD_STOPWATCH = '/code/add', // 新增码表
   EDIT_STOPWATCH = '/code/edit', // 编辑码表
   DELETE_STOPWATCH = '/code/delete/', // 删除码表
@@ -22,11 +22,13 @@ enum Api {
 // 检索列表回调
 export const getStopwatchList = (params: funArgsType.GetStopwatchList) => {
   const data = {
+    page: params.page,
+    size: params.size,
     codeState: params.codeState,
     codeName: params.codeName,
-    orderBy: params.orderBy,
+    updateTimeOrder: params.orderBy,
   };
-  return api.post<resType.StopwatchListRes>({ url: `${Api.GET_STOPWATCH_LIST}${params.page}/${params.size}`, data });
+  return api.post<resType.StopwatchListRes>({ url: Api.GET_STOPWATCH_LIST, data });
 };
 
 // 新增码表

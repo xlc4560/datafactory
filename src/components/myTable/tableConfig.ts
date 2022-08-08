@@ -36,3 +36,6 @@ export const codeValueModalTableColumns = [
 ];
 // 模拟数据
 export const SimulationData = [];
+
+// 绑定码表字段弹窗中的表格
+export const codeBindTableColumns = [...codeModalTableColumns];
