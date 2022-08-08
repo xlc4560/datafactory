@@ -32,7 +32,7 @@ export const GetApiList = (params: funType.GetApiListArgs, order: number | null 
   return api.post<resType.ApiList>({ url: Api.GET_API_LIST, data: params });
 };
 // 获取接口详情数据
-export const GetApiDetails = (id: string) => api.post<resType.ApiDetails>({ url: Api.GET_API_DETAILS + id });
+export const GetApiDetails = (id: string) => api.post<apiInfoType>({ url: Api.GET_API_DETAILS + id });
 // 接口状态修改
 export const UpdateApiState = ({ operation, idList }: { operation: string; idList: string[] }) => api.post<any>({ url: Api.API_STATE_UPDATE, data: { operation, idList } });
 
@@ -78,6 +78,7 @@ export const ApiCheck = (params: funType.ApiCheck) => {
       apiMethod: params.apiBasic.apiMethod,
       apiTimeout: params.apiBasic.apiTimeout,
       apiType: params.apiBasic.apiType,
+      id: params.apiBasic.id ? params.apiBasic.id : null,
     },
   });
 };
@@ -96,6 +97,20 @@ export const apiDraft = (params: apiInfoType) => {
   arrayFlat(params.responseBody);
   return api.post<object>({ url: Api.REGISTER_API, data: { ...params.apiBasic, parameters: parameters.concat(params.inputParameters) } });
 };
-
+// 编辑接口 2.0 宋杰龙版本
+export const apiEdit = (params: apiInfoType) => {
+  const parameters: inputParameterDataType[] = [];
+  const arrayFlat = (data: inputParameterDataType[]) => {
+    data.forEach((item: inputParameterDataType) => {
+      parameters.push(item);
+      if (item.children?.length) {
+        arrayFlat(item.children);
+      }
+    });
+  };
+  arrayFlat(params.requestBody);
+  arrayFlat(params.responseBody);
+  return api.post<object>({ url: Api.UPDATE_API, data: { ...params.apiBasic, parameters: parameters.concat(params.inputParameters) } });
+};
 // 测试接口（用于测试网络请求及代理配置是否成功）
 export const gettest = () => api.post({ url: Api.GET_TEST });

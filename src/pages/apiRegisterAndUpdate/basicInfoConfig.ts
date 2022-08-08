@@ -1,4 +1,5 @@
 import type { Rule } from 'ant-design-vue/es/form';
+import { apiInfoType } from './dataType';
 export const rules: Record<string, Rule[]> = {
   apiType: [{ required: true, message: '接口分类不能为空!' }],
   apiName: [{ required: true, message: '接口名称不能为空!' }],
@@ -29,4 +30,20 @@ export const rules: Record<string, Rule[]> = {
     },
     { type: 'number', min: 0, max: 10, message: '超出规定范围！' },
   ],
+};
+export const apiInfoDefault: apiInfoType = {
+  apiBasic: {
+    apiType: '',
+    apiName: '',
+    apiSource: '',
+    apiDescription: '',
+    apiProtocol: null,
+    apiIpPort: '',
+    apiPath: '',
+    apiMethod: null,
+    apiTimeout: null,
+  },
+  inputParameters: [],
+  requestBody: [],
+  responseBody: [],
 };

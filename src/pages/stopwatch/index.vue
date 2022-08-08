@@ -2,7 +2,7 @@
   <!-- 数据筛选组件 -->
   <StopwatchDataFilterVue @get-filter-data="getFilterData" />
   <!-- 列表部分 -->
-  <StopwatchTableList :show-modal="showModal" :stopwatch-filters="stopwatchFilters" @open-modal="showModal" @open-drawer="showDrawer" />
+  <StopwatchTableList :stopwatch-filters="stopwatchFilters" @open-modal="showModal" @open-drawer="showDrawer" />
   <!-- 详情弹窗 -->
   <a-modal v-model:visible="visible" width="800px" :title="stopwatchData.codeName" @ok="handleOk">
     <StopwatchDetails :stopwatch-data="stopwatchData" />

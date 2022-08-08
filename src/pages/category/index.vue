@@ -8,7 +8,7 @@
       <a-input v-model:value="searchKeyword" placeholder="请输入关键字" />
     </div>
     <a-tree v-model:expandedKeys="expandedKeys" v-model:selectedKeys="selectedKeys" :tree-data="treeData" :field-names="fieldNames" :auto-expand-parent="autoExpandParent" @expand="onExpand">
-      <template #title="{ name, categoryCode, children, parentId }">
+      <template #title="{ name, categoryCode }">
         <div class="iconWarp">
           <span v-if="name.indexOf(searchKeyword) > -1" class="titleName">
             {{ name.substr(0, name.indexOf(searchKeyword)) }}
@@ -19,9 +19,9 @@
           <a-popover>
             <template #content>
               <ul class="menuSiderCRUD_style">
-                <li @click="() => classifyUpdate(0, name, categoryCode, children, parentId)">新增</li>
-                <li @click="() => classifyUpdate(1, name, categoryCode, children, parentId)">编辑</li>
-                <li @click="() => classifyUpdate(2, name, categoryCode, children, parentId)">删除</li>
+                <li @click="() => classifyUpdate(0, name, categoryCode)">新增</li>
+                <li @click="() => classifyUpdate(1, name, categoryCode)">编辑</li>
+                <li @click="() => classifyUpdate(2, name, categoryCode)">删除</li>
               </ul>
             </template>
             <more-outlined class="icon" />
@@ -80,14 +80,14 @@
   const autoExpandParent = ref<boolean>(true);
   // 生成dataList的逻辑（递归调用）
   const generateList = (data: TreeDataType[]) => {
-    for (let i = 0; i < data.length; i++) {
-      const node = data[i];
+    data.forEach(item => {
+      const node = item;
       const categoryCode = node.categoryCode;
       dataList.push({ key: categoryCode, title: node.name });
       if (node.children) {
         generateList(node.children);
       }
-    }
+    });
   };
   // 展开/收起节点时触发（感觉没啥用）
   const onExpand = (keys: string[]) => {
@@ -119,10 +119,9 @@
   const title = ref<string>('');
   const parentCode = ref<string>('');
   const operationType = ref<number | null>(null);
-  const classifyUpdate = (type: number, categoryName: string, categoryCode?: string, ...other: any) => {
+  const classifyUpdate = (type: number, categoryName: string, categoryCode?: string) => {
     operationType.value = type;
     visible.value = true;
-    // console.log(categoryName, categoryCode, other);
     // 0：新增，1：编辑，2：删除
     switch (type) {
       case 0:
@@ -307,7 +306,9 @@
     }
   }
 
-  .ant-popover-inner-content {
-    padding: 5px 0;
+  .ant-popover {
+    .ant-popover-inner-content {
+      padding: 5px 0;
+    }
   }
 </style>
