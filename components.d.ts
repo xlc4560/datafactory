@@ -36,6 +36,15 @@ declare module '@vue/runtime-core' {
     ATabs: typeof import('ant-design-vue/es')['Tabs'];
     ATag: typeof import('ant-design-vue/es')['Tag'];
     ATextarea: typeof import('ant-design-vue/es')['Textarea'];
+    ATooltip: typeof import('ant-design-vue/es')['Tooltip'];
+    ATree: typeof import('ant-design-vue/es')['Tree'];
+    ATreeSelect: typeof import('ant-design-vue/es')['TreeSelect'];
+    AUpload: typeof import('ant-design-vue/es')['Upload'];
+    LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
+    LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
+    LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
+    MyTable: typeof import('./src/components/myTable.vue')['default'];
+    DefineCodeValue: typeof import('./src/components/myTable/defineCodeValue.vue')['default'];
     LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
     LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
     LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];

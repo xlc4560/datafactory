@@ -34,12 +34,12 @@ export const options = ref<SelectProps['options']>([
 
 // 表格
 export const columns: TableColumnsType = [
-  { title: '标准编号', width: 250, dataIndex: 'standardCode', key: 'name', fixed: 'left' },
-  { title: '中文名称', width: 250, dataIndex: 'standardCnName', key: 'name', fixed: 'left' },
-  { title: '英文名称', width: 250, dataIndex: 'standardEnName', key: 'age', fixed: 'left' },
+  { title: '标准编号', width: 150, dataIndex: 'standardCode', key: 'name', fixed: 'left' },
+  { title: '中文名称', width: 150, dataIndex: 'standardCnName', key: 'name', fixed: 'left' },
+  { title: '英文名称', width: 150, dataIndex: 'standardEnName', key: 'age', fixed: 'left' },
   { title: '数据类型', dataIndex: 'standardType', key: '1', width: 150 },
   { title: '标准状态', dataIndex: 'standardState', key: '2', width: 150 },
-  { title: '更新时间', dataIndex: 'updateTime', key: '3', width: 150, sorter: true },
+  { title: '更新时间', dataIndex: 'updateTime', key: '3', width: 200, sorter: true },
   {
     title: '操作',
     key: 'operation',

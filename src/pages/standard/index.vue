@@ -32,7 +32,7 @@
     </a-form>
   </div>
   <!--  数据列表部分-->
-  <div class="backColor tableWarp" style="margin: 10px 0">
+  <div class="backColor tableWarp" style="margin: 10px 0px">
     <!-- 按钮操作组 -->
     <div class="tableactionGroup">
       <div class="tableactionGroup-item">
@@ -54,7 +54,7 @@
       </div>
     </div>
     <!-- 表格 -->
-    <a-table :columns="columns" :data-source="data" :scroll="{ x: 1500, y: 300 }" :row-selection="rowSelection" :pagination="false" @change="sorterChange">
+    <a-table :columns="columns" :data-source="data" :row-selection="rowSelection" :pagination="false" @change="sorterChange">
       <template #bodyCell="{ column, text, record }">
         <template v-if="column.dataIndex === 'standardCode'">
           <a @click="showModalDetails(record)">{{ text }}</a>
@@ -367,6 +367,7 @@
   }
 
   .tableWarp {
+    padding: 0px 30px;
     width: 100%;
     min-height: 70vh;
 
