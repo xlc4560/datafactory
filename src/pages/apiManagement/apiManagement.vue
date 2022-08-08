@@ -73,7 +73,7 @@
     </div>
 
     <!-- 接口详情弹窗 -->
-    <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 20px" class="aModal">
+    <a-modal v-model:visible="modalVisible" width="1200px" :closable="false" style="top: 10vh" class="aModal">
       <template #footer>
         <a-button key="back" @click="handleCancel">返回</a-button>
       </template>

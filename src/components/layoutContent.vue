@@ -20,18 +20,14 @@
     // match.splice(0, 1);
     return match;
   });
-  // console.log(useRoute().matched);
 </script>
 
 <style scoped lang="less">
   .content {
-    // min-height: 94vh;
-    // height: 100vh;
     .main {
       display: flex;
       flex-direction: column;
       margin: 2vh;
-      // background-color: antiquewhite;
       min-height: calc(100vh - 90px);
     }
 

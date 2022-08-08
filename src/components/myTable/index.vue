@@ -72,7 +72,8 @@
     </a-form>
   </div>
   <!-- 新增弹窗 -->
-  <defineCodeValueVue :is-show="isShowModal" @close-modal="closeModal" />
+  <defineCodeValueVue v-if="!currentParameter?.codeId" :is-show="isShowModal" @close-modal="closeModal" />
+  <codeBindVue v-else :is-show="isShowModal" :is-render-unbind-btn="isRenderUnbindBtn" @close-modal="closeModal" />
   <!-- JSON数据导入弹窗 -->
   <a-modal v-model:visible="JSONDataModalVisible" title="JSON数据导入" width="1000px" style="top: 22vh" @ok="JSONDataHandleOk">
     <a-form layout="vertical" :model="JsonData">
@@ -95,11 +96,13 @@
   import { TypeEnum, RequireEnum } from '@/pages/apiRegisterAndUpdate/dataEnum';
   import { changeIsEdit } from './tableConfig';
   import defineCodeValueVue from './defineCodeValue.vue';
+  import codeBindVue from './codeBind.vue';
   // pinia数据
   import { storeToRefs } from 'pinia';
   import useStore from '@/store';
   const { useApiRegisterAndUpdateStore } = useStore();
   const { apiInfo, currentParameter } = storeToRefs(useApiRegisterAndUpdateStore);
+  const isRenderUnbindBtn = ref<boolean>(false);
   const props = defineProps({
     headerTitle: {
       type: String,
@@ -147,7 +150,6 @@
   watch(
     apiInfo.value[props.tableDataName],
     (value: inputParameterDataType[]) => {
-      console.log(apiInfo.value[props.tableDataName]);
       dataFlat.value = [];
       generateList(value);
     },
@@ -269,8 +271,9 @@
   // 控制弹窗是否显示
   const isShowModal = ref<boolean>(false);
   const showCodeValueModal = (record: inputParameterDataType) => {
-    isShowModal.value = true;
+    isRenderUnbindBtn.value = true;
     currentParameter.value = record;
+    isShowModal.value = true;
     if (!currentParameter.value.code) {
       currentParameter.value.code = {};
       currentParameter.value.code.codeConfig = [];

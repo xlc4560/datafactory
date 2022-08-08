@@ -16,7 +16,7 @@
   <div class="footer_v9rLv">
     <a-space :size="12" style="float: right">
       <!-- @confirm="" -->
-      <a-popconfirm title="是否取消此次接口编辑?" ok-text="是" cancel-text="否">
+      <a-popconfirm style="padding: 12px 16px" title="是否取消此次接口编辑?" ok-text="是" cancel-text="否" @confirm="cancel">
         <a-button class="btn">取 消</a-button>
       </a-popconfirm>
       <a-popconfirm title="是否保存为未发布并退出?" ok-text="是" cancel-text="否" @confirm="saveApi(2)">
@@ -32,10 +32,10 @@
 </template>
 
 <script setup lang="ts">
-  import { ApiCheck, apiDraft, GetApiDetails } from '@/api/apiManagement';
+  import { cloneDeep } from 'lodash-es';
+  import { ApiCheck, apiDraft, GetApiDetails, apiEdit } from '@/api/apiManagement';
   import basicInfoVue from './basicInfo.vue';
   import parameterConfigVue from './parameterConfig.vue';
-  import { apiInfoType } from './dataType';
   import { storeToRefs } from 'pinia';
   import { apiInfoDefault } from './basicInfoConfig';
   // 从pinia中引入集中管理的状态
@@ -54,8 +54,12 @@
       apiInfo.value.responseBody = res.responseBody ? res.responseBody : [];
     })();
   } else {
-    apiInfo.value = apiInfoDefault;
+    apiInfo.value.apiBasic = cloneDeep(apiInfoDefault.apiBasic);
+    apiInfo.value.inputParameters = cloneDeep(apiInfoDefault.inputParameters);
+    apiInfo.value.requestBody = cloneDeep(apiInfoDefault.requestBody);
+    apiInfo.value.responseBody = cloneDeep(apiInfoDefault.responseBody);
   }
+
   const currentStep = ref<0 | 1 | 2>(0);
   // 下一步
   const goNextStep = async () => {
@@ -70,10 +74,6 @@
   // 上一步
   const goBackStep = () => {
     currentStep.value--;
-  };
-  // 获取Apibasic数据的回调
-  const getApibasicInfo = (data: apiInfoType['apiBasic']) => {
-    apiInfo.value.apiBasic = data;
   };
   // 获取basicInfoVue组件的实例 用于触发表单验证
   const basicInfoInstance = ref<InstanceType<typeof basicInfoVue>>();
@@ -90,15 +90,28 @@
         await parameterConfigInstance.value?.RequestBodyInstance?.formRef?.validate();
         await parameterConfigInstance.value?.ResponseBodyInstance?.formRef?.validate();
       }
-      // 开始存入数据库
       apiInfo.value.apiBasic.apiState = apiState;
-      await apiDraft(apiInfo.value);
+      // 开始存入数据库
+      if (route.params.id) {
+        // 编辑
+        await apiEdit(apiInfo.value);
+      } else {
+        // 注册
+        await apiDraft(apiInfo.value);
+      }
+
       router.push({
         path: '/DataFactory/DataSourceManagement/ApiManagement',
       });
     } catch (error) {
       message.warning('数据格式校验失败', 1);
     }
+  };
+  // 取消更改
+  const cancel = () => {
+    router.push({
+      path: '/DataFactory/DataSourceManagement/ApiManagement',
+    });
   };
 </script>
 
@@ -131,8 +144,6 @@
     box-shadow: 0 -5px 30px 5px rgb(219, 219, 219);
 
     .btn {
-      // position: absolute;
-      // margin-right: 20px;
       right: 20px;
     }
   }
