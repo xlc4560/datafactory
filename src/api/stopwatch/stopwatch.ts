@@ -17,6 +17,7 @@ enum Api {
   DELETE_STOPWATCH = '/code/delete/', // 删除码表
   GET_STOPWATCH_DETAILS = '/code/detail/', // 查看码表详情
   UPDATE_STOPWATCH_STATE = '/code/stateUpdate', // 码表状态修改
+  GET_RELEASE_LIST = '/code/selectReleaseList',
 }
 // 检索列表回调
 export const getStopwatchList = (params: funArgsType.GetStopwatchList) => {
@@ -53,4 +54,9 @@ export const getStopwatchDetails = (codeId: string) => {
 // 码表状态修改
 export const updateStopwatchState = (params: funArgsType.UpdateStopwatchState) => {
   return api.post<any>({ url: Api.UPDATE_STOPWATCH_STATE, data: params });
+};
+
+// 获取码表已发布列表
+export const getReleaseCodeList = () => {
+  return api.get<{ codeId: string; codeName: string }[]>({ url: Api.GET_RELEASE_LIST });
 };

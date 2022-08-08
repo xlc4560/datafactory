@@ -26,20 +26,20 @@ export default {
           },
         },
         {
-          path: 'ManualReg',
-          name: 'ManualReg',
+          path: 'ApiRegister',
+          name: 'ApiRegister',
           meta: {
             title: '人工注册',
           },
-          component: () => import('@/pages/apiManagement/ManualReg.vue'),
+          component: () => import('@/pages/apiRegisterAndUpdate/index.vue'),
         },
         {
-          path: 'ManualReg/:id',
-          name: 'ManualRegEdit',
+          path: 'ApiRegister/:id',
+          name: 'ApiUpdate',
           meta: {
             title: '编辑',
           },
-          component: () => import('@/pages/apiManagement/ManualReg.vue'),
+          component: () => import('@/pages/apiRegisterAndUpdate/index.vue'),
         },
         {
           path: 'publishApi',
