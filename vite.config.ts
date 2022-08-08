@@ -63,6 +63,13 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '/category': {
           target: 'http://124.223.17.68:6002',
           changeOrigin: true,
+          rewrite: path => path.replace(/^\/code/, '/code'),
+        },
+        //数据库管理
+        '/dataSource': {
+          target: 'http://10.8.21.126:6002',
+          changeOrigin: true,
+          // rewrite: path => path.replace(/^\/database/, ''),
         },
       },
     },
