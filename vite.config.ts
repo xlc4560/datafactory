@@ -38,22 +38,24 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         // 接口管理（宋杰龙）
         '/api': {
           // target: 'http://192.168.1.100:6002',
-          target: 'http://10.8.21.126:6002',
-          // target: 'http://124.223.17.68:6002',
+          // target: 'http://10.8.21.126:6002',
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
         // 码表管理
         '/code': {
           // target: 'http://10.8.21.220:6002',
-          target: 'http://10.8.21.143:6002',
+          // target: 'http://10.8.21.143:6002',
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
         // 数据标准目录
         '/standard': {
           // target: 'http://10.8.21.202:6002',
-          target: 'http://10.8.21.143:6002',
+          // target: 'http://10.8.21.143:6002',
+          target: 'http://124.223.17.68:6002',
         },
         // 分类（宋杰龙）
         '/category': {

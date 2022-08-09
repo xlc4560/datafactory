@@ -79,6 +79,10 @@
           subName: '数据标准目录',
           key: '/DataFactory/DataStandardsManagement/standard',
         },
+        {
+          subName: '数据资产目录',
+          key: '/DataFactory/DataStandardsManagement/dataAssetCatalog',
+        },
       ],
     },
   ]);

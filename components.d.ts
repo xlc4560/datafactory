@@ -6,6 +6,7 @@ import '@vue/runtime-core';
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AAvatar: typeof import('ant-design-vue/es')['Avatar'];
+    ABadge: typeof import('ant-design-vue/es')['Badge'];
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb'];
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem'];
     AButton: typeof import('ant-design-vue/es')['Button'];
@@ -27,7 +28,7 @@ declare module '@vue/runtime-core' {
     AMenu: typeof import('ant-design-vue/es')['Menu'];
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem'];
     AModal: typeof import('ant-design-vue/es')['Modal'];
-    APageHeader: typeof import('ant-design-vue/es')['PageHeader'];
+    APagination: typeof import('ant-design-vue/es')['Pagination'];
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm'];
     APopover: typeof import('ant-design-vue/es')['Popover'];
     ARow: typeof import('ant-design-vue/es')['Row'];
@@ -45,10 +46,6 @@ declare module '@vue/runtime-core' {
     ATree: typeof import('ant-design-vue/es')['Tree'];
     ATreeSelect: typeof import('ant-design-vue/es')['TreeSelect'];
     AUpload: typeof import('ant-design-vue/es')['Upload'];
-    LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
-    LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
-    LayoutNavMenu: typeof import('./src/components/layoutNavMenu.vue')['default'];
-    MyTable: typeof import('./src/components/myTable.vue')['default'];
     DefineCodeValue: typeof import('./src/components/myTable/defineCodeValue.vue')['default'];
     LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
     LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
@@ -56,6 +53,7 @@ declare module '@vue/runtime-core' {
     MyTable: typeof import('./src/components/myTable/index.vue')['default'];
     RouterLink: typeof import('vue-router')['RouterLink'];
     RouterView: typeof import('vue-router')['RouterView'];
+    Upload: typeof import('./src/components/upload.vue')['default'];
   }
 }
 
