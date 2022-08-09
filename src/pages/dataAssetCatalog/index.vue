@@ -81,11 +81,11 @@
     </div>
   </div>
   <!-- 详情部分 -->
-  <a-drawer :title="title" :width="1400" :destroy-on-close="true" :visible="visibleDetails" @close="onClose">
+  <a-drawer :title="title" :width="1600" :destroy-on-close="true" :visible="visibleDetails" @close="onClose">
     <assetdetails></assetdetails>
   </a-drawer>
   <!-- 新增、编辑 -->
-  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1400" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
+  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1600" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
     <!-- <AddStandard :codeid="codeid" @visible="svisible2"></AddStandard> -->
     <addasset></addasset>
   </a-drawer>
