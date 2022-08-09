@@ -1,5 +1,5 @@
 <template>
-  <div class="apiDetails scroll_apiDetails">
+  <div class="apiDetails_YDHK scroll_apiDetails">
     <h1><strong>接口详情</strong></h1>
     <a-card :title="'接口名称:     ' + props.records.apiBasic.apiName" size="small">
       <a-descriptions>
@@ -10,7 +10,7 @@
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="请求参数">
           <a-card size="small">
-            <a-table :columns="apiDetails_columns" :data-source="apiDeatils.apiParameter" :pagination="false"> </a-table>
+            <a-table size="small" :columns="apiDetails_columns" :data-source="apiDeatils.apiParameter" :pagination="false"> </a-table>
           </a-card>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求body" force-render>
@@ -18,13 +18,18 @@
             <JsonViewer class="scroll_apiDetails" :value="apiDeatils.apiRequestBody" :expand-depth="1" boxed copyable sort theme="light" />
           </a-card>
         </a-tab-pane>
+        <a-tab-pane key="3" tab="返回示例" force-render>
+          <a-card size="small" class="scroll_apiDetails">
+            <JsonViewer class="scroll_apiDetails" :value="apiDeatils.apiResponse" :expand-depth="1" boxed copyable sort theme="light" />
+          </a-card>
+        </a-tab-pane>
       </a-tabs>
     </div>
-    <div class="apiReponseInstance">
+    <!-- <div class="apiReponseInstance">
       <a-card title="接口返回示例" size="small">
         <JsonViewer class="scroll_apiDetails" :value="apiDeatils.apiResponse" :expand-depth="1" boxed copyable sort theme="light" />
       </a-card>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -32,6 +37,8 @@
   import type { apiParameter } from './types';
   import { apiDetails_columns } from './data';
   import { JsonViewer } from 'vue3-json-viewer';
+  import { cloneDeep } from 'lodash-es';
+  import { TypeEnum, PositionEnum, RequireEnum } from '@/enums/apiRegisterAndUpdateEnum';
   import 'vue3-json-viewer/dist/index.css';
   // tab标签页初始展示
   const activeKey = ref('1');
@@ -42,31 +49,19 @@
       default: () => ({ a: 1, b: 2 }),
     },
   });
+
   // 所有需要展示的数据
   const apiDeatils = computed(() => {
     let apiParameter: apiParameter[] = [];
     if (props.records.apiParameter === null || props.records.apiParameter === undefined || props.records.apiParameter === '') {
       apiParameter = [];
     } else {
-      apiParameter = props.records.apiParameter;
-      apiParameter.forEach(item => {
-        switch (item.parameterPosition) {
-          case 0:
-            item.parameterPosition = 'query';
-          case 1:
-            item.parameterPosition = 'header';
-          case 2:
-            item.parameterPosition = 'body';
-        }
-        item.parameterRequire = item.parameterRequire === 0 ? '否' : '是';
-        switch (item.parameterType) {
-          case 0:
-            item.parameterType = 'string';
-          case 1:
-            item.parameterType = 'integer';
-          case 2:
-            item.parameterType = 'number';
-        }
+      apiParameter = cloneDeep(props.records.apiParameter);
+      apiParameter = apiParameter.map(item => {
+        item.parameterPosition = PositionEnum[item.parameterPosition as number];
+        item.parameterRequire = RequireEnum[item.parameterRequire as number];
+        item.parameterType = TypeEnum[item.parameterType as number];
+        return item;
       });
     }
     return {
@@ -121,11 +116,11 @@
     }
   }
 
-  .apiDetails {
+  .apiDetails_YDHK {
     display: flex;
     flex-direction: column;
     padding: 10px;
-    height: 62vh;
+    height: 50vh;
 
     h1 {
       font-size: 20px;

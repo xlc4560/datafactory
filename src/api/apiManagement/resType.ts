@@ -31,6 +31,21 @@ export interface ApiList {
   }[];
   total: number;
 }
+// 请求码表列表的响应值类型
+export interface CodeList {
+  CodeBasics: {
+    id: number;
+    code_id: string;
+    code_name: string;
+    code_statee: number;
+    code_description: string;
+    update_time: string;
+    pageSize: number;
+    pageNum: number;
+    totalNum: number;
+  }[];
+  totalNum: number;
+}
 export interface ApiDetails {
   apiBasic: {
     id: number;
@@ -56,4 +71,20 @@ export interface ApiDetails {
     parameterDescription?: string;
     parameterDefault: string;
   }[];
+}
+export interface GETLIST {
+  page: number;
+  size: number;
+  /**
+   * 码表名称
+   */
+  codeName?: string;
+  /**
+   * 码表状态，0:未发布，1:已发布，2:已停用
+   */
+  codeState?: number;
+  /**
+   * 时间排序，0:降序，1:升序，默认降序
+   */
+  orderBy?: number;
 }
