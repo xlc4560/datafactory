@@ -29,7 +29,7 @@
         </a-form>
       </div>
       <!--  数据列表部分-->
-      <div class="backColor tableWarp" style="margin: 10px 0 0 0">
+      <div class="backColor tableWarp">
         <!-- 按钮操作组 -->
         <div class="tableactionGroup">
           <a-space :size="12">
@@ -177,7 +177,7 @@
     loading,
   } = usePagination(request.GetApiList, {
     pagination: {
-      currentKey: 'pageNum',
+      currentKey: 'page',
       pageSizeKey: 'pageSize',
     },
   });
@@ -305,6 +305,7 @@
       }
       // 表格相关
       .tableWarp {
+        margin: 10px 0 0 0;
         width: 100%;
         min-height: 70vh;
 

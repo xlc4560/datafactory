@@ -26,7 +26,6 @@
   const emits = defineEmits(['getFilterData']);
   const stopwatchFilters = reactive<StopwatchFiltersType>({ codeState: null, codeName: '' });
   const handleFinish: FormProps['onFinish'] = () => {
-    // console.log(stopwatchFilters);
     emits('getFilterData', stopwatchFilters);
   };
 

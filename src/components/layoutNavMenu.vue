@@ -81,6 +81,17 @@
         },
       ],
     },
+    {
+      subName: '脚本管理',
+      key: '/DataFactory/ScriptManagement/',
+      icon: 'CodeOutlined',
+      children: [
+        {
+          subName: '脚本管理',
+          key: '/DataFactory/ScriptManagement/scriptManagement',
+        },
+      ],
+    },
   ]);
   //
   watch(

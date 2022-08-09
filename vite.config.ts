@@ -37,9 +37,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       proxy: {
         // 码表管理
         '/code': {
-          // target: 'http://192.168.1.100:6002',
-          target: 'http://124.223.17.68:6002',
-          // target: 'http://10.8.21.126:6002',
+          target: 'http://10.8.21.140:6002',
           // target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
@@ -48,7 +46,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '/api': {
           target: 'http://124.223.17.68:6002',
           // target: 'http://10.8.21.126:6002',
-          // target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
@@ -56,7 +53,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '/standard': {
           target: 'http://124.223.17.68:6002',
           // target: 'http://10.8.21.202:6002',
-          // target: 'http://10.8.21.143:6002',
           changeOrigin: true,
         },
         // 分类（宋杰龙）
