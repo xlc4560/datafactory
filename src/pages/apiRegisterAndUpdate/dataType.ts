@@ -9,6 +9,7 @@ export interface columnsType {
   minWidth?: string;
   maxWidth?: string;
   ellipsis?: boolean;
+  sorter?: boolean;
 }
 export interface codeType {
   [key: string]: any;

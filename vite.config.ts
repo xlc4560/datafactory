@@ -37,8 +37,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       proxy: {
         // 码表管理
         '/code': {
-          target: 'http://10.8.21.140:6002',
-          // target: 'http://124.223.17.68:6002',
+          // target: 'http://10.8.21.140:6002',
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
         },
@@ -66,6 +66,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/database/, ''),
+        },
+        //脚本管理
+        '/script': {
+          target: 'http://10.8.21.186:6002',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/script/, ''),
         },
       },
     },
