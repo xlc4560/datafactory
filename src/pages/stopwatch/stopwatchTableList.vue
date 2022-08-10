@@ -8,7 +8,7 @@
         <a-button :disabled="btnIsDisabled" @click="updataStopwatchState(UpdateStateApi.DISABLE)">批量停用</a-button>
       </a-space>
       <a-space :size="12">
-        <a-button><a href="http://localhost:6002/code/downloadTemplate">导入模板下载</a></a-button>
+        <a-button><a href="http://124.223.17.68:6002/code/downloadTemplate">导入模板下载</a></a-button>
         <a-button @click="showModalin">标准导入</a-button>
         <a-button type="primary" @click="stopwatchUpdate(0, { codeId: '' })">新增码表</a-button>
       </a-space>
@@ -91,7 +91,7 @@
     },
     downloadLink: {
       type: String,
-      default: 'http://localhost:6002/code/importCode',
+      default: 'http://124.223.17.68:6002/code/importCode',
     },
   });
   // 声明自定义事件用于和父组件通信
@@ -240,9 +240,6 @@
       responseType: 'blob',
     })
       .then(response => {
-        console.log(response);
-        console.log(response.data);
-
         if (response.data.type == 'application/json') {
           let reader = new FileReader(); // 创建读取文件对象
           reader.readAsText(response.data, 'utf-8'); // 设置读取的数据以及返回的数据类型为utf-8
@@ -250,7 +247,11 @@
             //
             let res = JSON.parse(reader.result as string); // 返回的数据
             console.log(res, '返回结果'); // { name: "小花" }
-            message.success('上传成功！');
+            if (res.code === 100200) {
+              message.success('上传成功！', 1);
+            } else {
+              message.error(res.msg, 1);
+            }
           });
         } else {
           fileList.value = [];

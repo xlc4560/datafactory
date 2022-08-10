@@ -34,8 +34,8 @@ export default {
           },
         },
         {
-          path: 'ManualReg',
-          name: 'ManualReg',
+          path: 'ApiRegister',
+          name: 'ApiRegister',
           meta: {
             title: '人工注册',
           },
@@ -52,7 +52,7 @@ export default {
         {
           path: 'publishApi',
           name: 'publishApi',
-          component: () => import('@/pages/apiRegisterAndUpdate/index.vue'),
+          component: () => import('@/pages/error/index.vue'),
           meta: {
             title: '发布接口',
           },
