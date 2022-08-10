@@ -381,11 +381,15 @@
       padding: 10px 20px;
 
       .tableactionGroup-item {
+        display: flex;
+
         .li {
           display: flex;
           margin: 10px 10px;
+          flex-direction: row;
           // background-color: rgb(231, 109, 109);
           .li-i {
+            display: flex;
             margin: 0px 10px;
           }
         }
