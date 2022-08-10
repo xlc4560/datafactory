@@ -1,7 +1,7 @@
 <template>
   <div class="menuSider">
     <div class="dataSourceTitle">
-      <span>接口分类</span>
+      <span>{{ categorySchema }}</span>
       <plus-circle-outlined @click="() => classifyUpdate(0, searchKeyword, '0')" />
     </div>
     <div class="searchInput">
@@ -19,9 +19,9 @@
           <a-popover>
             <template #content>
               <ul class="menuSiderCRUD_style">
-                <li @click="() => classifyUpdate(0, name, categoryCode)">新增</li>
-                <li @click="() => classifyUpdate(1, name, categoryCode)">编辑</li>
-                <li @click="() => classifyUpdate(2, name, categoryCode)">删除</li>
+                <li @click="() => classifyUpdate(0, name, categoryCode, parentCode)">新增</li>
+                <li @click="() => classifyUpdate(1, name, categoryCode, parentCode)">编辑</li>
+                <li @click="() => classifyUpdate(2, name, categoryCode, parentCode)">删除</li>
               </ul>
             </template>
             <more-outlined class="icon" />
@@ -118,8 +118,9 @@
   const visible = ref<boolean>(false);
   const title = ref<string>('');
   const parentCode = ref<string>('');
+  const categoryCode_forUpdate = ref<string>('');
   const operationType = ref<number | null>(null);
-  const classifyUpdate = (type: number, categoryName: string, categoryCode?: string) => {
+  const classifyUpdate = (type: number, categoryName: string, categoryCode?: string, parent_code?: string) => {
     operationType.value = type;
     visible.value = true;
     // 0：新增，1：编辑，2：删除
@@ -127,17 +128,20 @@
       case 0:
         title.value = '新增分类';
         classifyFormData.classifyName = '';
+        parentCode.value = categoryCode as string;
         break;
       case 1:
         title.value = '编辑分类';
         classifyFormData.classifyName = categoryName;
+        parentCode.value = parent_code as string;
+        categoryCode_forUpdate.value = categoryCode as string;
         break;
       case 2:
         title.value = '删除分类';
         classifyFormData.classifyName = '';
+        categoryCode_forUpdate.value = categoryCode as string;
         break;
     }
-    parentCode.value = categoryCode as string;
   };
 
   // 分类表单相关
@@ -166,9 +170,10 @@
               break;
             case 1:
               await catagoryResquest.UpdateCategory({
-                categoryCode: parentCode.value,
+                parentCode: parentCode.value,
                 categoryName: classifyFormData.classifyName,
                 categorySchema: props.categorySchema,
+                categoryCode: categoryCode_forUpdate.value,
               });
               treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
               generateList(treeData.value);
@@ -180,7 +185,7 @@
         });
     } else {
       (async () => {
-        await catagoryResquest.DeleteCategory(parentCode.value);
+        await catagoryResquest.DeleteCategory(categoryCode_forUpdate.value);
         treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
         generateList(treeData.value);
       })();

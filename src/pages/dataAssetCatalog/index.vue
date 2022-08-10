@@ -2,7 +2,7 @@
   <div class="apiManagementFather">
     <!-- 分类区 -->
     <div class="category">
-      <!-- <classification category-schema="数据资产表目录" /> -->
+      <classification category-schema="数据资产表目录" />
     </div>
     <div class="tableBox">
       <!--  数据筛选部分-->
@@ -100,7 +100,10 @@
   //   新增、编辑
   import addasset from './addAsset.vue';
   //   分类
-  // import classification from '@/pages/category/index.vue';
+  import classification from '@/pages/category/index.vue';
+  // 请求
+  // import { assetGetList, assetUpdateState, assetDelete } from '@/api/dataAssetCatalog/index';
+
   //   下拉状态选择
   const handleChange: SelectProps['onChange'] = value => {
     console.log(value); // { key: "lucy", label: "Lucy (101)" }
@@ -114,6 +117,7 @@
     formState.assetNameCn = '';
     formState.assetNameEn = '';
     formState.dataAssetState = null;
+    console.log(toRaw(formState));
   };
   // 多选
   const btndisable = ref(true);
@@ -295,6 +299,7 @@
 
           .formItemWidth {
             flex: 2;
+            width: 600px;
           }
 
           .formBtn {

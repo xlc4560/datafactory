@@ -16,10 +16,6 @@
           <a-textarea v-model:value="assetadd.assetNameCn" placeholder="请输入资产表描述" :rows="4" />
         </a-form-item>
 
-        <!-- <a-form-item label="所属目录" name="assetNameCn" :rules="[{ required: true, message: '请选择所属目录!' }]">
-          <a-input v-model:value="assetadd.assetNameCn" placeholder="请选择所属目录" />
-        </a-form-item> -->
-
         <a-form-item name="assetNameCn" label="所属目录">
           <div class="scrollable-container">
             <a-space v-for="(user, index) in assetadd.categoryCodes" :key="index">
