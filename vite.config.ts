@@ -70,6 +70,12 @@ export default ({ mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/database/, ''),
         },
+        //脚本管理
+        '/script': {
+          target: 'http://10.8.21.186:6002',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/script/, ''),
+        },
       },
     },
     plugins: [

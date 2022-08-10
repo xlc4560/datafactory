@@ -118,7 +118,7 @@
     },
     tableData: {
       type: Array as PropType<inputParameterDataType[]>,
-      default: () => [],
+      default: () => [] as inputParameterDataType[],
     },
     tableDataName: {
       type: String,

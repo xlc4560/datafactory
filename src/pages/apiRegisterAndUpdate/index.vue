@@ -36,11 +36,11 @@
   import { ApiCheck, apiDraft, GetApiDetails, apiEdit } from '@/api/apiManagement';
   import basicInfoVue from './basicInfo.vue';
   import parameterConfigVue from './parameterConfig.vue';
-  import { storeToRefs } from 'pinia';
   import { apiInfoDefault } from './basicInfoConfig';
+  import { message } from 'ant-design-vue';
   // 从pinia中引入集中管理的状态
   import useStore from '@/store';
-  import { message } from 'ant-design-vue';
+  import { storeToRefs } from 'pinia';
   const { useApiRegisterAndUpdateStore } = useStore();
   const { apiInfo } = storeToRefs(useApiRegisterAndUpdateStore);
   const router = useRouter();

@@ -301,7 +301,6 @@
 
     .isNopublish {
       display: inline-block;
-      // background: #faad14;
       margin-right: 3px;
       border-radius: 50%;
       width: 7px;
