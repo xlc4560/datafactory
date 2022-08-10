@@ -84,6 +84,14 @@ export default {
             title: '数据标准目录',
           },
         },
+        {
+          path: 'dataAssetCatalog',
+          name: 'dataAssetCatalog',
+          component: () => import('@/pages/dataAssetCatalog/index.vue'),
+          meta: {
+            title: '数据资产目录',
+          },
+        },
       ],
     },
   ],
