@@ -45,7 +45,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
         // 接口管理（宋杰龙）
         '/api': {
-          // target: 'http://localhost:6002',
           // target: 'http://10.8.21.126:6002',
           target: 'http://124.223.17.68:6002',
           changeOrigin: true,
@@ -53,7 +52,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
         // 数据标准目录
         '/standard': {
-          // target: 'http://localhost:6002',
           // target: 'http://10.8.21.202:6002',
           // target: 'http://10.8.21.143:6002',
           target: 'http://124.223.17.68:6002',

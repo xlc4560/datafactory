@@ -46,6 +46,7 @@ declare module '@vue/runtime-core' {
     ATree: typeof import('ant-design-vue/es')['Tree'];
     ATreeSelect: typeof import('ant-design-vue/es')['TreeSelect'];
     AUpload: typeof import('ant-design-vue/es')['Upload'];
+    CodeBind: typeof import('./src/components/myTable/codeBind.vue')['default'];
     DefineCodeValue: typeof import('./src/components/myTable/defineCodeValue.vue')['default'];
     LayoutContent: typeof import('./src/components/layoutContent.vue')['default'];
     LayOutHeader: typeof import('./src/components/layOutHeader.vue')['default'];
