@@ -76,6 +76,12 @@ export default ({ mode }: ConfigEnv): UserConfig => {
           changeOrigin: true,
           rewrite: path => path.replace(/^\/script/, ''),
         },
+        //数据资产管理
+        '/asset': {
+          target: 'http://10.8.21.157:6002',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/script/, ''),
+        },
       },
     },
     plugins: [
