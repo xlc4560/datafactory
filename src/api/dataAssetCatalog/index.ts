@@ -6,6 +6,9 @@ enum Api {
   ASSET_GETLIST = '/asset/getList', //检索数据资产列表
   ASSET_UPDATESTATE = '/asset/updateState', //状态修改
   ASSET_DELETE = '/asset/delete/', //删除数据资产
+  ASSET_ADD = '/asset/add', //新增数据资产
+  ASSET_UPDATE = '/asset/update', //数据资产更新
+  ASSET_GETDETAIL = '/asset/getDetail/', //数据资产详情
 }
 
 // 检索数据资产列表
@@ -21,4 +24,19 @@ export const assetUpdateState = (params: Type.AssetUpdateState) => {
 //删除数据资产
 export const assetDelete = (assetCode: string) => {
   return api._delete<any>({ url: Api.ASSET_DELETE + assetCode });
+};
+
+// 新增数据资产
+export const assetAdd = (params: Type.AssetAdd) => {
+  return api.post<any>({ url: Api.ASSET_ADD, data: params });
+};
+
+//数据资产更新
+export const asseUpdate = (params: Type.AssetUpdate) => {
+  return api.put<any>({ url: Api.ASSET_UPDATE, data: params });
+};
+
+// 数据资产详情
+export const assetGetDetail = (assetCode: string) => {
+  return api.get<any>({ url: Api.ASSET_GETDETAIL + assetCode });
 };
