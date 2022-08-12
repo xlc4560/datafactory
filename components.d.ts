@@ -41,6 +41,7 @@ declare module '@vue/runtime-core' {
     ATextarea: typeof import('ant-design-vue/es')['Textarea'];
     ATooltip: typeof import('ant-design-vue/es')['Tooltip'];
     ATree: typeof import('ant-design-vue/es')['Tree'];
+    ATreeSelect: typeof import('ant-design-vue/es')['TreeSelect'];
     ATypographyLink: typeof import('ant-design-vue/es')['TypographyLink'];
     AUpload: typeof import('ant-design-vue/es')['Upload'];
     CodeBind: typeof import('./src/components/myTable/codeBind.vue')['default'];
