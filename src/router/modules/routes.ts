@@ -94,5 +94,24 @@ export default {
         },
       ],
     },
+    {
+      path: 'ScriptManagement',
+      name: 'ScriptManagement',
+      meta: {
+        title: '脚本管理',
+      },
+      component: () => import('@/layout/content.vue'),
+      redirect: '/DataFactory/ScriptManagement/scriptManagement',
+      children: [
+        {
+          path: 'scriptManagement',
+          name: 'scriptManagement',
+          component: () => import('@/pages/scriptManagement/index.vue'),
+          meta: {
+            title: '脚本管理',
+          },
+        },
+      ],
+    },
   ],
 };
