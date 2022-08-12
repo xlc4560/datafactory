@@ -84,3 +84,13 @@ export const outputParameterColumns: columnsType[] = [
     dataIndex: 'parameterDescription',
   },
 ];
+
+// 脚本测试表格配置
+export const scriptTestTable: columnsType[] = [
+  ...inputParameterColumns,
+  {
+    title: '测试值',
+    dataIndex: 'testValue',
+    width: '250px',
+  },
+];

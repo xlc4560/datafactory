@@ -24,12 +24,13 @@
   import ScriptDetails from './scriptDetails.vue';
   // 测试页
   import ScriptTest from './scriptTest.vue';
+  import { modalControlDataType } from './type';
   // 从pinia中引入集中管理的状态
   // import useStore from '@/store';
   // import { storeToRefs } from 'pinia';
   // const { useScriptManagementStore, useCategoryStore } = useStore();
 
-  const modalControlData = reactive<{ scriptDetailsDrawer: boolean; scriptTestDrawer: boolean; [key: string]: boolean }>({
+  const modalControlData = reactive<modalControlDataType>({
     scriptDetailsDrawer: false,
     scriptTestDrawer: false,
   });

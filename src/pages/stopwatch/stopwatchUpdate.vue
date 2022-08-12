@@ -234,10 +234,6 @@
 
     & .ant-drawer-content-wrapper {
       .ant-drawer-content {
-        .ant-drawer-body {
-          padding: 0;
-        }
-
         .ant-drawer-footer {
           .btn {
             margin: 0 1vw 0 0;

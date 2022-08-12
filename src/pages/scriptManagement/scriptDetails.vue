@@ -1,5 +1,5 @@
 <template>
-  <a-drawer :visible="scriptDetailsDrawer" width="1000px" @close="emits('changeDrawerControlData', { dataName: 'scriptDetailsDrawer', value: false })">
+  <a-drawer :visible="scriptDetailsDrawer" width="75vw" @close="emits('changeDrawerControlData', { dataName: 'scriptDetailsDrawer', value: false })">
     <a-descriptions :column="1">
       <template #title>
         <div class="scriptTitle_SxGJ"><strong>基本信息</strong></div>
@@ -96,22 +96,7 @@ pd.DataFrame(test1).to_csv('./小李.csv',index=None,header=None)`);
 </script>
 
 <style scoped lang="less">
-  .scriptTitle_SxGJ {
-    position: relative;
-    line-height: 40px;
-    padding-left: 8px;
-    font-size: 16px;
-  }
-
-  .scriptTitle_SxGJ::before {
-    position: absolute;
-    top: calc(50% - 8px);
-    left: 0;
-    width: 3px;
-    height: 16px;
-    background-color: #1890ff;
-    content: '';
-  }
+  @import url('./title.less');
 
   :deep(.ant-table-title) {
     padding: 0;

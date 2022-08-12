@@ -33,7 +33,7 @@
         </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'scriptName'">
-            <a @click="openScriptDetails(record.scriptId)">{{ record.scriptName }}</a>
+            <a @click="openScriptModal(record.scriptId, 'scriptDetailsDrawer')">{{ record.scriptName }}</a>
           </template>
           <template v-else-if="column.dataIndex === 'scriptState'">
             <span class="isNopublish" :style="{ background: codeState[record.scriptState].color }"></span>
@@ -43,10 +43,11 @@
             {{ scriptType[record.scriptType].lable }}
           </template>
           <template v-else-if="column.dataIndex === 'operation'">
-            <a-button type="link">测试</a-button>
-            <a-button type="link">编辑</a-button>
-            <a-button type="link">停用</a-button>
-            <a-button type="link">删除</a-button>
+            <a-button type="link" @click="openScriptModal(record.scriptId, 'scriptTestDrawer')">测试</a-button>
+            <a-button v-if="[0, 2].includes(record.scriptState)" type="link">编辑</a-button>
+            <a-button v-if="[1].includes(record.scriptState)" type="link">停用</a-button>
+            <a-button v-if="[0].includes(record.scriptState)" type="link">删除</a-button>
+            <a-button v-if="[0, 2].includes(record.scriptState)" type="link">发布</a-button>
           </template>
         </template>
       </a-table>
@@ -182,10 +183,11 @@
   const modalSelectDropDown = async () => {
     treeData.value = await ReadCategory('脚本分类');
   };
-
-  const openScriptDetails = (scriptId: string) => {
-    emits('changeDrawerControlData', { dataName: 'scriptDetailsDrawer', value: true });
+  // 打开脚本弹窗抽屉
+  const openScriptModal = (scriptId: string, dataName: string) => {
+    emits('changeDrawerControlData', { dataName, value: true });
     // 根据id查询脚本详情
     console.log(scriptId);
+    // 赋值给currentScriptDetails
   };
 </script>
