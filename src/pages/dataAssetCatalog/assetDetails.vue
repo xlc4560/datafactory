@@ -4,69 +4,107 @@
     <div class="details-base">
       <div class="title">基本信息</div>
       <div class="content">
-        <p><span>中文名称:</span><span>中文名称</span></p>
-        <p><span>英文名称:</span><span>中文名称</span></p>
-        <p><span>资产表描述:</span><span>中文名称</span></p>
-        <p><span>所属目录:</span><span>中文名称</span></p>
+        <p>
+          <span>中文名称:</span>
+          <span>{{ dataAssetInformation.chinesename }}</span>
+        </p>
+        <p>
+          <span>英文名称:</span>
+          <span>{{ dataAssetInformation.englishname }}</span>
+        </p>
+        <p>
+          <span>资产表描述:</span>
+          <span>{{ dataAssetInformation.assetdescription }}</span>
+        </p>
+        <p>
+          <span>所属目录:</span>
+          <span class="catalogue">{{ dataAssetInformation.catalogue }}</span>
+        </p>
       </div>
     </div>
     <div class="details-msg">
       <div class="title">字段信息</div>
       <div class="table">
-        <a-table :columns="columns" :data-source="data" :pagination="{ pageSize: 50 }" :scroll="{ y: 340 }" />
+        <a-table :columns="columns" :data-source="dataAssetInformation.fieldinformation" :pagination="{ pageSize: 50 }" :scroll="{ y: 340 }" />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+  import { DataAssetInformation } from './types';
+  const dataAssetInformation = reactive<DataAssetInformation>({
+    chinesename: 'chinesename',
+    englishname: 'englishname',
+    assetdescription: 'assetdescription',
+    catalogue: '基本信息',
+    fieldinformation: [
+      {
+        key: 1,
+        fieldchinesename: 'englishname',
+        fieldenglishage: '数据1',
+        fieldexplain: 'fieldexplain',
+        datatype: 'datatype',
+        datalength: 'datalength',
+        dataprecision: 'dataprecision',
+        default: 'default',
+        valueranges: 'valueranges',
+        enumranges: 'enumranges',
+      },
+      {
+        key: 2,
+        fieldchinesename: 'englishname',
+        fieldenglishage: '数据1',
+        fieldexplain: 'fieldexplain',
+        datatype: 'datatype',
+        datalength: 'datalength',
+        dataprecision: 'dataprecision',
+        default: 'default',
+        valueranges: 'valueranges',
+        enumranges: 'enumranges',
+      },
+    ],
+  });
   // 表格
   const columns = [
     {
       title: '字段英文名称',
-      dataIndex: 'name',
+      dataIndex: 'fieldchinesename',
       width: 150,
     },
     {
       title: '字段中文名称',
-      dataIndex: 'age',
+      dataIndex: 'fieldenglishage',
       width: 150,
     },
     {
       title: '字段说明',
-      dataIndex: 'address',
+      dataIndex: 'fieldexplain',
     },
     {
       title: '数据类型',
-      dataIndex: 'address',
+      dataIndex: 'datatype',
     },
     {
       title: '数据长度',
-      dataIndex: 'address',
+      dataIndex: 'datalength',
     },
     {
       title: '数据精度',
-      dataIndex: 'address',
+      dataIndex: 'dataprecision',
     },
     {
       title: '默认值',
-      dataIndex: 'address',
+      dataIndex: 'default',
     },
     {
       title: '取值范围',
-      dataIndex: 'address',
+      dataIndex: 'valueranges',
     },
     {
       title: '枚举范围',
-      dataIndex: 'address',
+      dataIndex: 'enumranges',
     },
   ];
-
-  const data = [...Array(100)].map((_, i) => ({
-    key: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`,
-  }));
 </script>
 <style scoped lang="less">
   .details {
@@ -78,10 +116,19 @@
       }
 
       .content {
+        margin-left: 2%;
         padding: 10px 20px;
 
         span {
           margin-right: 10px;
+        }
+
+        .catalogue {
+          border: 1px solid #e9e9e9;
+          border-radius: 24px;
+          padding: 0 10px;
+          color: #f28d41;
+          background: #f3f3f3;
         }
       }
     }

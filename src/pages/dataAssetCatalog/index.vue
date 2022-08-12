@@ -81,11 +81,15 @@
     </div>
   </div>
   <!-- 详情部分 -->
-  <a-drawer :title="title" :width="1200" :destroy-on-close="true" :visible="visibleDetails" @close="onClose">
+  <a-drawer :title="title" :width="1200" :destroy-on-close="true" :visible="visibleDetails" :footer-style="{ textAlign: 'right' }" @close="onClose">
     <assetdetails></assetdetails>
+    <!-- <test></test> -->
+    <template #footer>
+      <a-button style="margin-right: 8px" type="primary" @click="onClose">关闭</a-button>
+    </template>
   </a-drawer>
   <!-- 新增、编辑 -->
-  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1400" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
+  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1200" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
     <!-- <AddStandard :codeid="codeid" @visible="svisible2"></AddStandard> -->
     <addasset></addasset>
   </a-drawer>
@@ -99,8 +103,9 @@
   import assetdetails from './assetDetails.vue';
   //   新增、编辑
   import addasset from './addAsset.vue';
-  // 请求
-  import { assetGetList, assetUpdateState, assetDelete } from '@/api/dataAssetCatalog/index';
+
+  //测试
+  import test from './test.vue';
   //   分类
   import classification from '@/pages/category/index.vue';
   // 从pinia中引入集中管理的状态
@@ -314,9 +319,9 @@
         .formAction {
           display: flex;
           flex-flow: row nowrap;
-          margin: 20px;
+          margin: 20px 0;
           padding: 0 10px;
-          width: 100%;
+          width: 105%;
 
           .formItemWidth {
             flex: 2;
