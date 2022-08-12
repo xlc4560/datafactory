@@ -86,6 +86,8 @@
   // import { defineComponent, reactive, ref } from 'vue';
   import type { UnwrapRef } from 'vue';
   // import { cloneDeep } from 'lodash-es';
+  // 获取下拉选择数据
+  import { standardAssetConfigAdapt, categoryListTree } from '@/api/dataAssetCatalog/index';
   // const issave = ref(false);
   interface AssetAdd {
     assetDesc?: string; //数据资产表描述
@@ -115,6 +117,13 @@
         standardCode: '',
       },
     ],
+  });
+  // 获取下拉选择数据
+  standardAssetConfigAdapt().then(res => {
+    console.log(res);
+  });
+  categoryListTree('数据资产目录分类').then(res => {
+    console.log(res);
   });
 
   // 添加

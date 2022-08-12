@@ -9,6 +9,10 @@ enum Api {
   ASSET_ADD = '/asset/add', //新增数据资产
   ASSET_UPDATE = '/asset/update', //数据资产更新
   ASSET_GETDETAIL = '/asset/getDetail/', //数据资产详情
+  // 数据资产引用
+  STANDARD_ASSETCONFIGADAPT = '/standard/assetConfigAdapt',
+  // 分类查询
+  CATEGORY_LIST_TREE = '/category/list/tree/',
 }
 
 // 检索数据资产列表
@@ -39,4 +43,14 @@ export const asseUpdate = (params: Type.AssetUpdate) => {
 // 数据资产详情
 export const assetGetDetail = (assetCode: string) => {
   return api.get<any>({ url: Api.ASSET_GETDETAIL + assetCode });
+};
+
+// 数据资产引用
+export const standardAssetConfigAdapt = () => {
+  return api.get<any>({ url: Api.STANDARD_ASSETCONFIGADAPT });
+};
+
+// 分类查询
+export const categoryListTree = (categorySchema: string) => {
+  return api.get<any>({ url: Api.CATEGORY_LIST_TREE + categorySchema });
 };
