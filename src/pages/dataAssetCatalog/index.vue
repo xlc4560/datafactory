@@ -104,6 +104,9 @@
   //   新增、编辑
   import addasset from './addAsset.vue';
 
+  //
+  import { assetGetList, assetUpdateState, assetDelete } from '@/api/dataAssetCatalog/index';
+
   //测试
   import test from './test.vue';
   //   分类
