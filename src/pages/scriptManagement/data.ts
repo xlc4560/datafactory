@@ -48,3 +48,39 @@ export const codeState: { value: string; color: string }[] = [
   { value: '已发布', color: '#52c41a' },
   { value: '已停用', color: '#ff4d4f' },
 ];
+
+// 脚本详情
+// 输入参数表格配置
+export const inputParameterColumns: columnsType[] = [
+  {
+    title: '参数名称',
+    dataIndex: 'parameterName',
+  },
+  {
+    title: '数据类型',
+    dataIndex: 'parameterType',
+  },
+  {
+    title: '是否必填',
+    dataIndex: 'parameterRequire',
+  },
+  {
+    title: '参数描述',
+    dataIndex: 'parameterDescription',
+  },
+];
+// 输出参数表格配置
+export const outputParameterColumns: columnsType[] = [
+  {
+    title: '参数名称',
+    dataIndex: 'parameterName',
+  },
+  {
+    title: '数据类型',
+    dataIndex: 'parameterType',
+  },
+  {
+    title: '参数描述',
+    dataIndex: 'parameterDescription',
+  },
+];

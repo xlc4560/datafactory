@@ -14,6 +14,11 @@ const useScriptManagementStore = defineStore('useScriptManagementStore', {
         scriptType: undefined,
       },
       useRun: () => ({}),
-    } as { filterData: FilterDataType; useRun: () => void }),
+      currentScriptDetails: {},
+    } as {
+      filterData: FilterDataType;
+      useRun: () => void;
+      currentScriptDetails: any;
+    }),
 });
 export default useScriptManagementStore;

@@ -228,6 +228,10 @@
   }
   //   表单class
   .stopwatchUpdate {
+    .ant-table-title {
+      padding: 0 !important;
+    }
+
     & .ant-drawer-content-wrapper {
       .ant-drawer-content {
         .ant-drawer-body {

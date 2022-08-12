@@ -186,13 +186,14 @@
 <style lang="less">
   // 滚动条样式
   @import url('./scorll.less');
-
+  // .ant-drawer-body {
+  //   padding: 0 !important;
+  // }
   .ant-drawer-content-wrapper {
     .ant-drawer-content {
-      .ant-drawer-body {
-        padding: 0;
-      }
-
+      //   .ant-drawer-body {
+      //     padding: 0;
+      //   }
       .ant-drawer-footer {
         .btn {
           margin: 0 1vw 0 0;
@@ -216,7 +217,7 @@
         margin: 10px 0 0 0;
 
         .ant-card-body {
-          padding: 0;
+          padding: 0 !important;
         }
       }
     }

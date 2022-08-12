@@ -22,7 +22,7 @@
         :row-selection="{ selectedRowKeys: selectedRowKeysRef, onChange: onSelectChange }"
         :row-key="rowKey"
         :columns="tableColumns"
-        :data-source="dataSource?.scriptInfoList"
+        :data-source="simulationData"
         :loading="loading"
         :pagination="pagination"
         size="small"
@@ -33,7 +33,7 @@
         </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'scriptName'">
-            <a>{{ record.scriptName }}</a>
+            <a @click="openScriptDetails(record.scriptId)">{{ record.scriptName }}</a>
           </template>
           <template v-else-if="column.dataIndex === 'scriptState'">
             <span class="isNopublish" :style="{ background: codeState[record.scriptState].color }"></span>
@@ -42,17 +42,32 @@
           <template v-else-if="column.dataIndex === 'scriptType'">
             {{ scriptType[record.scriptType].lable }}
           </template>
+          <template v-else-if="column.dataIndex === 'operation'">
+            <a-button type="link">测试</a-button>
+            <a-button type="link">编辑</a-button>
+            <a-button type="link">停用</a-button>
+            <a-button type="link">删除</a-button>
+          </template>
         </template>
       </a-table>
     </div>
     <!-- 修改分类 -->
-    <a-modal v-model:visible="modalVisible" width="1000px" title="脚本批量分类">
+    <a-modal v-model:visible="modalVisible" width="1000px" title="脚本批量分类" style="top: 20vh">
       <a-form :model="newScriptCategory">
-        <a-form-item label="脚本分类" has-feedback name="value" :rules="[{ required: true, message: '请输入必填项!' }]">
-          <a-select v-model:value="newScriptCategory.value" :allow-clear="true" placeholder="请选择分类!" @dropdown-visible-change="modalSelectDropDown">
-            <a-select-option key="0">{{ 'xxxx' }}</a-select-option>
-          </a-select>
-        </a-form-item>
+        <div style="min-height: 200px">
+          <a-form-item label="脚本分类" has-feedback name="value" :rules="[{ required: true, message: '请输入必填项!' }]">
+            <a-tree-select
+              v-model:value="newScriptCategory.value"
+              :tree-data="treeData"
+              placeholder="请选择接口分类"
+              show-search
+              :field-names="{ label: 'name', value: 'categoryCode' }"
+              allow-clear
+              :dropdown-style="{ height: '200px' }"
+              @dropdown-visible-change="modalSelectDropDown"
+            ></a-tree-select>
+          </a-form-item>
+        </div>
       </a-form>
     </a-modal>
   </div>
@@ -67,15 +82,35 @@
   import useStore from '@/store';
   import { storeToRefs } from 'pinia';
   const { useScriptManagementStore, useCategoryStore } = useStore();
-  const { useRun, filterData } = storeToRefs(useScriptManagementStore);
+  const { useRun, filterData, currentScriptDetails } = storeToRefs(useScriptManagementStore);
   const { fiterCategoryName } = storeToRefs(useCategoryStore);
-  watch(
-    () => fiterCategoryName,
-    () => {
-      console.log(fiterCategoryName);
+  const emits = defineEmits(['changeDrawerControlData']);
+  const simulationData = [
+    {
+      id: 1,
+      scriptName: 'hahaha',
+      scriptType: 0,
+      scriptCategory: 0,
+      scriptState: 0,
+      updateTime: '2022-08-10 16:00:00',
     },
-    { deep: true },
-  );
+    {
+      id: 2,
+      scriptName: 'hahaha',
+      scriptType: 0,
+      scriptCategory: 0,
+      scriptState: 1,
+      updateTime: '2022-08-10 16:00:00',
+    },
+    {
+      id: 3,
+      scriptName: 'hahaha',
+      scriptType: 0,
+      scriptCategory: 0,
+      scriptState: 2,
+      updateTime: '2022-08-10 16:00:00',
+    },
+  ];
   // 以下是分页逻辑
   const {
     data: dataSource,
@@ -143,9 +178,14 @@
   const updateScriptType = () => {
     modalVisible.value = true;
   };
+  const treeData = ref<any>([]);
   const modalSelectDropDown = async () => {
-    console.log(await ReadCategory('脚本分类'));
+    treeData.value = await ReadCategory('脚本分类');
+  };
+
+  const openScriptDetails = (scriptId: string) => {
+    emits('changeDrawerControlData', { dataName: 'scriptDetailsDrawer', value: true });
+    // 根据id查询脚本详情
+    console.log(scriptId);
   };
 </script>
-
-<style></style>

@@ -6,8 +6,10 @@
     </div>
     <div class="tableBox">
       <data-filter-vue />
-      <data-list-vue />
+      <data-list-vue @change-drawer-control-data="changeDrawerControlData" />
     </div>
+    <script-details :script-details-drawer="modalControlData.scriptDetailsDrawer" @change-drawer-control-data="changeDrawerControlData" />
+    <script-test :script-test-drawer="modalControlData.scriptTestDrawer" @change-drawer-control-data="changeDrawerControlData" />
   </div>
 </template>
 
@@ -18,10 +20,23 @@
   import dataFilterVue from './dataFilter.vue';
   // 列表组件
   import dataListVue from './dataList.vue';
+  // 详情页
+  import ScriptDetails from './scriptDetails.vue';
+  // 测试页
+  import ScriptTest from './scriptTest.vue';
   // 从pinia中引入集中管理的状态
   // import useStore from '@/store';
   // import { storeToRefs } from 'pinia';
   // const { useScriptManagementStore, useCategoryStore } = useStore();
+
+  const modalControlData = reactive<{ scriptDetailsDrawer: boolean; scriptTestDrawer: boolean; [key: string]: boolean }>({
+    scriptDetailsDrawer: false,
+    scriptTestDrawer: false,
+  });
+  // 状态更改
+  const changeDrawerControlData = ({ dataName, value }: { dataName: string; value: boolean }) => {
+    modalControlData[dataName] = value;
+  };
 </script>
 
 <style scoped lang="less">
