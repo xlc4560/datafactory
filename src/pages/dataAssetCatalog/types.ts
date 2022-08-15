@@ -19,7 +19,7 @@ export interface FormState {
   /**
    * 按时间排序，0降序（默认），1升序
    */
-  oderByDate?: number | null;
+  updateTimeOrder?: number | null;
   /**
    * 页数
    */
@@ -27,7 +27,7 @@ export interface FormState {
   /**
    * 每页大小
    */
-  size: number | null;
+  pageSize: number | null;
 }
 // 表格数据类型
 export interface DataItem {

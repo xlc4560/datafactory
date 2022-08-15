@@ -105,7 +105,7 @@
   import addasset from './addAsset.vue';
 
   //
-  import { assetGetList, assetUpdateState, assetDelete } from '@/api/dataAssetCatalog/index';
+  import { assetGetList, assetUpdateState, assetDelete, assetGetDetail } from '@/api/dataAssetCatalog/index';
 
   //测试
   import test from './test.vue';
@@ -120,6 +120,9 @@
     console.log(fiterCategoryName.value);
     formState.categoryCode = fiterCategoryName.value;
     assetSearchList();
+  });
+  assetGetDetail('ZC00001').then(res => {
+    console.log(res);
   });
 
   // 封装获取表格列表数据方法
@@ -150,13 +153,14 @@
   const search = () => {
     console.log(toRaw(formState));
     formState.page = 1;
-    formState.size = 20;
+    formState.pageSize = 20;
     assetSearchList();
   };
+  search();
   // 重置
   const reset = () => {
     formState.page = 1;
-    formState.size = 20;
+    formState.pageSize = 20;
     formState.assetNameCn = '';
     formState.assetNameEn = '';
     formState.dataAssetState = null;
@@ -208,7 +212,7 @@
     console.log('Page: ', page, 'pageSize: ', pageSize);
     page = page <= 0 ? 1 : page;
     formState.page = page;
-    formState.size = pageSize;
+    formState.pageSize = pageSize;
     // 页码发生改变发送请求
     // standardSearchList(page, pageSize, 0, toRaw(formState));
     assetSearchList();
@@ -217,10 +221,10 @@
   const sorterChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
     console.log('params', sorter.order);
     if (sorter.order == 'ascend') {
-      formState.oderByDate = 1;
+      formState.updateTimeOrder = 1;
       // standardSearchList(1, pageSize.value, 1, toRaw(formState));
     } else if (sorter.order == 'descend') {
-      formState.oderByDate = 0;
+      formState.updateTimeOrder = 0;
       // standardSearchList(1, pageSize.value, 0, toRaw(formState));
     }
     assetSearchList();
@@ -256,16 +260,18 @@
     // 发布请求
     const codeIdList: string[] = [e.key];
     console.log(codeIdList);
-    assetUpdateState({ assetCodes: codeIdList, operation: 0 });
-    search();
+    assetUpdateState({ assetCodes: codeIdList, operation: 0 }).then(() => {
+      search();
+    });
   };
   // 批量发布
   const batchRelease = () => {
     console.log('批量发布');
     console.log(tableliID);
     // 发送批量发布请求
-    assetUpdateState({ assetCodes: tableliID, operation: 0 });
-    search();
+    assetUpdateState({ assetCodes: tableliID, operation: 0 }).then(() => {
+      search();
+    });
   };
   // 停用
   const disable = (e: any) => {
@@ -273,15 +279,17 @@
     // 停用请求
     const codeIdList: string[] = [e.key];
     console.log(codeIdList);
-    assetUpdateState({ assetCodes: codeIdList, operation: 1 });
-    search();
+    assetUpdateState({ assetCodes: codeIdList, operation: 1 }).then(() => {
+      search();
+    });
   };
   // 批量停用
   const batchDisable = () => {
     console.log('批量停用');
     console.log(tableliID);
-    assetUpdateState({ assetCodes: tableliID, operation: 1 });
-    search();
+    assetUpdateState({ assetCodes: tableliID, operation: 1 }).then(() => {
+      search();
+    });
   };
   // 删除
   const deleteItem = (e: any) => {
