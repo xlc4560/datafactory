@@ -7,7 +7,7 @@ import axios from 'axios';
 // 创建axios实例
 const instance = axios.create({
   // baseURL: '',
-  timeout: 3000,
+  timeout: 6000,
 });
 // 请求拦截
 instance.interceptors.request.use(
@@ -39,28 +39,15 @@ instance.interceptors.response.use(
       antdMessage.error(msg, 1);
       return { code, data, msg };
     }
-    // switch (code) {
-    //   case 100200:
-    //     antdMessage.success(msg, 1);
-    //     break;
-    //   case 100500:
-    //     antdMessage.error(msg, 1);
-    //     return code;
-    //   case 100006:
-    //     antdMessage.warning(msg, 1);
-    //     return code;
-    //   case 100003:
-    //     antdMessage.warning(msg, 1);
-    //     return code;
-    //   default:
-    //     break;
-    // }
     return data;
   },
   error => {
     switch (error?.code) {
       case 'ECONNABORTED':
         antdMessage.error('请求超时', 1);
+        break;
+      case 'ERR_BAD_RESPONSE':
+        antdMessage.error(error.message, 1);
         break;
     }
     return Promise.reject(error);

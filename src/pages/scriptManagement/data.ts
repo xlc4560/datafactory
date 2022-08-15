@@ -94,3 +94,21 @@ export const scriptTestTable: columnsType[] = [
     width: '250px',
   },
 ];
+// 脚本编辑、新增table
+export const scriptEditInputParameterColumns: columnsType[] = [
+  ...inputParameterColumns,
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    width: '250px',
+  },
+];
+export const scriptEditOutputParameterColumns: columnsType[] = [
+  ...outputParameterColumns,
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    width: '250px',
+  },
+];
+export const FileDataType = ['.py', '.sql', '.py', '.sql'];

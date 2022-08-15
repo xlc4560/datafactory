@@ -71,10 +71,10 @@ export default ({ mode }: ConfigEnv): UserConfig => {
           // rewrite: path => path.replace(/^\/database/, ''),
         },
         //脚本管理
-        '/script': {
-          target: 'http://10.8.21.186:6002',
+        '/scriptInfo': {
+          target: 'http://10.8.21.139:6002',
+          // target: 'http://124.223.17.68:6002',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/script/, ''),
         },
       },
     },

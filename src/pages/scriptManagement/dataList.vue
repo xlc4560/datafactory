@@ -3,14 +3,14 @@
     <!-- 按钮操作组 -->
     <div class="tableactionGroup">
       <a-space :size="12">
-        <a-button :disabled="btnIsDisabled" @click="updateState({ idList: state.selectedRowKeys, scriptState: 1 })">批量发布</a-button>
-        <a-button :disabled="btnIsDisabled" @click="updateState({ idList: state.selectedRowKeys, scriptState: 2 })">批量停用</a-button>
+        <a-button :disabled="btnIsDisabled" @click="UpdateState({ idList: state.selectedRowKeys, operation: 1 })">批量发布</a-button>
+        <a-button :disabled="btnIsDisabled" @click="UpdateState({ idList: state.selectedRowKeys, operation: 0 })">批量停用</a-button>
         <a-button :disabled="btnIsDisabled" @click="updateScriptType">批量分类</a-button>
         <a-dropdown>
           <template #overlay>
             <a-menu>
-              <a-menu-item key="1"> Python脚本 </a-menu-item>
-              <a-menu-item key="2"> SQL脚本 </a-menu-item>
+              <a-menu-item key="1" @click="openDrawer('scriptEditDrawer', 2)"> Python脚本 </a-menu-item>
+              <a-menu-item key="2" @click="openDrawer('scriptEditDrawer', 3)"> SQL脚本 </a-menu-item>
             </a-menu>
           </template>
           <a-button type="primary"> 新增脚本 </a-button>
@@ -22,7 +22,7 @@
         :row-selection="{ selectedRowKeys: selectedRowKeysRef, onChange: onSelectChange }"
         :row-key="rowKey"
         :columns="tableColumns"
-        :data-source="simulationData"
+        :data-source="dataSource?.scriptInfoList"
         :loading="loading"
         :pagination="pagination"
         size="small"
@@ -33,7 +33,7 @@
         </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'scriptName'">
-            <a @click="openScriptModal(record.scriptId, 'scriptDetailsDrawer')">{{ record.scriptName }}</a>
+            <a @click="openDrawer('scriptDetailsDrawer', 5, record)">{{ record.scriptName }}</a>
           </template>
           <template v-else-if="column.dataIndex === 'scriptState'">
             <span class="isNopublish" :style="{ background: codeState[record.scriptState].color }"></span>
@@ -43,11 +43,11 @@
             {{ scriptType[record.scriptType].lable }}
           </template>
           <template v-else-if="column.dataIndex === 'operation'">
-            <a-button type="link" @click="openScriptModal(record.scriptId, 'scriptTestDrawer')">测试</a-button>
-            <a-button v-if="[0, 2].includes(record.scriptState)" type="link">编辑</a-button>
-            <a-button v-if="[1].includes(record.scriptState)" type="link">停用</a-button>
-            <a-button v-if="[0].includes(record.scriptState)" type="link">删除</a-button>
-            <a-button v-if="[0, 2].includes(record.scriptState)" type="link">发布</a-button>
+            <a-button type="link" @click="openDrawer('scriptTestDrawer', 5, record)">测试</a-button>
+            <a-button v-if="[0, 2].includes(record.scriptState)" type="link" @click="openDrawer('scriptEditDrawer', record.scriptType, record)">编辑</a-button>
+            <a-button v-if="[1].includes(record.scriptState)" type="link" @click="UpdateState({ idList: [record.id], operation: 0 })">停用</a-button>
+            <a-button v-if="[0].includes(record.scriptState)" type="link" @click="deleteScript(record.id)">删除</a-button>
+            <a-button v-if="[0, 2].includes(record.scriptState)" type="link" @click="UpdateState({ idList: [record.id], operation: 1 })">发布</a-button>
           </template>
         </template>
       </a-table>
@@ -77,47 +77,18 @@
 <script setup lang="ts">
   import { tableColumns, codeState, scriptType } from './data';
   import * as request from '@/api/scriptManagement';
+  import { scriptInfoListType } from '@/api/scriptManagement/apiReturnType';
   import { ReadCategory } from '@/api/category';
   import { usePagination } from 'vue-request'; // 分页
-  // 从pinia中引入集中管理的状态
-  import useStore from '@/store';
-  import { storeToRefs } from 'pinia';
-  const { useScriptManagementStore, useCategoryStore } = useStore();
-  const { useRun, filterData, currentScriptDetails } = storeToRefs(useScriptManagementStore);
-  const { fiterCategoryName } = storeToRefs(useCategoryStore);
+  import { filterData, useRun, currentScriptDetails, registerAndEditTitle } from './scriptHooks';
+  import { message } from 'ant-design-vue';
   const emits = defineEmits(['changeDrawerControlData']);
-  const simulationData = [
-    {
-      id: 1,
-      scriptName: 'hahaha',
-      scriptType: 0,
-      scriptCategory: 0,
-      scriptState: 0,
-      updateTime: '2022-08-10 16:00:00',
-    },
-    {
-      id: 2,
-      scriptName: 'hahaha',
-      scriptType: 0,
-      scriptCategory: 0,
-      scriptState: 1,
-      updateTime: '2022-08-10 16:00:00',
-    },
-    {
-      id: 3,
-      scriptName: 'hahaha',
-      scriptType: 0,
-      scriptCategory: 0,
-      scriptState: 2,
-      updateTime: '2022-08-10 16:00:00',
-    },
-  ];
   // 以下是分页逻辑
   const {
     data: dataSource,
     run,
     loading,
-  } = usePagination(request.getScriptList, {
+  } = usePagination(request.GetScriptList, {
     defaultParams: [
       {
         page: 1,
@@ -153,13 +124,13 @@
   const rowKey = (record: { [key: string]: any; record: string }) => record.id;
   // 多选状态
   const state = reactive<{
-    selectedRowKeys: (string | number)[];
+    selectedRowKeys: number[];
   }>({
-    selectedRowKeys: [1], // Check here to configure the default column
+    selectedRowKeys: [], // Check here to configure the default column
   });
   const { selectedRowKeys: selectedRowKeysRef } = toRefs(state);
   // 当选择状态发生改变时的回调
-  const onSelectChange = (selectedRowKeys: (string | number)[]) => {
+  const onSelectChange = (selectedRowKeys: number[]) => {
     if (selectedRowKeys.length > 0) {
       btnIsDisabled.value = false;
     } else {
@@ -169,8 +140,28 @@
   };
 
   // 批量修改状态
-  const updateState = (params: { idList: (number | string)[]; scriptState: number }) => {
-    request.updateState(params);
+  const UpdateState = async (params: { idList: number[]; operation: number }) => {
+    try {
+      loading.value = true;
+      await request.UpdateScriptState(params);
+    } catch (error) {
+    } finally {
+      loading.value = false;
+      await run(filterData.value);
+      message.success('修改成功!', 1);
+      state.selectedRowKeys = [];
+    }
+  };
+  const deleteScript = async (scriptId: string | number) => {
+    try {
+      loading.value = true;
+      await request.DeleteScript(scriptId);
+    } catch (error) {
+    } finally {
+      loading.value = false;
+      await run(filterData.value);
+      message.success('删除成功!', 1);
+    }
   };
   const newScriptCategory = ref<{ value: string }>({ value: '' });
   // 控制弹窗是否显示
@@ -183,11 +174,9 @@
   const modalSelectDropDown = async () => {
     treeData.value = await ReadCategory('脚本分类');
   };
-  // 打开脚本弹窗抽屉
-  const openScriptModal = (scriptId: string, dataName: string) => {
+  const openDrawer = (dataName: string, drawerTitle: number, record?: scriptInfoListType) => {
+    record ? (currentScriptDetails.value = record) : (currentScriptDetails.value = {});
+    registerAndEditTitle.value = drawerTitle;
     emits('changeDrawerControlData', { dataName, value: true });
-    // 根据id查询脚本详情
-    console.log(scriptId);
-    // 赋值给currentScriptDetails
   };
 </script>

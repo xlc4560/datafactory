@@ -11,15 +11,21 @@ export interface scriptInfoListType {
   scriptState?: number;
   scriptType?: number;
   inputParameter?: string | null;
-  outputParameter?: null;
+  outputParameter?: string | null;
   sourceCode?: number | null;
   operatorCode?: null;
   isDelete?: number;
   createTime?: string;
   updateTime?: string;
+  [key: string]: any;
 }
-export interface scriptLstResType {
+export interface scriptListResType {
   total: number; // 总页数
   totalPage: number; // 总条数
   scriptInfoList?: scriptInfoListType[];
+}
+export interface scriptTestRes {
+  code: number;
+  data: string | null | number;
+  msg: string;
 }

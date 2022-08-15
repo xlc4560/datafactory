@@ -25,13 +25,8 @@
 
 <script setup lang="ts">
   import type { FormInstance } from 'ant-design-vue';
-  // 从pinia中引入集中管理的状态
-  import useStore from '@/store';
-  import { storeToRefs } from 'pinia';
   import { scriptStateOption, scriptType } from './data';
-  const { useScriptManagementStore, useCategoryStore } = useStore();
-  const { filterData, useRun } = storeToRefs(useScriptManagementStore);
-  const { fiterCategoryName } = storeToRefs(useCategoryStore);
+  import { fiterCategoryName, filterData, useRun } from './scriptHooks';
   const formInstance = ref<FormInstance>();
   watch(
     () => fiterCategoryName,
@@ -46,5 +41,3 @@
     useRun.value();
   };
 </script>
-
-<style></style>

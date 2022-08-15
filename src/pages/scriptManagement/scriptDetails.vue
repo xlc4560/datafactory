@@ -5,27 +5,40 @@
         <div class="scriptTitle_SxGJ"><strong>基本信息</strong></div>
       </template>
       <a-descriptions-item label="脚本名称">
-        <a @click="ChangeScriptContentVisible(true)">Zhou Maomao</a>
+        <a @click="ChangeScriptContentVisible(true)">{{ currentScriptDetails?.scriptName }}</a>
       </a-descriptions-item>
-      <a-descriptions-item label="脚本分类">1810000000</a-descriptions-item>
-      <a-descriptions-item label="脚本类型">Hangzhou, Zhejiang</a-descriptions-item>
-      <a-descriptions-item label="类名">empty</a-descriptions-item>
-      <a-descriptions-item label="函数名">empty</a-descriptions-item>
-      <a-descriptions-item label="自定义异常">empty</a-descriptions-item>
-      <a-descriptions-item label="描述"> No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China </a-descriptions-item>
+      <a-descriptions-item label="脚本分类">{{ currentScriptDetails?.scriptCategory }}</a-descriptions-item>
+      <a-descriptions-item label="脚本类型">{{ currentScriptDetails?.scriptType ? 'SQL脚本' : 'Python脚本' }}</a-descriptions-item>
+      <a-descriptions-item label="类名">{{ currentScriptDetails?.scriptClass }}</a-descriptions-item>
+      <a-descriptions-item label="函数名">{{ currentScriptDetails?.scriptFunction }}</a-descriptions-item>
+      <a-descriptions-item label="自定义异常">{{}}</a-descriptions-item>
+      <a-descriptions-item label="描述"> {{ currentScriptDetails?.scriptDescription }} </a-descriptions-item>
     </a-descriptions>
     <a-descriptions :column="1">
       <template #title>
         <div class="scriptTitle_SxGJ"><strong>参数信息</strong></div>
       </template>
       <a-descriptions-item>
-        <a-table :columns="inputParameterColumns" size="small" :pagination="false">
+        <a-table :columns="inputParameterColumns" :data-source="jsonDataParse('inputParameter')" size="small" :pagination="false">
           <template #title>输入参数</template>
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'parameterType'">
+              {{ TypeEnum[record.parameterType] }}
+            </template>
+            <template v-else-if="column.dataIndex === 'parameterRequire'">
+              {{ RequireEnum[record.parameterRequire] }}
+            </template>
+          </template>
         </a-table>
       </a-descriptions-item>
       <a-descriptions-item>
-        <a-table :columns="outputParameterColumns" size="small" :pagination="false">
+        <a-table :columns="outputParameterColumns" :data-source="jsonDataParse('outputParameter')" size="small" :pagination="false">
           <template #title>输出参数</template>
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'parameterType'">
+              {{ TypeEnum[record.parameterType] }}
+            </template>
+          </template>
         </a-table>
       </a-descriptions-item>
     </a-descriptions>
@@ -37,7 +50,7 @@
       :model-value="code"
       :disabled="true"
       placeholder="Code goes here...---"
-      :style="{ height: '600px' }"
+      :style="{ height: '60vh' }"
       :autofocus="true"
       :indent-with-tab="true"
       :tab-size="2"
@@ -52,10 +65,15 @@
 
 <script setup lang="ts">
   import { inputParameterColumns, outputParameterColumns } from './data';
+  import { GetScriptContent } from '@/api/scriptManagement';
   import { Codemirror } from 'vue-codemirror';
   import { python } from '@codemirror/lang-python';
   import { javascript } from '@codemirror/lang-javascript';
   import { oneDark } from '@codemirror/theme-one-dark';
+  import { TypeEnum, RequireEnum } from './Enum';
+  // 从pinia中引入集中管理的状态
+  import { fiterCategoryName, filterData, useRun, currentScriptDetails } from './scriptHooks';
+  import { message } from 'ant-design-vue';
   const props = defineProps({
     scriptDetailsDrawer: {
       type: Boolean,
@@ -64,37 +82,25 @@
   });
   const emits = defineEmits(['changeDrawerControlData']);
   const scriptContentVisible = ref<boolean>(false);
-  const ChangeScriptContentVisible = (visible: boolean) => {
-    scriptContentVisible.value = visible;
+  const jsonDataParse = (dataName: string): [] | null => {
+    if (currentScriptDetails?.value[dataName]) {
+      return JSON.parse(currentScriptDetails?.value[dataName] as string);
+    } else {
+      return null;
+    }
   };
-  const code = ref(`from PIL import Image
-import numpy as np
-import pandas as pd
-
-size = [150,200]
-filename = './1644660317429.jpg'
-im = Image.open(filename)
-width,height = im.size
-Lim = im.convert('L')
-Lim = Lim.resize([150,200])
-threshold = 170
-table = []
-for i in range(256):
-    if i < threshold:
-        table.append(0)
-    else:
-        table.append(1)
-bim = Lim.point(table,'1')
-
-test = bim.getdata()
-test1 = np.array(test)
-test1 = test1.reshape(size[::-1])
-
-pd.DataFrame(test1).to_csv('./小李.csv',index=None,header=None)`);
+  const ChangeScriptContentVisible = async (visible: boolean) => {
+    scriptContentVisible.value = visible;
+    code.value = '';
+    try {
+      code.value = await GetScriptContent(currentScriptDetails?.value.id as number);
+    } catch (error) {}
+  };
+  // 脚本代码
+  const code = ref(``);
   const extensions = [javascript(), python(), oneDark];
   const log = console.log;
 </script>
-
 <style scoped lang="less">
   @import url('./title.less');
 
