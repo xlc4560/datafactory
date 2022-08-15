@@ -16,35 +16,34 @@ export interface AssetUpdateState {
 
 // // 新增数据资产
 export interface AssetAdd {
+  assetCode?: string; //数据资产编号
   assetDesc?: string; //数据资产表描述
   assetNameCn: string; //数据资产名称
   assetNameEn: string; //数据资产英文名称
-  categoryCodes: string[]; //目录编号数组
+  categoryCodes: { value: string }[]; //目录编号数组
   //数据资产配置
-  assetConfigs: [
-    {
-      assetConfigDescription?: string; //字段描述
-      assetConfigName: string; //字段中文名称
-      assetConfigNameEn: string; //字段英文名称
-      standardCode: string; //数据标准目录编号
-    },
-  ];
+  assetConfigs: {
+    assetConfigDescription?: string; //字段描述
+    assetConfigName: string; //字段中文名称
+    assetConfigNameEn: string; //字段英文名称
+    standardCode: string; //数据标准目录编号
+    editable?: boolean; // 编辑状态
+  }[];
 }
 
 // 数据资产更新
 export interface AssetUpdate {
+  assetCode?: string; //数据资产编号
   assetDesc?: string; //数据资产表描述
-  assetCode: string; //数据资产编号
   assetNameCn: string; //数据资产名称
   assetNameEn: string; //数据资产英文名称
-  categoryCodes: string[]; //目录编号数组
+  categoryCodes: { value: string }[]; //目录编号数组
   //数据资产配置
-  assetConfigs: [
-    {
-      assetConfigDescription?: string; //字段描述
-      assetConfigName: string; //字段中文名称
-      assetConfigNameEn: string; //字段英文名称
-      standardCode: string; //数据标准目录编号
-    },
-  ];
+  assetConfigs: {
+    assetConfigDescription?: string; //字段描述
+    assetConfigName: string; //字段中文名称
+    assetConfigNameEn: string; //字段英文名称
+    standardCode: string; //数据标准目录编号
+    editable?: boolean; // 编辑状态
+  }[];
 }

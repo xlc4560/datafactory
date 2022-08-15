@@ -43,11 +43,11 @@ export interface DataAssetInformation {
   chinesename: string;
   englishname: string;
   assetdescription: string;
-  catalogue: string;
+  catalogue: string[];
   fieldinformation: {
     key?: number;
     fieldchinesename: string;
-    fieldenglishage: string;
+    fieldenglishname: string;
     fieldexplain: string;
     datatype: string;
     datalength: string;

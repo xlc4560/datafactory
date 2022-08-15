@@ -18,62 +18,68 @@
         </p>
         <p>
           <span>所属目录:</span>
-          <span class="catalogue">{{ dataAssetInformation.catalogue }}</span>
+          <span v-for="(i, index) in dataAssetInformation.catalogue" :key="index" class="catalogue">{{ i }}</span>
         </p>
       </div>
     </div>
     <div class="details-msg">
       <div class="title">字段信息</div>
       <div class="table">
-        <a-table :columns="columns" :data-source="dataAssetInformation.fieldinformation" :pagination="{ pageSize: 50 }" :scroll="{ y: 340 }" />
+        <a-table :columns="columns" :data-source="dataAssetInformation.fieldinformation" :pagination="{ pageSize: 50 }" :scroll="{ y: 340 }">
+          <template #bodyCell="{ column, record, text }">
+            <template v-if="column.dataIndex === 'fieldexplain'">
+              <span v-if="record.fieldexplain == ''">{{ '-' }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'datalength'">
+              <span v-if="record.datalength == null">{{ '-' }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'dataprecision'">
+              <span v-if="record.dataprecision == null">{{ '-' }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'default'">
+              <span v-if="record.default == null">{{ '-' }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'valueranges'">
+              <span v-if="record.valueranges == 'null-null'">{{ 0 }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'enumranges'">
+              <span v-if="record.enumranges == null">{{ '-' }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'datatype'">
+              <span>{{ datatype[text] }}</span>
+            </template>
+          </template>
+        </a-table>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   import { DataAssetInformation } from './types';
+  import { assetGetDetail } from '@/api/dataAssetCatalog/index';
   const dataAssetInformation = reactive<DataAssetInformation>({
-    chinesename: 'chinesename',
-    englishname: 'englishname',
-    assetdescription: 'assetdescription',
-    catalogue: '基本信息',
-    fieldinformation: [
-      {
-        key: 1,
-        fieldchinesename: 'englishname',
-        fieldenglishage: '数据1',
-        fieldexplain: 'fieldexplain',
-        datatype: 'datatype',
-        datalength: 'datalength',
-        dataprecision: 'dataprecision',
-        default: 'default',
-        valueranges: 'valueranges',
-        enumranges: 'enumranges',
-      },
-      {
-        key: 2,
-        fieldchinesename: 'englishname',
-        fieldenglishage: '数据1',
-        fieldexplain: 'fieldexplain',
-        datatype: 'datatype',
-        datalength: 'datalength',
-        dataprecision: 'dataprecision',
-        default: 'default',
-        valueranges: 'valueranges',
-        enumranges: 'enumranges',
-      },
-    ],
+    chinesename: '',
+    englishname: '',
+    assetdescription: '',
+    catalogue: [],
+    fieldinformation: [],
   });
+  enum datatype {
+    'Int' = 0,
+    'Enum' = 1,
+    'Float' = 2,
+    'String' = 3,
+  }
   // 表格
   const columns = [
     {
       title: '字段英文名称',
-      dataIndex: 'fieldchinesename',
+      dataIndex: 'fieldenglishname',
       width: 150,
     },
     {
       title: '字段中文名称',
-      dataIndex: 'fieldenglishage',
+      dataIndex: 'fieldchinesename',
       width: 150,
     },
     {
@@ -105,6 +111,35 @@
       dataIndex: 'enumranges',
     },
   ];
+
+  const prop = defineProps({
+    assetcode: {
+      type: String,
+      default: '',
+    },
+  });
+  console.log(prop.assetcode);
+  assetGetDetail(prop.assetcode).then(res => {
+    console.log(res);
+    dataAssetInformation.chinesename = res.asset.assetNameCn;
+    dataAssetInformation.englishname = res.asset.assetNameEn;
+    dataAssetInformation.assetdescription = res.asset.assetDesc;
+    dataAssetInformation.catalogue = res.categoryName;
+    res.assetConfigStandardMap.forEach((item: any) => {
+      let temp = {
+        fieldchinesename: item.assetConfigName,
+        fieldenglishname: item.assetConfigNameEn,
+        fieldexplain: item.assetConfigDescription,
+        datatype: item.standardType,
+        datalength: item.standardDataLength,
+        dataprecision: item.standardDataAccuracy,
+        default: item.standardDefault,
+        valueranges: item.standardValueMin + '-' + item.standardValueMax,
+        enumranges: item.codeId,
+      };
+      dataAssetInformation.fieldinformation.push(temp);
+    });
+  });
 </script>
 <style scoped lang="less">
   .details {

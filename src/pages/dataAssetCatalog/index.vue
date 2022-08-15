@@ -82,7 +82,7 @@
   </div>
   <!-- 详情部分 -->
   <a-drawer :title="title" :width="1200" :destroy-on-close="true" :visible="visibleDetails" :footer-style="{ textAlign: 'right' }" @close="onClose">
-    <assetdetails></assetdetails>
+    <assetdetails :assetcode="assetcode"></assetdetails>
     <!-- <test></test> -->
     <template #footer>
       <a-button style="margin-right: 8px" type="primary" @click="onClose">关闭</a-button>
@@ -91,7 +91,7 @@
   <!-- 新增、编辑 -->
   <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1200" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
     <!-- <AddStandard :codeid="codeid" @visible="svisible2"></AddStandard> -->
-    <addasset></addasset>
+    <addasset :codeid="codeid"></addasset>
   </a-drawer>
 </template>
 <script setup lang="ts">
@@ -231,13 +231,14 @@
   };
   // 详情
   const visibleDetails = ref<boolean>(false);
-  const standardCode = ref<string>('');
+  const assetcode = ref<string>('');
   const title = ref<string>('');
   const showModalDetails = (record: any) => {
     visibleDetails.value = true;
-    console.log(record.key);
+
     title.value = record.key;
-    standardCode.value = record.key;
+    assetcode.value = record.key;
+    console.log(assetcode.value);
   };
   const onClose = () => {
     visibleDetails.value = false;
