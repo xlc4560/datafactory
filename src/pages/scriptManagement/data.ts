@@ -59,10 +59,42 @@ export const inputParameterColumns: columnsType[] = [
   {
     title: '数据类型',
     dataIndex: 'parameterType',
+    selectOption: [
+      {
+        key: 0,
+        label: 'String',
+      },
+      {
+        key: 1,
+        label: 'Integer',
+      },
+      {
+        key: 2,
+        label: 'number',
+      },
+      {
+        key: 3,
+        label: 'Object',
+      },
+      {
+        key: 4,
+        label: 'Array',
+      },
+    ],
   },
   {
     title: '是否必填',
     dataIndex: 'parameterRequire',
+    selectOption: [
+      {
+        key: 0,
+        label: '否',
+      },
+      {
+        key: 1,
+        label: '是',
+      },
+    ],
   },
   {
     title: '参数描述',
@@ -78,6 +110,28 @@ export const outputParameterColumns: columnsType[] = [
   {
     title: '数据类型',
     dataIndex: 'parameterType',
+    selectOption: [
+      {
+        key: 0,
+        label: 'String',
+      },
+      {
+        key: 1,
+        label: 'Integer',
+      },
+      {
+        key: 2,
+        label: 'number',
+      },
+      {
+        key: 3,
+        label: 'Object',
+      },
+      {
+        key: 4,
+        label: 'Array',
+      },
+    ],
   },
   {
     title: '参数描述',
@@ -112,3 +166,23 @@ export const scriptEditOutputParameterColumns: columnsType[] = [
   },
 ];
 export const FileDataType = ['.py', '.sql', '.py', '.sql'];
+export const emptyCurrentScriptDetails = {
+  id: undefined,
+  scriptEncode: undefined,
+  scriptRoute: undefined,
+  scriptName: undefined,
+  scriptMethod: undefined,
+  scriptFunction: undefined,
+  scriptClass: undefined,
+  scriptDescription: undefined,
+  scriptCategory: undefined,
+  scriptState: undefined,
+  scriptType: undefined,
+  inputParameter: [],
+  outputParameter: [],
+  sourceCode: null,
+  operatorCode: null,
+  isDelete: undefined,
+  createTime: undefined,
+  updateTime: undefined,
+};

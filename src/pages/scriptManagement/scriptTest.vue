@@ -68,7 +68,6 @@
   import { ScriptParameterType } from './type';
   import { JsonViewer } from 'vue3-json-viewer';
   import 'vue3-json-viewer/dist/index.css';
-  import { jsonDataParse } from './scriptHooks';
   import { TypeEnum, RequireEnum } from './Enum';
   import { ScriptTest__ } from '@/api/scriptManagement';
   import { copyText } from '@/utils/copyText';
@@ -84,17 +83,10 @@
   const keyClick = (keyName: string): void => {
     console.log(keyName, '被点击了');
   };
-  // 处理当前record的inputParameter
-  const dataComputed = (): ScriptParameterType[] => {
-    return jsonDataParse('inputParameter')?.map((item: any) => {
-      item.parameterValue = '';
-      return item;
-    }) as ScriptParameterType[];
-  };
   const tableData = ref<ScriptParameterType[]>([]);
-  // 监视当前字段，
+  // // 监视当前字段，
   watch(currentScriptDetails, () => {
-    tableData.value = dataComputed();
+    tableData.value = currentScriptDetails.value.inputParameter as ScriptParameterType[];
   });
   // 测试结果
   const scriptTestResult = ref<string | object | number | null>('');

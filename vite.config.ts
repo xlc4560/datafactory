@@ -72,7 +72,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
         //脚本管理
         '/scriptInfo': {
-          target: 'http://10.8.21.139:6002',
+          target: 'http://10.8.21.175:6002',
           // target: 'http://124.223.17.68:6002',
           changeOrigin: true,
         },

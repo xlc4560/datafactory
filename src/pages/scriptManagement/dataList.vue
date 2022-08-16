@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-  import { tableColumns, codeState, scriptType } from './data';
+  import { tableColumns, codeState, scriptType, emptyCurrentScriptDetails } from './data';
   import * as request from '@/api/scriptManagement';
   import { scriptInfoListType } from '@/api/scriptManagement/apiReturnType';
   import { ReadCategory } from '@/api/category';
@@ -175,7 +175,7 @@
     treeData.value = await ReadCategory('脚本分类');
   };
   const openDrawer = (dataName: string, drawerTitle: number, record?: scriptInfoListType) => {
-    record ? (currentScriptDetails.value = record) : (currentScriptDetails.value = {});
+    record ? (currentScriptDetails.value = record) : (currentScriptDetails.value = emptyCurrentScriptDetails);
     registerAndEditTitle.value = drawerTitle;
     emits('changeDrawerControlData', { dataName, value: true });
   };

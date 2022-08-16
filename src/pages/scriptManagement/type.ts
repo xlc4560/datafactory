@@ -1,3 +1,4 @@
+import { scriptInfoListType } from '@/api/scriptManagement/apiReturnType';
 export interface ModalControlDataType {
   scriptDetailsDrawer: boolean;
   scriptTestDrawer: boolean;
@@ -6,7 +7,7 @@ export interface ModalControlDataType {
 }
 export interface ScriptParameterType {
   parameterName: string;
-  parameterRequire: number;
+  parameterRequire?: number;
   parameterType: number;
   parameterValue: string | null;
 }

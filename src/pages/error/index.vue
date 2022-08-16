@@ -39,6 +39,7 @@
       </template>
     </a-table>
     <!-- :options="options" -->
+
     <a-select
       v-model:value="value"
       :first-active-value="['0']"
@@ -179,7 +180,7 @@
   const searchValue = (value: string) => {
     searchKeyWord.value = value;
   };
-  const searchKeyWord = ref<string>('aaaa');
+  const searchKeyWord = ref<string>('');
   const filterOption = (input: string, option: any) => {
     return option.key.toLowerCase().indexOf(searchKeyWord.value.toLowerCase()) >= 0;
   };

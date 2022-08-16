@@ -19,7 +19,7 @@
         <div class="scriptTitle_SxGJ"><strong>参数信息</strong></div>
       </template>
       <a-descriptions-item>
-        <a-table :columns="inputParameterColumns" :data-source="jsonDataParse('inputParameter')" size="small" :pagination="false">
+        <a-table :columns="inputParameterColumns" :data-source="currentScriptDetails.inputParameter" size="small" :pagination="false">
           <template #title>输入参数</template>
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'parameterType'">
@@ -32,7 +32,7 @@
         </a-table>
       </a-descriptions-item>
       <a-descriptions-item>
-        <a-table :columns="outputParameterColumns" :data-source="jsonDataParse('outputParameter')" size="small" :pagination="false">
+        <a-table :columns="outputParameterColumns" :data-source="currentScriptDetails.outputParameter" size="small" :pagination="false">
           <template #title>输出参数</template>
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'parameterType'">
@@ -82,13 +82,6 @@
   });
   const emits = defineEmits(['changeDrawerControlData']);
   const scriptContentVisible = ref<boolean>(false);
-  const jsonDataParse = (dataName: string): [] | null => {
-    if (currentScriptDetails?.value[dataName]) {
-      return JSON.parse(currentScriptDetails?.value[dataName] as string);
-    } else {
-      return null;
-    }
-  };
   const ChangeScriptContentVisible = async (visible: boolean) => {
     scriptContentVisible.value = visible;
     code.value = '';

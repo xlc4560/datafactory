@@ -1,3 +1,20 @@
+interface formItemMessageType {
+  help?: string;
+  validateStatus?: string;
+}
+export interface ScriptParameterType {
+  parameterName: string;
+  parameterRequire?: number;
+  parameterType: number;
+  parameterValue: string | null;
+  isEdit?: boolean;
+  formItemMessage?: {
+    parameterName: formItemMessageType;
+    parameterRequire: formItemMessageType;
+    parameterType: formItemMessageType;
+    [key: string]: any;
+  };
+}
 export interface scriptInfoListType {
   id?: number;
   scriptEncode?: string;
@@ -10,8 +27,8 @@ export interface scriptInfoListType {
   scriptCategory?: string;
   scriptState?: number;
   scriptType?: number;
-  inputParameter?: string | null;
-  outputParameter?: string | null;
+  inputParameter?: ScriptParameterType[];
+  outputParameter?: ScriptParameterType[];
   sourceCode?: number | null;
   operatorCode?: null;
   isDelete?: number;

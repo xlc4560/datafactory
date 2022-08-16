@@ -12,7 +12,7 @@ enum Api {
   ADD_SCRIPT = '/scriptInfo/addScript', // 脚本新增
 }
 // 获取脚本列表
-export const GetScriptList = (filterData: funArgsType.FilterDataType) => {
+export const GetScriptList = async (filterData: funArgsType.FilterDataType) => {
   const data = {
     current: undefined,
     pageSize: undefined,
@@ -20,7 +20,33 @@ export const GetScriptList = (filterData: funArgsType.FilterDataType) => {
   };
   delete data.current;
   delete data.pageSize;
-  return api.post<resType.scriptListResType>({ url: Api.GET_SCRIPT_LIST, data });
+  const response = await api.post<resType.scriptListResType>({ url: Api.GET_SCRIPT_LIST, data });
+  response.scriptInfoList?.forEach(item => {
+    ['inputParameter', 'outputParameter'].forEach((key: string) => {
+      if (item[key]) {
+        item[key] = JSON.parse(item[key] as unknown as string);
+        item[key]?.forEach((i: resType.ScriptParameterType) => {
+          i.isEdit = false;
+          i.formItemMessage = {
+            parameterName: {
+              help: undefined,
+              validateStatus: 'success',
+            },
+            parameterRequire: {
+              help: undefined,
+              validateStatus: 'success',
+            },
+            parameterType: {
+              help: undefined,
+              validateStatus: 'success',
+            },
+          };
+        });
+      }
+    });
+  });
+
+  return response;
 };
 // 脚本状态修改
 export const UpdateScriptState = (params: funArgsType.UpdateStateType) => {
@@ -37,6 +63,9 @@ export const ScriptTest__ = (params: funArgsType.scriptTestType) => {
 // 脚本删除
 export const DeleteScript = (scriptId: number | string) => api._delete({ url: Api.DELETE_SCRIPT + scriptId });
 // 新增脚本
-export const AddScript = (params: funArgsType.AddScriptType) => {
-  return api.post({ url: Api.ADD_SCRIPT, data: params });
+export const AddScript = (params: { scriptFile: any; scriptJson: string }) => {
+  const formData = new FormData();
+  formData.append('scriptFile', params.scriptFile.originFileObj);
+  formData.append('scriptJson', params.scriptJson);
+  return api.post({ url: Api.ADD_SCRIPT, data: formData, config: { headers: { 'Content-Type': 'multipart/form-data' } } });
 };
