@@ -82,8 +82,8 @@
   </div>
   <!-- 详情部分 -->
   <a-drawer :title="title" :width="1200" :destroy-on-close="true" :visible="visibleDetails" :footer-style="{ textAlign: 'right' }" @close="onClose">
-    <!-- <assetdetails :assetcode="assetcode"></assetdetails> -->
-    <test></test>
+    <assetdetails :assetcode="assetcode"></assetdetails>
+    <!-- <test></test> -->
     <template #footer>
       <a-button style="margin-right: 8px" type="primary" @click="onClose">关闭</a-button>
     </template>
