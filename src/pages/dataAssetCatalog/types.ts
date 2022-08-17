@@ -19,7 +19,7 @@ export interface FormState {
   /**
    * 按时间排序，0降序（默认），1升序
    */
-  oderByDate?: number | null;
+  updateTimeOrder?: number | null;
   /**
    * 页数
    */
@@ -27,7 +27,7 @@ export interface FormState {
   /**
    * 每页大小
    */
-  size: number | null;
+  pageSize: number | null;
 }
 // 表格数据类型
 export interface DataItem {
@@ -37,6 +37,25 @@ export interface DataItem {
   assetDesc: string; //数据资产表描述
   dataAssetState: number; //数据资产表状态
   updateTime: string; //更新时间
+}
+//数据资产详细信息
+export interface DataAssetInformation {
+  chinesename: string;
+  englishname: string;
+  assetdescription: string;
+  catalogue: string[];
+  fieldinformation: {
+    key?: number;
+    fieldchinesename: string;
+    fieldenglishname: string;
+    fieldexplain: string;
+    datatype: string;
+    datalength: string;
+    dataprecision: string;
+    default: string;
+    valueranges: string;
+    enumranges: string;
+  }[];
 }
 // 状态
 export enum state {

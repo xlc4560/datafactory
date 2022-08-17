@@ -1,203 +1,383 @@
 <!-- 新增资产表和编辑 -->
 <template>
   <div>
-    <div class="base">
-      <h3 :style="{ margin: '16px 0' }">数据资产表基础信息</h3>
-      <a-form :model="assetadd" name="basic" :label-col="{ span: 2 }" :wrapper-col="{ span: 8 }" autocomplete="off">
-        <a-form-item label="中文名称" name="assetNameCn" :rules="[{ required: true, message: '请输入中文名称!' }]">
+    <a-form :model="assetadd" v-bind="layout" @finish="onFinish">
+      <div class="base">
+        <h3 class="basictitle">数据资产表基础信息</h3>
+        <a-form-item label="中文名称" name="assetNameCn" :rules="rules.assetNameCn">
           <a-input v-model:value="assetadd.assetNameCn" placeholder="请输入中文名称" />
         </a-form-item>
-
-        <a-form-item label="英文名称" name="assetNameCn" :rules="[{ required: true, message: '请输入英文名称!' }]">
-          <a-input v-model:value="assetadd.assetNameCn" placeholder="请输入英文名称" />
+        <a-form-item label="英文名称" name="assetNameEn" :rules="rules.assetNameEn">
+          <a-input v-model:value="assetadd.assetNameEn" placeholder="请输入英文名称" />
         </a-form-item>
-
-        <a-form-item label="资产表描述" name="assetNameCn" :rules="[]">
-          <a-textarea v-model:value="assetadd.assetNameCn" placeholder="请输入资产表描述" :rows="4" />
+        <a-form-item label="资产表描述" name="assetDesc">
+          <a-textarea v-model:value="assetadd.assetDesc" placeholder="请输入资产表描述" :rows="4" />
         </a-form-item>
-
-        <a-form-item name="assetNameCn" label="所属目录">
+        <a-form-item label="所属目录" name="categoryCodes" :rules="rules.categoryCodes">
           <div class="scrollable-container">
-            <a-space v-for="(user, index) in assetadd.categoryCodes" :key="index">
-              <!-- <a-input v-model:value="assetadd.categoryCodes[index]" placeholder="请选择所属目录" /> -->
-              <a-select
-                v-model:value="assetadd.categoryCodes[index]"
-                mode="combobox"
-                style="width: 350px"
-                placeholder="请选择所属目录"
-                :options="[{ value: 0, label: 'Int' }]"
-                @change="handleChange"
-              ></a-select>
-
-              <MinusCircleOutlined v-if="index != 0" @click="removeUser(index)" />
-            </a-space>
+            <a-form-item v-for="(i, index) in assetadd.categoryCodes" :key="index">
+              <a-tree-select
+                v-model:value="i.value"
+                style="width: 90%"
+                show-search
+                placeholder="Please select"
+                allow-clear
+                tree-default-expand-all
+                :tree-data="treedata"
+                :field-names="{
+                  children: 'children',
+                  label: 'name',
+                  value: 'id',
+                }"
+              >
+              </a-tree-select>
+              <a v-if="index != 0" style="margin-left: 3%" @click="removeUser(index)">删除</a>
+            </a-form-item>
           </div>
         </a-form-item>
-
-        <a-form-item label=" ">
+        <a-form-item label=" " :colon="false">
           <a-button type="dashed" block @click="addSight">
             <PlusOutlined />
-            Add sights
+            添加一行
           </a-button>
         </a-form-item>
-
-        <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button type="primary" html-type="submit" @finish="onFinish">Submit</a-button>
-        </a-form-item>
-      </a-form>
-    </div>
-    <div class="configuration">
-      <div class="title">
-        <h3 :style="{ margin: '16px 0' }">字段配置</h3>
-        <a-button type="primary" @click="addItem">添加字段</a-button>
       </div>
-      <a-table :columns="columns" :data-source="dataSource" bordered>
-        <template #bodyCell="{ column, text, record }">
-          <template v-if="['name', 'age', 'address'].includes(column.dataIndex)">
-            <div>
-              <a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]" style="margin: -5px 0" />
-              <template v-else>
-                {{ text }}
-              </template>
-            </div>
+      <div class="configuration">
+        <div class="title">
+          <h3 :style="{ margin: '16px 0' }">字段配置</h3>
+          <a-button type="primary" @click="addItem">添加字段</a-button>
+        </div>
+        <a-table :columns="columns" :data-source="assetadd.assetConfigs" bordered>
+          <template #bodyCell="{ column, text, record, index }">
+            <template v-if="column.dataIndex === 'assetConfigName' && assetadd.assetConfigs[index].editable">
+              <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigName']" :rules="[{ required: true, message: '必填' }]">
+                <a-input v-model:value="record.assetConfigName"></a-input>
+              </a-form-item>
+            </template>
+            <template v-else-if="column.dataIndex === 'assetConfigNameEn' && assetadd.assetConfigs[index].editable">
+              <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigNameEn']" :rules="[{ required: true, message: '必填' }]">
+                <a-input v-model:value="record.assetConfigNameEn"></a-input>
+              </a-form-item>
+            </template>
+            <template v-else-if="column.dataIndex === 'assetConfigDescription' && assetadd.assetConfigs[index].editable">
+              <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigDescription']" :rules="[{ required: true, message: '必填' }]">
+                <a-input v-model:value="record.assetConfigDescription"></a-input>
+              </a-form-item>
+            </template>
+            <template v-else-if="column.dataIndex === 'standardCode' && assetadd.assetConfigs[index].editable">
+              <a-form-item has-feedback :name="['assetConfigs', index, 'standardCode']" :rules="[{ required: true, message: '必填' }]">
+                <a-select v-model:value="record.standardCode" :options="options"></a-select>
+              </a-form-item>
+            </template>
+            <template v-else-if="column.dataIndex === 'operation'">
+              <div class="editable-row-operations">
+                <span v-if="assetadd.assetConfigs[index].editable">
+                  <a @click="save(index)">保存</a>
+                  <a-popconfirm title="确认取消?" @confirm="cancel(index)">
+                    <a class="operation_sep">取消</a>
+                  </a-popconfirm>
+                </span>
+                <span v-else>
+                  <a @click="edit(index)">编辑</a>
+                  <a-popconfirm title="确认删除?" @confirm="del(index)">
+                    <a class="operation_sep">删除</a>
+                  </a-popconfirm>
+                </span>
+              </div>
+            </template>
+            <template v-else>
+              {{ text }}
+            </template>
           </template>
-          <template v-else-if="column.dataIndex === 'operation'">
-            <div class="editable-row-operations">
-              <span v-if="editableData[record.key]">
-                <a-typography-link style="margin-right: 10px" @click="save(record.key)">保存</a-typography-link>
-                <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
-                  <a>取消</a>
-                </a-popconfirm>
-              </span>
-              <span v-else>
-                <a style="margin-right: 10px" @click="edit(record.key)">编辑</a>
-                <a @click="edit(record.key)">删除</a>
-              </span>
-            </div>
-          </template>
-        </template>
-      </a-table>
-    </div>
+        </a-table>
+      </div>
+      <a-divider />
+      <div class="buttons">
+        <a-button class="buttonclose" @click="closeDrawer">关闭</a-button>
+        <a-button type="primary" html-type="submit">确定</a-button>
+      </div>
+    </a-form>
   </div>
 </template>
 <script setup lang="ts">
-  import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue';
-  import { cloneDeep } from 'lodash-es';
-  // import { defineComponent, reactive, ref } from 'vue';
-  import type { UnwrapRef } from 'vue';
-  // import { cloneDeep } from 'lodash-es';
-  // const issave = ref(false);
+  import { PlusOutlined } from '@ant-design/icons-vue';
+  import { standardAssetConfigAdapt, categoryListTree, assetAdd, asseUpdate, assetGetDetail } from '@/api/dataAssetCatalog/index';
+  import { message } from 'ant-design-vue';
+  //表单样式
+  const layout = {
+    labelCol: { span: 2 },
+    wrapperCol: { span: 15 },
+  };
+  //验证
+  const rules = reactive({
+    assetNameCn: [
+      { required: true, message: '请输入中文名称!' },
+      { pattern: /^[a-zA-Z\u4e00-\u9fa5]+$/, message: '只支持中文及英文大小写' },
+    ],
+    assetNameEn: [
+      { required: true, message: '请输入英文名称!' },
+      { pattern: /^[a-zA-Z][a-zA-Z0-9_]*$/, message: '英文大小写数字及下划线，且只能英文开头' },
+    ],
+    categoryCodes: [{ required: true, message: '请选择目录!' }],
+  });
+
   interface AssetAdd {
+    assetCode?: string; //数据资产编号
     assetDesc?: string; //数据资产表描述
     assetNameCn: string; //数据资产名称
     assetNameEn: string; //数据资产英文名称
-    categoryCodes: string[]; //目录编号数组
+    categoryCodes: { value: string }[]; //目录编号数组
     //数据资产配置
-    assetConfigs: [
-      {
-        assetConfigDescription?: string; //字段描述
-        assetConfigName: string; //字段中文名称
-        assetConfigNameEn: string; //字段英文名称
-        standardCode: string; //数据标准目录编号
-      },
-    ];
+    assetConfigs: {
+      assetConfigDescription?: string; //字段描述
+      assetConfigName: string; //字段中文名称
+      assetConfigNameEn: string; //字段英文名称
+      standardCode: string; //数据标准目录编号
+      editable?: boolean; // 编辑状态
+    }[];
   }
+
+  //初始化数据
   const assetadd = reactive<AssetAdd>({
     assetDesc: '',
     assetNameCn: '',
     assetNameEn: '',
-    categoryCodes: [''],
-    assetConfigs: [
-      {
-        assetConfigDescription: '',
-        assetConfigName: '',
-        assetConfigNameEn: '',
-        standardCode: '',
-      },
-    ],
+    categoryCodes: [{ value: '' }],
+    assetConfigs: [],
   });
 
-  // 添加
-  const addSight = () => {
-    assetadd.categoryCodes.push('');
+  //声明选择类型
+  const options: { label: string; value: string }[] = [];
+
+  // 定义树形结构
+  let treedata = ref([]);
+  //求情树形结构数据
+  categoryListTree('数据资产目录分类').then(res => {
+    treedata.value = res;
+    // 树形结构展开方法;
+    function treeToArr(data: any, pid: any = null, res: any) {
+      data.forEach((item: any) => {
+        res.push({ pid: item.parentId, id: item.categoryCode, name: item.name });
+        if (item.children && item.children.length !== 0) {
+          treeToArr(item.children, item.id, res);
+        }
+      });
+      return res;
+    }
+    //暂存展开数组
+    let resArr: any = [];
+    //调用展开树形结构方法
+    treeToArr(treedata.value, 0, resArr);
+    //判断是否有孩子节点
+    for (let i = 0; i < resArr.length; i++) {
+      let t = 0;
+      for (let j = i + 1; j < resArr.length; j++) {
+        if (resArr[i].id == resArr[j].pid) {
+          t++;
+        } else {
+        }
+      }
+      if (t == 0) {
+        // console.log('无孩子', resArr[i]);
+      } else {
+        // console.log('有孩子', resArr[i]);
+        resArr[i].disabled = true;
+      }
+    }
+
+    //数组转回树形结构
+    function convert(list: any) {
+      const res = [];
+      const map = list.reduce((res: any, v: any) => ((res[v.id] = v), (v.children = []), res), {});
+      for (const item of list) {
+        if (item.pid === '0') {
+          res.push(item);
+          continue;
+        }
+        if (item.pid in map) {
+          const parent = map[item.pid];
+          parent.children = parent.children || [];
+          parent.children.push(item);
+        }
+      }
+      return res;
+    }
+    //调用并赋值转换回树形结构方法
+    treedata.value = convert(resArr) as any;
+
+    let newcategory = reactive([{ value: '' }]);
+    //编辑页面获取数据
+    if (prop.codeid != 'new') {
+      assetGetDetail(prop.codeid).then(res => {
+        // 基本信息
+        assetadd.assetCode = res.asset.assetCode;
+        assetadd.assetDesc = res.asset.assetDesc;
+        assetadd.assetNameCn = res.asset.assetNameCn;
+        assetadd.assetNameEn = res.asset.assetNameEn;
+        assetadd.categoryCodes.splice(0, 1);
+        // 所属目录
+        res.categoryName.forEach((i: any) => {
+          let temp = {
+            value: i,
+          };
+          newcategory.push(temp);
+        });
+        // 字段配置
+        res.assetConfigStandardMap.forEach((i: any) => {
+          let temp = {
+            assetConfigDescription: i.assetConfigDescription,
+            assetConfigName: i.assetConfigName,
+            assetConfigNameEn: i.assetConfigNameEn,
+            standardCode: i.standardCode,
+          };
+          assetadd.assetConfigs.push(temp);
+        });
+        // 将获取的目录数据id赋给选择框
+        resArr.forEach((i: any) => {
+          newcategory.forEach((e: any) => {
+            if (i.name == e.value) {
+              console.log(i.id);
+              let temp = {
+                value: i.id,
+              };
+              assetadd.categoryCodes.push(temp);
+            }
+          });
+        });
+      });
+    }
+  });
+  //请求标准映射数据
+  standardAssetConfigAdapt().then(res => {
+    res.forEach((i: any) => {
+      let temp = {
+        label: i.standardCode + ' - ' + i.standardCnName + ' - ' + i.standardEnName,
+        value: i.standardCode,
+      };
+      options.push(temp);
+    });
+  });
+
+  //接收组件传值
+  const prop = defineProps({
+    codeid: {
+      type: String,
+      default: '',
+    },
+    changevisible: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  const props = toRefs(prop);
+  const changevisible = ref<boolean>();
+  changevisible.value = props.changevisible.value;
+  const emit1 = defineEmits(['changevisible', 'reset']);
+  const closeDrawer = () => {
+    changevisible.value = false;
+    emit1('changevisible', changevisible.value);
   };
-  // 删除
+  function reset() {
+    emit1('reset');
+  }
+
+  // 添加目录
+  const addSight = () => {
+    assetadd.categoryCodes.push({ value: '' });
+  };
+  // 删除目录
   const removeUser = (index: any) => {
     assetadd.categoryCodes.splice(index, 1);
   };
-  // 选择
-  const handleChange = (value: any) => {
-    console.log(`selected ${value}`);
-  };
+
   // 添加一条字段配置
   const addItem = () => {
-    assetadd.assetConfigs.push({
+    let t = {
       assetConfigDescription: '',
       assetConfigName: '',
       assetConfigNameEn: '',
       standardCode: '',
-    });
-  };
-  // 提交
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
-    console.log(assetadd);
+      editable: true,
+    };
+    if (assetadd.assetConfigs.length == 0) {
+      assetadd.assetConfigs.push(t);
+    } else if (assetadd.assetConfigs[assetadd.assetConfigs.length - 1].editable == true && assetadd.assetConfigs.length > 1) {
+      message.warn('只能同时编辑一行');
+    } else {
+      assetadd.assetConfigs.push(t);
+    }
   };
   // 表格
   const columns = [
     {
-      title: 'name',
-      dataIndex: 'name',
-      width: '25%',
-    },
-    {
-      title: 'age',
-      dataIndex: 'age',
+      title: '字段英文名称',
+      dataIndex: 'assetConfigNameEn',
       width: '15%',
     },
     {
-      title: 'address',
-      dataIndex: 'address',
+      title: '字段中文名称',
+      dataIndex: 'assetConfigName',
+      width: '15%',
+    },
+    {
+      title: '字段说明',
+      dataIndex: 'assetConfigDescription',
+      width: '15%',
+    },
+    {
+      title: '标准映射',
+      dataIndex: 'standardCode',
       width: '40%',
     },
     {
-      title: 'operation',
+      title: '操作',
       dataIndex: 'operation',
     },
   ];
-  interface DataItem {
-    key: string;
-    name: string;
-    age: number;
-    address: string;
-  }
-  const data: DataItem[] = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i.toString(),
-      name: `Edrward ${i}`,
-      age: 32,
-      address: `London Park no. ${i}`,
-    });
-  }
-  const dataSource = ref(data);
-  const editableData: UnwrapRef<Record<string, DataItem>> = reactive({});
+  const edit = (index: number) => {
+    assetadd.assetConfigs[index].editable = true;
+  };
 
-  const edit = (key: string) => {
-    editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
+  const save = (index: number) => {
+    assetadd.assetConfigs[index].editable = false;
   };
-  const save = (key: string) => {
-    Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
-    delete editableData[key];
+  const cancel = (index: number) => {
+    assetadd.assetConfigs[index].editable = false;
   };
-  const cancel = (key: string) => {
-    delete editableData[key];
+  const del = (index: number) => {
+    assetadd.assetConfigs.splice(index, 1);
+  };
+  //提交
+  const onFinish = () => {
+    let temp: string[] = [];
+    assetadd.categoryCodes.forEach(i => {
+      temp.push(i.value);
+    });
+    assetadd.categoryCodes = temp as any;
+    console.log(toRaw(assetadd));
+    if (prop.codeid == 'new') {
+      assetAdd(toRaw(assetadd)).then(res => {
+        console.log(res);
+        closeDrawer();
+        reset();
+      });
+    } else {
+      asseUpdate(toRaw(assetadd)).then(res => {
+        console.log(res);
+        closeDrawer();
+        reset();
+      });
+    }
   };
 </script>
 <style scoped lang="less">
   .base {
     // border-top: 1px solid #f0f0f0;
     padding: 10px;
+  }
+
+  .basictitle {
+    margin: '16px 0';
   }
 
   .title {
@@ -210,11 +390,24 @@
 
   .configuration {
     border: 1px solid #f3f3f3;
-    padding: 10px 50px;
+    padding: 10px 30px;
   }
 
   .scrollable-container {
     overflow-y: scroll;
     height: 100px;
+  }
+
+  .operation_sep {
+    margin-left: 5%;
+  }
+
+  .buttons {
+    margin-right: 3%;
+    text-align: right;
+
+    .buttonclose {
+      margin-right: 2%;
+    }
   }
 </style>

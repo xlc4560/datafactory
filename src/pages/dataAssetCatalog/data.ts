@@ -6,9 +6,9 @@ export const formState = reactive<FormState>({
   assetNameEn: '',
   dataAssetState: null,
   categoryCode: '',
-  oderByDate: null,
+  updateTimeOrder: null,
   page: null,
-  size: null,
+  pageSize: null,
 });
 export const StateOptions = ref<SelectProps['options']>([
   {

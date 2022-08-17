@@ -2,7 +2,7 @@
   <div class="apiManagementFather">
     <!-- 分类区 -->
     <div class="category">
-      <classification category-schema="数据资产表目录" />
+      <classification category-schema="数据资产目录分类" />
     </div>
     <div class="tableBox">
       <!--  数据筛选部分-->
@@ -81,13 +81,17 @@
     </div>
   </div>
   <!-- 详情部分 -->
-  <a-drawer :title="title" :width="1200" :destroy-on-close="true" :visible="visibleDetails" @close="onClose">
-    <assetdetails></assetdetails>
+  <a-drawer :title="title" :width="1200" :destroy-on-close="true" :visible="visibleDetails" :footer-style="{ textAlign: 'right' }" @close="onClose">
+    <assetdetails :assetcode="assetcode"></assetdetails>
+    <!-- <test></test> -->
+    <template #footer>
+      <a-button style="margin-right: 8px" type="primary" @click="onClose">关闭</a-button>
+    </template>
   </a-drawer>
   <!-- 新增、编辑 -->
-  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1400" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
+  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1200" title="数据资产表基础信息" placement="right">
     <!-- <AddStandard :codeid="codeid" @visible="svisible2"></AddStandard> -->
-    <addasset></addasset>
+    <addasset :codeid="codeid" :visible-add="visibleAdd" @changevisible="changevisible" @reset="reset"></addasset>
   </a-drawer>
 </template>
 <script setup lang="ts">
@@ -99,11 +103,48 @@
   import assetdetails from './assetDetails.vue';
   //   新增、编辑
   import addasset from './addAsset.vue';
+
+  //
+  import { assetGetList, assetUpdateState, assetDelete, assetGetDetail } from '@/api/dataAssetCatalog/index';
+
+  //测试
+  import test from './test.vue';
   //   分类
   import classification from '@/pages/category/index.vue';
-  // 请求
-  // import { assetGetList, assetUpdateState, assetDelete } from '@/api/dataAssetCatalog/index';
+  // 从pinia中引入集中管理的状态
+  import useStore from '@/store';
+  const { useCategoryStore } = useStore();
+  const { fiterCategoryName } = storeToRefs(useCategoryStore);
+  watch(fiterCategoryName, () => {
+    // 获取分类id
+    console.log(fiterCategoryName.value);
+    formState.categoryCode = fiterCategoryName.value;
+    assetSearchList();
+  });
+  assetGetDetail('ZC00001').then(res => {
+    console.log(res);
+  });
 
+  // 封装获取表格列表数据方法
+  // console.log(toRaw(formState));
+  const assetSearchList = () => {
+    assetGetList(toRaw(formState)).then(res => {
+      console.log(res);
+      total.value = res.total;
+      data.splice(0, data.length);
+      res.records.forEach((i: any) => {
+        let t = {
+          key: i.assetCode,
+          assetNameCn: i.assetNameCn,
+          assetNameEn: i.assetNameEn,
+          assetDesc: i.assetDesc,
+          dataAssetState: i.dataAssetState,
+          updateTime: i.updateTime,
+        };
+        data.push(t);
+      });
+    });
+  };
   //   下拉状态选择
   const handleChange: SelectProps['onChange'] = value => {
     console.log(value); // { key: "lucy", label: "Lucy (101)" }
@@ -111,13 +152,21 @@
   //   查询
   const search = () => {
     console.log(toRaw(formState));
+    formState.page = 1;
+    formState.pageSize = 20;
+    assetSearchList();
   };
+  search();
   // 重置
   const reset = () => {
+    formState.page = 1;
+    formState.pageSize = 20;
     formState.assetNameCn = '';
     formState.assetNameEn = '';
     formState.dataAssetState = null;
+    formState.categoryCode = '';
     console.log(toRaw(formState));
+    assetSearchList();
   };
   // 多选
   const btndisable = ref(true);
@@ -161,32 +210,42 @@
   //当前页码和每页显示条数发生改变,发送请求
   const onChange = (page: number, pageSize: number) => {
     console.log('Page: ', page, 'pageSize: ', pageSize);
+    page = page <= 0 ? 1 : page;
+    formState.page = page;
+    formState.pageSize = pageSize;
     // 页码发生改变发送请求
     // standardSearchList(page, pageSize, 0, toRaw(formState));
+    assetSearchList();
   };
   // 排序
   const sorterChange = (pag: { pageSize: number; current: number }, filters: any, sorter: any) => {
     console.log('params', sorter.order);
-    // if (sorter.order == 'ascend') {
-    //   standardSearchList(1, pageSize.value, 1, toRaw(formState));
-    // } else if (sorter.order == 'descend') {
-    //   standardSearchList(1, pageSize.value, 0, toRaw(formState));
-    // }
+    if (sorter.order == 'ascend') {
+      formState.updateTimeOrder = 1;
+      // standardSearchList(1, pageSize.value, 1, toRaw(formState));
+    } else if (sorter.order == 'descend') {
+      formState.updateTimeOrder = 0;
+      // standardSearchList(1, pageSize.value, 0, toRaw(formState));
+    }
+    assetSearchList();
   };
   // 详情
   const visibleDetails = ref<boolean>(false);
-  const standardCode = ref<string>('');
+  const assetcode = ref<string>('');
   const title = ref<string>('');
   const showModalDetails = (record: any) => {
     visibleDetails.value = true;
-    console.log(record.key);
+
     title.value = record.key;
-    standardCode.value = record.key;
+    assetcode.value = record.key;
+    console.log(assetcode.value);
   };
   const onClose = () => {
     visibleDetails.value = false;
   };
-  //   新增、编辑
+  // 新增部分
+  const visibleAdd = ref<boolean>(false);
+  // 编辑、新增
   const codeid = ref('');
   const showDrawerAdd = (x: string) => {
     visibleAdd.value = true;
@@ -194,8 +253,8 @@
     codeid.value = x;
   };
   // 关闭
-  const afterVisibleChange = (bool: boolean) => {
-    console.log('visible', bool);
+  const changevisible = (val: { data: boolean }) => {
+    visibleAdd.value = val.data;
   };
 
   // 发布
@@ -204,21 +263,18 @@
     // 发布请求
     const codeIdList: string[] = [e.key];
     console.log(codeIdList);
-    // standardRevise({ standardCodeList: codeIdList, operation: 1 }).then(res => {
-    //   console.log(res);
-    //   reset();
-    // });
+    assetUpdateState({ assetCodes: codeIdList, operation: 0 }).then(() => {
+      search();
+    });
   };
   // 批量发布
   const batchRelease = () => {
     console.log('批量发布');
     console.log(tableliID);
-
     // 发送批量发布请求
-    // standardRevise({ standardCodeList: tableliID, operation: 1 }).then(res => {
-    //   console.log(res);
-    //   reset();
-    // });
+    assetUpdateState({ assetCodes: tableliID, operation: 0 }).then(() => {
+      search();
+    });
   };
   // 停用
   const disable = (e: any) => {
@@ -226,43 +282,26 @@
     // 停用请求
     const codeIdList: string[] = [e.key];
     console.log(codeIdList);
-    // standardRevise({ standardCodeList: codeIdList, operation: 0 }).then(res => {
-    //   console.log(res);
-    //   reset();
-    // });
+    assetUpdateState({ assetCodes: codeIdList, operation: 1 }).then(() => {
+      search();
+    });
   };
   // 批量停用
   const batchDisable = () => {
     console.log('批量停用');
-    // 发送批量停用请求
-    // standardRevise({ standardCodeList: tableliID, operation: 0 }).then(res => {
-    //   console.log(res);
-    //   reset();
-    // });
+    console.log(tableliID);
+    assetUpdateState({ assetCodes: tableliID, operation: 1 }).then(() => {
+      search();
+    });
   };
   // 删除
   const deleteItem = (e: any) => {
     console.log(e.key);
     // 删除请求
-
-    // standardDel(e.key).then(res => {
-    //   console.log(res);
-    //   reset();
-    // });
+    assetDelete(e.key).then(() => {
+      search();
+    });
   };
-  // 新增部分
-  const visibleAdd = ref<boolean>(false);
-  // 关闭
-  //   const afterVisibleChange = (bool: boolean) => {
-  //     console.log('visible', bool);
-  //   };
-  //   const svisible2 = (val: any) => {
-  //     visibleAdd.value = val.value;
-  //     visibleAdd.value = false;
-  //     console.log('关闭关闭');
-  //     console.log(visibleAdd.value);
-  //     reset();
-  //   };
 </script>
 <style scoped lang="less">
   .apiManagementFather {
@@ -293,9 +332,9 @@
         .formAction {
           display: flex;
           flex-flow: row nowrap;
-          margin: 20px;
+          margin: 20px 0;
           padding: 0 10px;
-          width: 100%;
+          width: 105%;
 
           .formItemWidth {
             flex: 2;
