@@ -59,8 +59,8 @@
       </a-table>
     </div>
     <!-- 修改分类 -->
-    <a-modal v-model:visible="modalVisible" width="1000px" title="脚本批量分类" style="top: 20vh">
-      <a-form :model="newScriptCategory">
+    <a-modal v-model:visible="modalVisible" width="1000px" title="脚本批量分类" style="top: 20vh" @ok="updateModalOk({ ids: state.selectedRowKeys, categoryCode: newScriptCategory.value })">
+      <a-form ref="formRef" :model="newScriptCategory">
         <div style="min-height: 200px">
           <a-form-item label="脚本分类" has-feedback name="value" :rules="[{ required: true, message: '请输入必填项!' }]">
             <a-tree-select
@@ -89,7 +89,7 @@
   import { usePagination } from 'vue-request'; // 分页
   import { filterData, useRun, currentScriptDetails, registerAndEditTitle } from './scriptHooks';
   import { message } from 'ant-design-vue';
-  console.log(TypeEnum);
+  import { FormInstance } from 'ant-design-vue/es/form';
 
   const emits = defineEmits(['changeDrawerControlData']);
   // 以下是分页逻辑
@@ -126,9 +126,11 @@
     filterData.value.orderByDate = sorter.order === 'ascend' ? 1 : sorter.order === 'descend' ? 0 : undefined;
     filterData.value.size = pag.pageSize;
     filterData.value.page = pag.current;
+    console.log(filterData);
+
     run(filterData.value);
   };
-  const btnIsDisabled = ref<boolean>(false);
+  const btnIsDisabled = ref<boolean>(true);
   // 表格rowkey
   const rowKey = (record: { [key: string]: any; record: string }) => record.id;
   // 多选状态
@@ -153,23 +155,27 @@
     try {
       loading.value = true;
       await request.UpdateScriptState(params);
+      message.success('修改成功!', 1);
+      state.selectedRowKeys = [];
+      btnIsDisabled.value = true;
     } catch (error) {
     } finally {
       loading.value = false;
       await run(filterData.value);
-      message.success('修改成功!', 1);
-      state.selectedRowKeys = [];
     }
   };
+  // 批量删除
   const deleteScript = async (scriptId: string | number) => {
     try {
       loading.value = true;
       await request.DeleteScript(scriptId);
+      state.selectedRowKeys = [];
+      btnIsDisabled.value = true;
+      message.success('删除成功!', 1);
     } catch (error) {
     } finally {
       loading.value = false;
       await run(filterData.value);
-      message.success('删除成功!', 1);
     }
   };
   const newScriptCategory = ref<{ value: string }>({ value: '' });
@@ -178,6 +184,21 @@
   // 批量修改分类
   const updateScriptType = () => {
     modalVisible.value = true;
+  };
+  const formRef = ref<FormInstance>();
+  const updateModalOk = async (params: { ids: number[]; categoryCode: string }) => {
+    try {
+      await formRef.value?.validate();
+      await request.UpdateScriptCategory(params);
+      state.selectedRowKeys = [];
+      btnIsDisabled.value = true;
+      message.success('修改成功', 1);
+    } catch (error) {
+    } finally {
+      modalVisible.value = false;
+
+      run(filterData.value);
+    }
   };
   const treeData = ref<any>([]);
   const modalSelectDropDown = async () => {
