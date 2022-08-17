@@ -9,8 +9,9 @@ enum Api {
   SCRIPT_TEST = '/scriptInfo/test', // 脚本测试
   UPDATE_SCRIPT_STATE = '/scriptInfo/updateState', // 脚本状态修改
   DELETE_SCRIPT = '/scriptInfo/deleteScript/', // 脚本删除
-  ADD_SCRIPT = '/xxxxxxxxx/scriptInfo/addScript', // 脚本新增
-  UPDATE_SCRIPT = '/xxxxxxxxx/scriptInfo/updateScript', // 脚本编辑
+  ADD_SCRIPT = '/scriptInfo/addScript', // 脚本新增
+  UPDATE_SCRIPT = '/scriptInfo/updateScript', // 脚本编辑
+  UPDATE_SCRIPT_CATEGORY = '/scriptInfo/updateCategory', // 脚本分类修改
 }
 // 获取脚本列表
 export const GetScriptList = async (filterData: funArgsType.FilterDataType) => {
@@ -79,4 +80,8 @@ export const UpdateScript = (params: { scriptFile: any; scriptJson: string }) =>
   formData.append('scriptFile', params.scriptFile?.originFileObj);
   formData.append('scriptJson', params.scriptJson);
   return api.post({ url: Api.UPDATE_SCRIPT, data: formData, config: { headers: { 'Content-Type': 'multipart/form-data' } } });
+};
+// 脚本状态修改
+export const UpdateScriptCategory = (params: funArgsType.UpdateCategoryType) => {
+  return api.post<any>({ url: Api.UPDATE_SCRIPT_CATEGORY, data: params });
 };

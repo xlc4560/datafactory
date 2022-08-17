@@ -21,6 +21,11 @@ export interface UpdateStateType {
   idList: number[];
   operation: number;
 }
+// 脚本分类修改
+export interface UpdateCategoryType {
+  ids: number[];
+  categoryCode: string;
+}
 
 export interface InputParamsType {
   parameterName: string;
