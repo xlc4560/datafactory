@@ -9,7 +9,8 @@ enum Api {
   SCRIPT_TEST = '/scriptInfo/test', // 脚本测试
   UPDATE_SCRIPT_STATE = '/scriptInfo/updateState', // 脚本状态修改
   DELETE_SCRIPT = '/scriptInfo/deleteScript/', // 脚本删除
-  ADD_SCRIPT = '/scriptInfo/addScript', // 脚本新增
+  ADD_SCRIPT = '/xxxxxxxxx/scriptInfo/addScript', // 脚本新增
+  UPDATE_SCRIPT = '/xxxxxxxxx/scriptInfo/updateScript', // 脚本编辑
 }
 // 获取脚本列表
 export const GetScriptList = async (filterData: funArgsType.FilterDataType) => {
@@ -41,6 +42,9 @@ export const GetScriptList = async (filterData: funArgsType.FilterDataType) => {
               validateStatus: 'success',
             },
           };
+          if (key === 'outputParameter') {
+            i.parameterRequire = 0;
+          }
         });
       }
     });
@@ -65,7 +69,14 @@ export const DeleteScript = (scriptId: number | string) => api._delete({ url: Ap
 // 新增脚本
 export const AddScript = (params: { scriptFile: any; scriptJson: string }) => {
   const formData = new FormData();
-  formData.append('scriptFile', params.scriptFile.originFileObj);
+  formData.append('scriptFile', params.scriptFile?.originFileObj);
   formData.append('scriptJson', params.scriptJson);
   return api.post({ url: Api.ADD_SCRIPT, data: formData, config: { headers: { 'Content-Type': 'multipart/form-data' } } });
+};
+// 编辑脚本
+export const UpdateScript = (params: { scriptFile: any; scriptJson: string }) => {
+  const formData = new FormData();
+  formData.append('scriptFile', params.scriptFile?.originFileObj);
+  formData.append('scriptJson', params.scriptJson);
+  return api.post({ url: Api.UPDATE_SCRIPT, data: formData, config: { headers: { 'Content-Type': 'multipart/form-data' } } });
 };

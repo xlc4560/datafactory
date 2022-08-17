@@ -251,6 +251,7 @@
         display: flex;
         border-radius: 3px;
         padding: 5px 10px;
+        white-space: nowrap;
         background: rgb(255, 255, 255);
         box-shadow: 0 5px 10px 5px rgb(233, 233, 233);
         line-height: 32px;

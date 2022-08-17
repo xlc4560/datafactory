@@ -72,9 +72,15 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
         //脚本管理
         '/scriptInfo': {
-          target: 'http://10.8.21.175:6002',
+          target: 'http://10.8.21.146:6002',
+          // 10.8.21.220:6002
           // target: 'http://124.223.17.68:6002',
           changeOrigin: true,
+        },
+        '/xxxxxxxxx': {
+          target: 'http://10.8.21.220:6002',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/xxxxxxxxx/, ''),
         },
       },
     },

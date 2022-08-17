@@ -154,35 +154,32 @@
   const handleOk = async () => {
     // 触发表单验证
     if (operationType.value !== 2) {
-      classifyFormInstance.value
-        ?.validate()
-        .then(async () => {
-          switch (operationType.value) {
-            // 新增
-            case 0:
-              await catagoryResquest.CreateCategory({
-                parentCode: parentCode.value,
-                categoryName: classifyFormData.classifyName,
-                categorySchema: props.categorySchema,
-              });
-              treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
-              generateList(treeData.value);
-              break;
-            case 1:
-              await catagoryResquest.UpdateCategory({
-                parentCode: parentCode.value,
-                categoryName: classifyFormData.classifyName,
-                categorySchema: props.categorySchema,
-                categoryCode: categoryCode_forUpdate.value,
-              });
-              treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
-              generateList(treeData.value);
-              break;
-          }
-        })
-        .catch(error => {
-          console.log('error', error);
-        });
+      try {
+        await classifyFormInstance.value?.validate();
+        visible.value = false;
+        switch (operationType.value) {
+          // 新增
+          case 0:
+            await catagoryResquest.CreateCategory({
+              parentCode: parentCode.value,
+              categoryName: classifyFormData.classifyName,
+              categorySchema: props.categorySchema,
+            });
+            treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
+            generateList(treeData.value);
+            break;
+          case 1:
+            await catagoryResquest.UpdateCategory({
+              parentCode: parentCode.value,
+              categoryName: classifyFormData.classifyName,
+              categorySchema: props.categorySchema,
+              categoryCode: categoryCode_forUpdate.value,
+            });
+            treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
+            generateList(treeData.value);
+            break;
+        }
+      } catch (error) {}
     } else {
       (async () => {
         await catagoryResquest.DeleteCategory(categoryCode_forUpdate.value);
@@ -190,7 +187,6 @@
         generateList(treeData.value);
       })();
     }
-    visible.value = false;
   };
 </script>
 

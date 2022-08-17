@@ -3,6 +3,7 @@ interface formItemMessageType {
   validateStatus?: string;
 }
 export interface ScriptParameterType {
+  [key: string]: any;
   parameterName: string;
   parameterRequire?: number;
   parameterType: number;
@@ -25,6 +26,7 @@ export interface scriptInfoListType {
   scriptClass?: string;
   scriptDescription?: string;
   scriptCategory?: string;
+  scriptCategoryName?: string;
   scriptState?: number;
   scriptType?: number;
   inputParameter?: ScriptParameterType[];
@@ -34,6 +36,7 @@ export interface scriptInfoListType {
   isDelete?: number;
   createTime?: string;
   updateTime?: string;
+  fileList?: File[];
   [key: string]: any;
 }
 export interface scriptListResType {

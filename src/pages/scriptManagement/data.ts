@@ -1,9 +1,10 @@
 import { columnsType } from '@/pages/apiRegisterAndUpdate/dataType';
+import type { Rule } from 'ant-design-vue/es/form';
 export const tableColumns: columnsType[] = [
   {
     title: '脚本名称',
     dataIndex: 'scriptName',
-    width: '35%',
+    width: '20%',
     ellipsis: true,
   },
   {
@@ -13,7 +14,7 @@ export const tableColumns: columnsType[] = [
   },
   {
     title: '脚本分类',
-    dataIndex: 'scriptCategory',
+    dataIndex: 'scriptCategoryName',
     ellipsis: true,
   },
   {
@@ -167,22 +168,30 @@ export const scriptEditOutputParameterColumns: columnsType[] = [
 ];
 export const FileDataType = ['.py', '.sql', '.py', '.sql'];
 export const emptyCurrentScriptDetails = {
-  id: undefined,
-  scriptEncode: undefined,
-  scriptRoute: undefined,
+  fileList: [],
   scriptName: undefined,
-  scriptMethod: undefined,
-  scriptFunction: undefined,
-  scriptClass: undefined,
-  scriptDescription: undefined,
+  sourceCode: null,
   scriptCategory: undefined,
-  scriptState: undefined,
   scriptType: undefined,
+  scriptClass: undefined,
+  scriptFunction: undefined,
+  scriptDescription: undefined,
+  operatorCode: null,
   inputParameter: [],
   outputParameter: [],
-  sourceCode: null,
-  operatorCode: null,
-  isDelete: undefined,
-  createTime: undefined,
-  updateTime: undefined,
+};
+const checkFile = async (_rule: Rule, value: File[]) => {
+  if (value.length === 0) {
+    return Promise.reject('请选择文件!');
+  } else {
+    return Promise.resolve();
+  }
+};
+export const scriptFormRule: Record<string, Rule[]> = {
+  fileList: [{ required: true, validator: checkFile, trigger: 'change' }],
+  scriptName: [{ required: true, message: '请输入脚本名称!', trigger: 'change' }],
+  scriptCategory: [{ required: true, message: '请选择脚本分类!', trigger: 'change' }],
+  scriptClass: [{ required: true, message: '请输入类名!', trigger: 'change' }],
+  scriptFunction: [{ required: true, message: '请输入函数名!', trigger: 'change' }],
+  sourceCode: [{ required: true, message: '请选择数据源!', trigger: 'change' }],
 };

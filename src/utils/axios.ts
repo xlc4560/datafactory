@@ -49,8 +49,11 @@ instance.interceptors.response.use(
       case 'ERR_BAD_RESPONSE':
         antdMessage.error(error.message, 1);
         break;
+      case 'ERR_BAD_REQUEST':
+        antdMessage.error('路径错误', 1);
+        break;
     }
-    return Promise.reject(error);
+    return Promise.reject(error as any);
   },
 );
 

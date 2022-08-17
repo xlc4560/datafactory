@@ -14,7 +14,7 @@ export const jsonDataParse = (dataName: string): [] | null => {
 // 参数名规则
 const NameReg = /([a-z])([a-z1-9])*(_([a-z1-9]+))*/;
 export const formValidate = (record: ScriptParameterType, dataName: string): boolean => {
-  if (dataName !== 'parameterDescription') {
+  if (dataName !== 'parameterDescription' && record.formItemMessage) {
     if (['', null, undefined].includes(record[dataName])) {
       record.formItemMessage[dataName].help = '请输入必填项!';
       record.formItemMessage[dataName].validateStatus = 'error';

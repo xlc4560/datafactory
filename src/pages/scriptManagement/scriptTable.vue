@@ -2,15 +2,15 @@
   <a-table :columns="tableColumns" :data-source="currentScriptDetails[dataName]" size="small" :pagination="false">
     <template #title>
       <div class="table_title">
-        <h3>输入参数</h3>
-        <a-button type="primary" ghost>添加配置项</a-button>
+        <h3>{{ tableTitle }}</h3>
+        <a-button type="primary" ghost @click="addScriptParameter">添加配置项</a-button>
       </div>
     </template>
-    <template #bodyCell="{ column, record }">
+    <template #bodyCell="{ column, record, index }">
       <template v-if="record.isEdit">
         <template v-if="column.dataIndex === 'operation'">
-          <a-button type="link" @click="editCurrentScript(record, false)">保存</a-button>
-          <a-button type="link">取消</a-button>
+          <a-button type="link" @click="editCurrentScript(record, false, index)">保存</a-button>
+          <a-button type="link" @click="cancelSave(record, false, index)">取消</a-button>
         </template>
         <template v-else>
           <a-form-item :help="record.formItemMessage[column.dataIndex]?.help" :validate-status="record.formItemMessage[column.dataIndex]?.validateStatus">
@@ -38,7 +38,8 @@
           {{ RequireEnum[record.parameterRequire] }}
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
-          <a-button type="link" @click="editCurrentScript(record, true)">编辑</a-button>
+          <a-button type="link" @click="editCurrentScript(record, true, index)">编辑</a-button>
+          <a-button type="link" @click="deleteCurrentScript(index)">删除</a-button>
         </template>
       </template>
     </template>
@@ -52,6 +53,7 @@
   import { ScriptParameterType } from '@/api/scriptManagement/apiReturnType';
   import { PropType } from 'vue';
   import { message } from 'ant-design-vue';
+  import { cloneDeep } from 'lodash-es';
   const props = defineProps({
     tableColumns: {
       type: Array as PropType<columnsType[]>,
@@ -61,20 +63,68 @@
       type: String,
       default: 'inputParameter',
     },
+    tableTitle: {
+      type: String,
+      default: '输入参数',
+    },
   });
-  // 编辑、保存回调
-  const editCurrentScript = (record: ScriptParameterType, isSave: boolean) => {
-    const keyName: string[] = Object.keys(record.formItemMessage as object);
-    const arr = keyName.map((key: string) => {
-      return formValidate(record, key);
+  const beforeEditData: any = [];
+  //  新增参数
+  const addScriptParameter = () => {
+    currentScriptDetails.value[props.dataName].push({
+      isEdit: true,
+      parameterIndex: undefined,
+      parameterName: undefined,
+      parameterRequire: 0,
+      parameterType: undefined,
+      formItemMessage: {
+        parameterName: {
+          help: undefined,
+          validateStatus: 'success',
+        },
+        parameterRequire: {
+          help: undefined,
+          validateStatus: 'success',
+        },
+        parameterType: {
+          help: undefined,
+          validateStatus: 'success',
+        },
+      },
     });
-    if (arr.includes(false)) {
-      message.error('请填写规范!');
-    } else {
+    beforeEditData[currentScriptDetails.value[props.dataName].length] = undefined;
+  };
+
+  // 编辑、保存回调
+  const editCurrentScript = (record: ScriptParameterType, isSave: boolean, index: number) => {
+    // 点击编辑时，存储一次数据
+    if (isSave) {
+      beforeEditData[index] = cloneDeep(record);
       record.isEdit = isSave;
+    } else {
+      const keyName: string[] = Object.keys(record.formItemMessage as object);
+      const arr = keyName.map((key: string) => {
+        return formValidate(record, key);
+      });
+      if (arr.includes(false)) {
+        message.error('请填写规范!');
+      } else {
+        record.isEdit = isSave;
+      }
     }
   };
+  //   删除回调
+  const deleteCurrentScript = (index: number) => {
+    currentScriptDetails.value[props.dataName].splice(index, 1);
+  };
   // 取消回调
+  const cancelSave = (record: ScriptParameterType, isSave: boolean, index: number) => {
+    if (beforeEditData[index]) {
+      Object.assign(record, beforeEditData[index]);
+    } else {
+      currentScriptDetails.value[props.dataName].splice(index, 1);
+    }
+  };
 </script>
 
 <style scoped lang="less">
@@ -95,6 +145,7 @@
     display: flex;
     border-radius: 3px;
     padding: 5px 10px;
+    white-space: nowrap;
     background: rgb(255, 255, 255);
     box-shadow: 0 5px 10px 5px rgb(233, 233, 233);
     line-height: 32px;

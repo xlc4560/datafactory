@@ -51,7 +51,7 @@
 
     .category {
       position: absolute;
-      width: 240px;
+      width: 16vw;
       height: 100%;
       background-color: white;
     }
@@ -61,7 +61,7 @@
     }
     // table盒子
     .tableBox {
-      margin-left: 260px;
+      margin-left: 17vw;
       // 筛选部分相关
       :deep(.scriptManagement-filter) {
         position: relative;

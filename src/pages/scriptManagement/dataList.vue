@@ -49,6 +49,12 @@
             <a-button v-if="[0].includes(record.scriptState)" type="link" @click="deleteScript(record.id)">删除</a-button>
             <a-button v-if="[0, 2].includes(record.scriptState)" type="link" @click="UpdateState({ idList: [record.id], operation: 1 })">发布</a-button>
           </template>
+          <template v-else>
+            <a-tooltip placement="topLeft">
+              <template #title>{{ record[column.dataIndex] }}</template>
+              {{ record[column.dataIndex] }}
+            </a-tooltip>
+          </template>
         </template>
       </a-table>
     </div>
@@ -75,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+  import { TypeEnum } from './Enum';
   import { tableColumns, codeState, scriptType, emptyCurrentScriptDetails } from './data';
   import * as request from '@/api/scriptManagement';
   import { scriptInfoListType } from '@/api/scriptManagement/apiReturnType';
@@ -82,6 +89,8 @@
   import { usePagination } from 'vue-request'; // 分页
   import { filterData, useRun, currentScriptDetails, registerAndEditTitle } from './scriptHooks';
   import { message } from 'ant-design-vue';
+  console.log(TypeEnum);
+
   const emits = defineEmits(['changeDrawerControlData']);
   // 以下是分页逻辑
   const {
@@ -175,7 +184,11 @@
     treeData.value = await ReadCategory('脚本分类');
   };
   const openDrawer = (dataName: string, drawerTitle: number, record?: scriptInfoListType) => {
-    record ? (currentScriptDetails.value = record) : (currentScriptDetails.value = emptyCurrentScriptDetails);
+    if (record) {
+      currentScriptDetails.value = record;
+    } else {
+      currentScriptDetails.value = emptyCurrentScriptDetails;
+    }
     registerAndEditTitle.value = drawerTitle;
     emits('changeDrawerControlData', { dataName, value: true });
   };
