@@ -74,7 +74,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
           target: 'http://10.8.21.175:6002',
           changeOrigin: true,
         },
-         //数据资产管理
+        //数据资产管理
         '/asset': {
           target: 'http://10.8.21.202:6002',
           changeOrigin: true,
