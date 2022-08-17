@@ -44,6 +44,7 @@
                 :rules="[
                   { required: ['参数名称', '参数位置', '数据类型', '是否必填'].includes(column.title), message: '该选项为必填' },
                   { validator: checkChildren, trigger: 'change' },
+                  { validator: (_rule, value) => checkCodeId(_rule, value, record), trigger: 'change' },
                 ]"
               >
                 <a-input v-if="['参数名称', '参数描述', '参数说明'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请输入" />
@@ -134,7 +135,6 @@
     },
   });
   // 由于可以添加子级项导致data为多层数组，需要扁平化处理
-
   // 存储扁平化的数据，用于表单验证触发
   const dataFlat = ref<inputParameterDataType[]>([]);
   const generateList = (data: inputParameterDataType[]) => {
@@ -194,7 +194,7 @@
       record.isEdit = edit;
     } catch (error) {
       // 校验失败的错误信息
-      message.warning('请正确填字段!', 1);
+      message.warning('请正确填写字段!', 1);
     }
   };
 
@@ -215,7 +215,6 @@
         message.warning('请正确填字段!', 1);
       } else {
         formRef.value?.resetFields();
-        record.isEdit = edit;
       }
     }
   };
@@ -227,8 +226,10 @@
         data.splice(index, 1);
         return null;
       }
-      if (item.children) {
+      if (item.children?.length && item.children?.length > 1) {
         deleteRecord(record, item.children);
+      } else {
+        message.error('复杂类型需保留一条子数据', 1);
       }
     });
   };
@@ -267,6 +268,15 @@
         return Promise.resolve();
       }
     }
+  };
+  // 有码值时，无法切换类型验证
+  const checkCodeId = async (_rule: Rule, value: number | string, record: inputParameterDataType) => {
+    if (record.codeId && [2, 3, 4].includes(value as number)) {
+      return Promise.reject('存在码值引用,不能切换!');
+    } else if ((record.code?.codeConfig || record.code?.codeName) && [2, 3, 4].includes(value as number)) {
+      return Promise.reject('存在自定义码值,不能切换!');
+    }
+    return Promise.resolve();
   };
   // 控制弹窗是否显示
   const isShowModal = ref<boolean>(false);
@@ -327,6 +337,7 @@
       display: flex;
       border-radius: 3px;
       padding: 5px 10px;
+      white-space: nowrap; // 控制文本不换行
       background: rgb(255, 255, 255);
       box-shadow: 0 5px 10px 5px rgb(233, 233, 233);
       line-height: 32px;

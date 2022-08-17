@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { FilterDataType } from '@/api/scriptManagement/apiFunArgs';
-
+import { scriptInfoListType } from '@/api/scriptManagement/apiReturnType';
 const useScriptManagementStore = defineStore('useScriptManagementStore', {
   state: () =>
     ({
@@ -14,6 +14,13 @@ const useScriptManagementStore = defineStore('useScriptManagementStore', {
         scriptType: undefined,
       },
       useRun: () => ({}),
-    } as { filterData: FilterDataType; useRun: () => void }),
+      currentScriptDetails: {},
+      registerAndEditTitle: 0,
+    } as {
+      filterData: FilterDataType;
+      useRun: () => void;
+      currentScriptDetails: scriptInfoListType;
+      registerAndEditTitle: number;
+    }),
 });
 export default useScriptManagementStore;

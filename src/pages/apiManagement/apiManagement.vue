@@ -55,16 +55,22 @@
               <template v-if="column.dataIndex === 'apiName'">
                 <a @click="apiDeatils(record)">{{ record.apiName }}</a>
               </template>
-              <template v-if="column.dataIndex === 'apiState'">
+              <template v-else-if="column.dataIndex === 'apiState'">
                 <span class="isNopublish" :style="{ background: apiState[record.apiState].color }"></span>
                 {{ apiState[record.apiState].value }}
               </template>
-              <template v-if="column.dataIndex === 'apiOperation'">
+              <template v-else-if="column.dataIndex === 'apiOperation'">
                 <a-button type="link" size="small" @click="showDrawer(true, record.id)">接口测试</a-button>
                 <a-button v-if="record.apiState === 4 || record.apiState === 2" type="link" size="small" @click="updateApisState('1', [record.id + ''])">发 布</a-button>
                 <a-button v-if="record.apiState === 3" type="link" size="small" @click="updateApisState('0', [record.id + ''])">停 用</a-button>
                 <a-button v-if="record.apiState !== 3" type="link" size="small" @click="updateApi(record?.id)">编 辑</a-button>
                 <a-button v-if="record.apiState === 1 || record.apiState === 2" type="link" size="small" @click="deleteApi(record)">删 除</a-button>
+              </template>
+              <template v-else>
+                <a-tooltip placement="topLeft">
+                  <template #title>{{ record[column.dataIndex] }}</template>
+                  {{ record[column.dataIndex] }}
+                </a-tooltip>
               </template>
             </template>
           </a-table>
@@ -260,7 +266,7 @@
 
     .category {
       position: absolute;
-      width: 240px;
+      width: 16vw;
       height: 100%;
       background-color: white;
     }
@@ -270,7 +276,7 @@
     }
     // table盒子
     .tableBox {
-      margin-left: 260px;
+      margin-left: 17vw;
       // 筛选部分相关
       .ApiManagement {
         position: relative;
