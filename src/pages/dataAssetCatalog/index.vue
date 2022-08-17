@@ -82,16 +82,16 @@
   </div>
   <!-- 详情部分 -->
   <a-drawer :title="title" :width="1200" :destroy-on-close="true" :visible="visibleDetails" :footer-style="{ textAlign: 'right' }" @close="onClose">
-    <assetdetails :assetcode="assetcode"></assetdetails>
-    <!-- <test></test> -->
+    <!-- <assetdetails :assetcode="assetcode"></assetdetails> -->
+    <test></test>
     <template #footer>
       <a-button style="margin-right: 8px" type="primary" @click="onClose">关闭</a-button>
     </template>
   </a-drawer>
   <!-- 新增、编辑 -->
-  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1200" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
+  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1200" title="数据资产表基础信息" placement="right">
     <!-- <AddStandard :codeid="codeid" @visible="svisible2"></AddStandard> -->
-    <addasset :codeid="codeid"></addasset>
+    <addasset :codeid="codeid" :visible-add="visibleAdd" @changevisible="changevisible" @reset="reset"></addasset>
   </a-drawer>
 </template>
 <script setup lang="ts">
@@ -243,7 +243,9 @@
   const onClose = () => {
     visibleDetails.value = false;
   };
-  //   新增、编辑
+  // 新增部分
+  const visibleAdd = ref<boolean>(false);
+  // 编辑、新增
   const codeid = ref('');
   const showDrawerAdd = (x: string) => {
     visibleAdd.value = true;
@@ -251,8 +253,8 @@
     codeid.value = x;
   };
   // 关闭
-  const afterVisibleChange = (bool: boolean) => {
-    console.log('visible', bool);
+  const changevisible = (val: { data: boolean }) => {
+    visibleAdd.value = val.data;
   };
 
   // 发布
@@ -296,11 +298,10 @@
   const deleteItem = (e: any) => {
     console.log(e.key);
     // 删除请求
-    assetDelete(e.key);
-    search();
+    assetDelete(e.key).then(() => {
+      search();
+    });
   };
-  // 新增部分
-  const visibleAdd = ref<boolean>(false);
 </script>
 <style scoped lang="less">
   .apiManagementFather {

@@ -1,51 +1,46 @@
 <!-- 新增资产表和编辑 -->
 <template>
   <div>
-    <a-form :model="assetadd" @finish="onFinish">
+    <a-form :model="assetadd" v-bind="layout" @finish="onFinish">
       <div class="base">
-        <h3 :style="{ margin: '16px 0' }">数据资产表基础信息</h3>
-        <a-form :model="assetadd" name="basic" :label-col="{ span: 2 }" :wrapper-col="{ span: 13 }" autocomplete="off">
-          <a-form-item label="中文名称" name="assetNameCn" :rules="[{ required: true, message: '请输入中文名称!' }]">
-            <a-input v-model:value="assetadd.assetNameCn" placeholder="请输入中文名称" />
-          </a-form-item>
-
-          <a-form-item label="英文名称" name="assetNameEn" :rules="[{ required: true, message: '请输入英文名称!' }]">
-            <a-input v-model:value="assetadd.assetNameEn" placeholder="请输入英文名称" />
-          </a-form-item>
-
-          <a-form-item label="资产表描述" name="assetDesc">
-            <a-textarea v-model:value="assetadd.assetDesc" placeholder="请输入资产表描述" :rows="4" />
-          </a-form-item>
-
-          <a-form-item name="assetNameCn" label="所属目录">
-            <div class="scrollable-container">
-              <a-form-item v-for="(i, index) in assetadd.categoryCodes" :key="index">
-                <a-tree-select
-                  v-model:value="i.value"
-                  style="width: 90%"
-                  show-search
-                  placeholder="Please select"
-                  allow-clear
-                  tree-default-expand-all
-                  :tree-data="treedata"
-                  :field-names="{
-                    children: 'children',
-                    label: 'name',
-                    value: 'id',
-                  }"
-                >
-                </a-tree-select>
-                <a v-if="index != 0" style="margin-left: 3%" @click="removeUser(index)">删除</a>
-              </a-form-item>
-            </div>
-          </a-form-item>
-          <a-form-item label=" " :colon="false">
-            <a-button type="dashed" block @click="addSight">
-              <PlusOutlined />
-              添加一行
-            </a-button>
-          </a-form-item>
-        </a-form>
+        <h3 class="basictitle">数据资产表基础信息</h3>
+        <a-form-item label="中文名称" name="assetNameCn" :rules="rules.assetNameCn">
+          <a-input v-model:value="assetadd.assetNameCn" placeholder="请输入中文名称" />
+        </a-form-item>
+        <a-form-item label="英文名称" name="assetNameEn" :rules="rules.assetNameEn">
+          <a-input v-model:value="assetadd.assetNameEn" placeholder="请输入英文名称" />
+        </a-form-item>
+        <a-form-item label="资产表描述" name="assetDesc">
+          <a-textarea v-model:value="assetadd.assetDesc" placeholder="请输入资产表描述" :rows="4" />
+        </a-form-item>
+        <a-form-item label="所属目录" name="categoryCodes" :rules="rules.categoryCodes">
+          <div class="scrollable-container">
+            <a-form-item v-for="(i, index) in assetadd.categoryCodes" :key="index">
+              <a-tree-select
+                v-model:value="i.value"
+                style="width: 90%"
+                show-search
+                placeholder="Please select"
+                allow-clear
+                tree-default-expand-all
+                :tree-data="treedata"
+                :field-names="{
+                  children: 'children',
+                  label: 'name',
+                  value: 'id',
+                }"
+              >
+              </a-tree-select>
+              <a v-if="index != 0" style="margin-left: 3%" @click="removeUser(index)">删除</a>
+            </a-form-item>
+          </div>
+        </a-form-item>
+        <a-form-item label=" " :colon="false">
+          <a-button type="dashed" block @click="addSight">
+            <PlusOutlined />
+            添加一行
+          </a-button>
+        </a-form-item>
       </div>
       <div class="configuration">
         <div class="title">
@@ -71,7 +66,6 @@
             </template>
             <template v-else-if="column.dataIndex === 'standardCode' && assetadd.assetConfigs[index].editable">
               <a-form-item has-feedback :name="['assetConfigs', index, 'standardCode']" :rules="[{ required: true, message: '必填' }]">
-                <!-- <a-input v-model:value="record.standardCode"></a-input> -->
                 <a-select v-model:value="record.standardCode" :options="options"></a-select>
               </a-form-item>
             </template>
@@ -97,8 +91,11 @@
           </template>
         </a-table>
       </div>
-
-      <a-button type="primary" html-type="submit">提交</a-button>
+      <a-divider />
+      <div class="buttons">
+        <a-button class="buttonclose" @click="closeDrawer">关闭</a-button>
+        <a-button type="primary" html-type="submit">确定</a-button>
+      </div>
     </a-form>
   </div>
 </template>
@@ -106,6 +103,23 @@
   import { PlusOutlined } from '@ant-design/icons-vue';
   import { standardAssetConfigAdapt, categoryListTree, assetAdd, asseUpdate, assetGetDetail } from '@/api/dataAssetCatalog/index';
   import { message } from 'ant-design-vue';
+  //表单样式
+  const layout = {
+    labelCol: { span: 2 },
+    wrapperCol: { span: 15 },
+  };
+  //验证
+  const rules = reactive({
+    assetNameCn: [
+      { required: true, message: '请输入中文名称!' },
+      { pattern: /^[a-zA-Z\u4e00-\u9fa5]+$/, message: '只支持中文及英文大小写' },
+    ],
+    assetNameEn: [
+      { required: true, message: '请输入英文名称!' },
+      { pattern: /^[a-zA-Z][a-zA-Z0-9_]*$/, message: '英文大小写数字及下划线，且只能英文开头' },
+    ],
+    categoryCodes: [{ required: true, message: '请选择目录!' }],
+  });
 
   interface AssetAdd {
     assetCode?: string; //数据资产编号
@@ -122,6 +136,8 @@
       editable?: boolean; // 编辑状态
     }[];
   }
+
+  //初始化数据
   const assetadd = reactive<AssetAdd>({
     assetDesc: '',
     assetNameCn: '',
@@ -129,8 +145,11 @@
     categoryCodes: [{ value: '' }],
     assetConfigs: [],
   });
+
+  //声明选择类型
   const options: { label: string; value: string }[] = [];
 
+  // 定义树形结构
   let treedata = ref([]);
   //求情树形结构数据
   categoryListTree('数据资产目录分类').then(res => {
@@ -166,7 +185,7 @@
       }
     }
 
-    //数组转换树形结构
+    //数组转回树形结构
     function convert(list: any) {
       const res = [];
       const map = list.reduce((res: any, v: any) => ((res[v.id] = v), (v.children = []), res), {});
@@ -186,7 +205,47 @@
     //调用并赋值转换回树形结构方法
     treedata.value = convert(resArr) as any;
 
-    console.log(treedata.value);
+    let newcategory = reactive([{ value: '' }]);
+    //编辑页面获取数据
+    if (prop.codeid != 'new') {
+      assetGetDetail(prop.codeid).then(res => {
+        // 基本信息
+        assetadd.assetCode = res.asset.assetCode;
+        assetadd.assetDesc = res.asset.assetDesc;
+        assetadd.assetNameCn = res.asset.assetNameCn;
+        assetadd.assetNameEn = res.asset.assetNameEn;
+        assetadd.categoryCodes.splice(0, 1);
+        // 所属目录
+        res.categoryName.forEach((i: any) => {
+          let temp = {
+            value: i,
+          };
+          newcategory.push(temp);
+        });
+        // 字段配置
+        res.assetConfigStandardMap.forEach((i: any) => {
+          let temp = {
+            assetConfigDescription: i.assetConfigDescription,
+            assetConfigName: i.assetConfigName,
+            assetConfigNameEn: i.assetConfigNameEn,
+            standardCode: i.standardCode,
+          };
+          assetadd.assetConfigs.push(temp);
+        });
+        // 将获取的目录数据id赋给选择框
+        resArr.forEach((i: any) => {
+          newcategory.forEach((e: any) => {
+            if (i.name == e.value) {
+              console.log(i.id);
+              let temp = {
+                value: i.id,
+              };
+              assetadd.categoryCodes.push(temp);
+            }
+          });
+        });
+      });
+    }
   });
   //请求标准映射数据
   standardAssetConfigAdapt().then(res => {
@@ -199,39 +258,29 @@
     });
   });
 
+  //接收组件传值
   const prop = defineProps({
     codeid: {
       type: String,
       default: '',
     },
+    changevisible: {
+      type: Boolean,
+      default: false,
+    },
   });
-
-  //编辑页面获取数据
-  if (prop.codeid != 'new') {
-    assetGetDetail(prop.codeid).then(res => {
-      console.log(res);
-      assetadd.assetCode = res.asset.assetCode;
-      assetadd.assetDesc = res.asset.assetDesc;
-      assetadd.assetNameCn = res.asset.assetNameCn;
-      assetadd.assetNameEn = res.asset.assetNameEn;
-      assetadd.categoryCodes.splice(0, 1);
-      res.categoryName.forEach((i: any) => {
-        let temp = {
-          value: i,
-        };
-        assetadd.categoryCodes.push(temp);
-      });
-      res.assetConfigStandardMap.forEach((i: any) => {
-        let temp = {
-          assetConfigDescription: i.assetConfigDescription,
-          assetConfigName: i.assetConfigName,
-          assetConfigNameEn: i.assetConfigNameEn,
-          standardCode: i.standardCode,
-        };
-        assetadd.assetConfigs.push(temp);
-      });
-    });
+  const props = toRefs(prop);
+  const changevisible = ref<boolean>();
+  changevisible.value = props.changevisible.value;
+  const emit1 = defineEmits(['changevisible', 'reset']);
+  const closeDrawer = () => {
+    changevisible.value = false;
+    emit1('changevisible', changevisible.value);
+  };
+  function reset() {
+    emit1('reset');
   }
+
   // 添加目录
   const addSight = () => {
     assetadd.categoryCodes.push({ value: '' });
@@ -253,7 +302,7 @@
     if (assetadd.assetConfigs.length == 0) {
       assetadd.assetConfigs.push(t);
     } else if (assetadd.assetConfigs[assetadd.assetConfigs.length - 1].editable == true && assetadd.assetConfigs.length > 1) {
-      message.warn('111');
+      message.warn('只能同时编辑一行');
     } else {
       assetadd.assetConfigs.push(t);
     }
@@ -309,10 +358,14 @@
     if (prop.codeid == 'new') {
       assetAdd(toRaw(assetadd)).then(res => {
         console.log(res);
+        closeDrawer();
+        reset();
       });
     } else {
       asseUpdate(toRaw(assetadd)).then(res => {
         console.log(res);
+        closeDrawer();
+        reset();
       });
     }
   };
@@ -321,6 +374,10 @@
   .base {
     // border-top: 1px solid #f0f0f0;
     padding: 10px;
+  }
+
+  .basictitle {
+    margin: '16px 0';
   }
 
   .title {
@@ -343,5 +400,14 @@
 
   .operation_sep {
     margin-left: 5%;
+  }
+
+  .buttons {
+    margin-right: 3%;
+    text-align: right;
+
+    .buttonclose {
+      margin-right: 2%;
+    }
   }
 </style>
