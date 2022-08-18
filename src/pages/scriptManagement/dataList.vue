@@ -126,8 +126,6 @@
     filterData.value.orderByDate = sorter.order === 'ascend' ? 1 : sorter.order === 'descend' ? 0 : undefined;
     filterData.value.size = pag.pageSize;
     filterData.value.page = pag.current;
-    console.log(filterData);
-
     run(filterData.value);
   };
   const btnIsDisabled = ref<boolean>(true);
