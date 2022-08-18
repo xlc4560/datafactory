@@ -57,10 +57,6 @@
           key: '/DataFactory/DataSourceManagement/ApiManagement',
         },
         {
-          subName: '已发布接口',
-          key: '/DataFactory/DataSourceManagement/publishApi',
-        },
-        {
           subName: '数据库管理',
           key: '/DataFactory/DataSourceManagement/dbManagement',
         },
