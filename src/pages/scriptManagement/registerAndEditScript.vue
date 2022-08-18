@@ -3,6 +3,7 @@
     :visible="scriptEditDrawer"
     :title="TitleEnum[registerAndEditTitle]"
     width="75vw"
+    destroy-on-close
     @after-visible-change="afterClose"
     @close="emits('changeDrawerControlData', { dataName: 'scriptEditDrawer', value: false })"
   >
@@ -107,7 +108,7 @@
   // 数据源列表api
   import { dbList } from '@/api/dbManagement';
   // 自定义hooks，获取pinia中的数据
-  import { registerAndEditTitle, currentScriptDetails } from './scriptHooks';
+  import { registerAndEditTitle, currentScriptDetails, useRun } from './scriptHooks';
   // 自定义表格配置项，以及表单验证规则
   import { scriptEditInputParameterColumns, scriptEditOutputParameterColumns, FileDataType, scriptFormRule } from './data';
   // 自定义title枚举
@@ -165,11 +166,12 @@
     },
     { deep: true },
   );
+  // 抽屉确认按钮
   const handleOk = async () => {
     try {
       await scriptFormRef.value?.validate();
     } catch (error) {
-      message.error('校验失败', 1);
+      message.error('数据校验未通过', 1);
     }
     const params = cloneDeep(currentScriptDetails.value);
     delete params.fileList;
@@ -190,6 +192,7 @@
         await AddScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
       }
       emits('changeDrawerControlData', { dataName: 'scriptEditDrawer', value: false });
+      useRun.value();
     } catch (error) {}
   };
 </script>
