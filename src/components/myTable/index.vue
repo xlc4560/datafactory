@@ -223,14 +223,11 @@
   // 删除
   const deleteRecord = (record: inputParameterDataType, data: inputParameterDataType[]) => {
     const parentId = ref<string>('0');
-    dataFlat.value.map(flat => {
-      if (record.id === flat.id) {
-        parentId.value = flat.parameterPid as string;
-      }
-      return flat.parameterPid;
-    });
     const arrP = dataFlat.value
       .map(flat => {
+        if (record.id === flat.id) {
+          parentId.value = flat.parameterPid as string;
+        }
         if (flat.parameterPid === parentId.value && parentId.value !== '0') {
           return flat.parameterPid;
         }
