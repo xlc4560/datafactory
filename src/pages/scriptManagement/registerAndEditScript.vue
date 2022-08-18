@@ -81,12 +81,12 @@
     <template #footer>
       <a-row :gutter="16">
         <a-col>
-          <a-popconfirm title="取消本次编辑并退出?" ok-text="确定" cancel-text="取消" @confirm="emits('changeDrawerControlData', { dataName: 'scriptEditDrawer', value: false })">
+          <a-popconfirm title="确认退出?" ok-text="确定" cancel-text="取消" @confirm="emits('changeDrawerControlData', { dataName: 'scriptEditDrawer', value: false })">
             <a-button>取 消</a-button>
           </a-popconfirm>
         </a-col>
         <a-col>
-          <a-popconfirm title="确认修改?" ok-text="确定" cancel-text="取消" @confirm="handleOk">
+          <a-popconfirm title="确认提交?" ok-text="确定" cancel-text="取消" @confirm="handleOk">
             <a-button type="primary">确 定</a-button>
           </a-popconfirm>
         </a-col>
@@ -185,12 +185,15 @@
       delete item.parameterRequire;
     });
     try {
+      const a = ref();
       // 0,1 编辑  2,3 新增
       if ([0, 1].includes(registerAndEditTitle.value)) {
-        await UpdateScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
+        a.value = await UpdateScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
       } else {
-        await AddScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
+        a.value = await AddScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
       }
+      console.log(a);
+
       emits('changeDrawerControlData', { dataName: 'scriptEditDrawer', value: false });
       useRun.value();
     } catch (error) {}
