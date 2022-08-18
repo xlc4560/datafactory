@@ -7,7 +7,15 @@
     <div class="searchInput">
       <a-input v-model:value="searchKeyword" placeholder="请输入关键字" />
     </div>
-    <a-tree v-model:expandedKeys="expandedKeys" v-model:selectedKeys="selectedKeys" :tree-data="treeData" :field-names="fieldNames" :auto-expand-parent="autoExpandParent" @expand="onExpand">
+    <a-tree
+      v-model:expandedKeys="expandedKeys"
+      v-model:selectedKeys="selectedKeys"
+      :tree-data="treeData"
+      :field-names="fieldNames"
+      :auto-expand-parent="autoExpandParent"
+      :loading="true"
+      @expand="onExpand"
+    >
       <template #title="{ name, categoryCode }">
         <div class="iconWarp">
           <span v-if="name.indexOf(searchKeyword) > -1" class="titleName">

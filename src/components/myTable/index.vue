@@ -101,6 +101,7 @@
   // pinia数据
   import { storeToRefs } from 'pinia';
   import useStore from '@/store';
+  import { log } from 'console';
   const { useApiRegisterAndUpdateStore } = useStore();
   const { apiInfo, currentParameter } = storeToRefs(useApiRegisterAndUpdateStore);
   const isRenderUnbindBtn = ref<boolean>(false);
@@ -221,15 +222,30 @@
 
   // 删除
   const deleteRecord = (record: inputParameterDataType, data: inputParameterDataType[]) => {
+    const parentId = ref<string>('0');
+    dataFlat.value.map(flat => {
+      if (record.id === flat.id) {
+        parentId.value = flat.parameterPid as string;
+      }
+      return flat.parameterPid;
+    });
+    const arrP = dataFlat.value
+      .map(flat => {
+        if (flat.parameterPid === parentId.value && parentId.value !== '0') {
+          return flat.parameterPid;
+        }
+      })
+      .filter(key => key);
     data.forEach((item: inputParameterDataType, index: number) => {
       if (item.id === record.id) {
-        data.splice(index, 1);
+        if (arrP.length === 1) {
+          message.error('复杂类型最后一条子数据不能删除!', 1);
+        } else {
+          data.splice(index, 1);
+        }
         return null;
-      }
-      if (item.children?.length && item.children?.length > 1) {
+      } else if (item.children) {
         deleteRecord(record, item.children);
-      } else {
-        message.error('复杂类型需保留一条子数据', 1);
       }
     });
   };
