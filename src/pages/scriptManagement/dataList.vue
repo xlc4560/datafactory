@@ -81,7 +81,6 @@
 </template>
 
 <script setup lang="ts">
-  import { TypeEnum } from './Enum';
   import { tableColumns, codeState, scriptType, emptyCurrentScriptDetails } from './data';
   import * as request from '@/api/scriptManagement';
   import { scriptInfoListType } from '@/api/scriptManagement/apiReturnType';
@@ -90,6 +89,7 @@
   import { filterData, useRun, currentScriptDetails, registerAndEditTitle } from './scriptHooks';
   import { message } from 'ant-design-vue';
   import { FormInstance } from 'ant-design-vue/es/form';
+  import { cloneDeep } from 'lodash-es';
 
   const emits = defineEmits(['changeDrawerControlData']);
   // 以下是分页逻辑
@@ -126,8 +126,6 @@
     filterData.value.orderByDate = sorter.order === 'ascend' ? 1 : sorter.order === 'descend' ? 0 : undefined;
     filterData.value.size = pag.pageSize;
     filterData.value.page = pag.current;
-    console.log(filterData);
-
     run(filterData.value);
   };
   const btnIsDisabled = ref<boolean>(true);
@@ -171,7 +169,6 @@
       await request.DeleteScript(scriptId);
       state.selectedRowKeys = [];
       btnIsDisabled.value = true;
-      message.success('删除成功!', 1);
     } catch (error) {
     } finally {
       loading.value = false;
@@ -208,7 +205,7 @@
     if (record) {
       currentScriptDetails.value = record;
     } else {
-      currentScriptDetails.value = emptyCurrentScriptDetails;
+      currentScriptDetails.value = cloneDeep(emptyCurrentScriptDetails);
     }
     registerAndEditTitle.value = drawerTitle;
     emits('changeDrawerControlData', { dataName, value: true });
