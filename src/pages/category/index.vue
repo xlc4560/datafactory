@@ -164,7 +164,6 @@
     if (operationType.value !== 2) {
       try {
         await classifyFormInstance.value?.validate();
-        visible.value = false;
         switch (operationType.value) {
           // 新增
           case 0:
@@ -173,6 +172,7 @@
               categoryName: classifyFormData.classifyName,
               categorySchema: props.categorySchema,
             });
+            visible.value = false;
             treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
             generateList(treeData.value);
             break;
@@ -183,6 +183,7 @@
               categorySchema: props.categorySchema,
               categoryCode: categoryCode_forUpdate.value,
             });
+            visible.value = false;
             treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
             generateList(treeData.value);
             break;
@@ -191,6 +192,7 @@
     } else {
       (async () => {
         await catagoryResquest.DeleteCategory(categoryCode_forUpdate.value);
+        visible.value = false;
         treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
         generateList(treeData.value);
       })();
