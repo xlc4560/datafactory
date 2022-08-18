@@ -7,43 +7,47 @@
     <div class="searchInput">
       <a-input v-model:value="searchKeyword" placeholder="请输入关键字" />
     </div>
-    <a-tree
-      v-model:expandedKeys="expandedKeys"
-      v-model:selectedKeys="selectedKeys"
-      :tree-data="treeData"
-      :field-names="fieldNames"
-      :auto-expand-parent="autoExpandParent"
-      :loading="true"
-      @expand="onExpand"
-    >
-      <template #title="{ name, categoryCode }">
-        <div class="iconWarp">
-          <span v-if="name.indexOf(searchKeyword) > -1" class="titleName">
-            {{ name.substr(0, name.indexOf(searchKeyword)) }}
-            <span style="color: #f50">{{ searchKeyword }}</span>
-            {{ name.substr(name.indexOf(searchKeyword) + searchKeyword?.length) }}
-          </span>
-          <span v-else class="titleName">{{ name }}</span>
-          <a-popover>
-            <template #content>
-              <ul class="menuSiderCRUD_style">
-                <li @click="() => classifyUpdate(0, name, categoryCode, parentCode)">新增</li>
-                <li @click="() => classifyUpdate(1, name, categoryCode, parentCode)">编辑</li>
-                <li @click="() => classifyUpdate(2, name, categoryCode, parentCode)">删除</li>
-              </ul>
-            </template>
-            <more-outlined class="icon" />
-          </a-popover>
-        </div>
-      </template>
-    </a-tree>
+    <a-spin :spinning="categorySpinning">
+      <a-tree
+        v-model:expandedKeys="expandedKeys"
+        v-model:selectedKeys="selectedKeys"
+        :tree-data="treeData"
+        :field-names="fieldNames"
+        :auto-expand-parent="autoExpandParent"
+        :loading="true"
+        @expand="onExpand"
+      >
+        <template #title="{ name, categoryCode }">
+          <div class="iconWarp">
+            <span v-if="name.indexOf(searchKeyword) > -1" class="titleName">
+              {{ name.substr(0, name.indexOf(searchKeyword)) }}
+              <span style="color: #f50">{{ searchKeyword }}</span>
+              {{ name.substr(name.indexOf(searchKeyword) + searchKeyword?.length) }}
+            </span>
+            <span v-else class="titleName">{{ name }}</span>
+            <a-popover>
+              <template #content>
+                <ul class="menuSiderCRUD_style">
+                  <li @click="() => classifyUpdate(0, name, categoryCode, parentCode)">新增</li>
+                  <li @click="() => classifyUpdate(1, name, categoryCode, parentCode)">编辑</li>
+                  <li @click="() => classifyUpdate(2, name, categoryCode, parentCode)">删除</li>
+                </ul>
+              </template>
+              <more-outlined class="icon" />
+            </a-popover>
+          </div>
+        </template>
+      </a-tree>
+    </a-spin>
     <a-modal v-model:visible="visible" :title="title" cancel-text="取消" ok-text="确认" :after-close="classifyFormInstance?.resetFields" @ok="handleOk">
-      <a-form v-if="operationType !== 2" ref="classifyFormInstance" :model="classifyFormData">
-        <a-form-item label="分类名称" has-feedback name="classifyName" :rules="[{ required: true, message: '请输入分类名称！' }]">
-          <a-input v-model:value="classifyFormData.classifyName" allow-clear placeholder="请输入分类名称"></a-input>
-        </a-form-item>
-      </a-form>
-      <div v-else>请确认是否删除该分类?</div>
+      <a-spin :spinning="spinning">
+        <a-form v-if="operationType !== 2" ref="classifyFormInstance" :model="classifyFormData">
+          <a-form-item label="分类名称" has-feedback name="classifyName" :rules="[{ required: true, message: '请输入分类名称！' }]">
+            <a-input v-model:value="classifyFormData.classifyName" allow-clear placeholder="请输入分类名称"></a-input>
+          </a-form-item>
+        </a-form>
+        <div v-else>请确认是否删除该分类?</div>
+      </a-spin>
     </a-modal>
   </div>
 </template>
@@ -66,13 +70,21 @@
       default: () => '',
     },
   });
+  const spinning = ref<boolean>(false);
+  const categorySpinning = ref<boolean>(false);
   // 监视props.categorySchema发生改变时就发起请求
   const treeData = ref<TreeDataType[]>([]);
   watch(
     () => props.categorySchema,
     async value => {
-      treeData.value = await catagoryResquest.ReadCategory(value);
-      generateList(treeData.value);
+      try {
+        categorySpinning.value = true;
+        treeData.value = await catagoryResquest.ReadCategory(value);
+        generateList(treeData.value);
+      } catch (error) {
+      } finally {
+        categorySpinning.value = false;
+      }
     },
     { deep: true, immediate: true },
   );
@@ -160,6 +172,8 @@
   const classifyFormInstance = ref<FormInstance>();
   // 弹窗框确认按钮回调
   const handleOk = async () => {
+    const editRes = ref();
+    spinning.value = true;
     // 触发表单验证
     if (operationType.value !== 2) {
       try {
@@ -167,35 +181,48 @@
         switch (operationType.value) {
           // 新增
           case 0:
-            await catagoryResquest.CreateCategory({
+            categorySpinning.value = true;
+            editRes.value = await catagoryResquest.CreateCategory({
               parentCode: parentCode.value,
               categoryName: classifyFormData.classifyName,
               categorySchema: props.categorySchema,
             });
-            visible.value = false;
             treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
             generateList(treeData.value);
             break;
           case 1:
-            await catagoryResquest.UpdateCategory({
+            categorySpinning.value = true;
+            editRes.value = await catagoryResquest.UpdateCategory({
               parentCode: parentCode.value,
               categoryName: classifyFormData.classifyName,
               categorySchema: props.categorySchema,
               categoryCode: categoryCode_forUpdate.value,
             });
-            visible.value = false;
             treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
             generateList(treeData.value);
             break;
         }
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        categorySpinning.value = false;
+        spinning.value = false;
+      }
     } else {
       (async () => {
-        await catagoryResquest.DeleteCategory(categoryCode_forUpdate.value);
-        visible.value = false;
-        treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
-        generateList(treeData.value);
+        try {
+          categorySpinning.value = true;
+          editRes.value = await catagoryResquest.DeleteCategory(categoryCode_forUpdate.value);
+          treeData.value = await catagoryResquest.ReadCategory(props.categorySchema);
+          generateList(treeData.value);
+        } catch (error) {
+        } finally {
+          categorySpinning.value = false;
+          spinning.value = false;
+        }
       })();
+    }
+    if (!editRes.value?.code) {
+      visible.value = false;
     }
   };
 </script>
