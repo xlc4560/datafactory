@@ -33,7 +33,7 @@
         </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'scriptName'">
-            <a @click="openDrawer('scriptDetailsDrawer', 5, record)">{{ record.scriptName }}</a>
+            <a href="javascript:;" @click="openDrawer('scriptDetailsDrawer', 5, record)">{{ record.scriptName }}</a>
           </template>
           <template v-else-if="column.dataIndex === 'scriptState'">
             <span class="isNopublish" :style="{ background: codeState[record.scriptState].color }"></span>

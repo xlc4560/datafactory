@@ -158,15 +158,17 @@
   watch(
     registerAndEditTitle,
     () => {
-      if ([0, 2].includes(registerAndEditTitle.value)) {
-        currentScriptDetails.value.scriptType = 0;
-      } else {
-        currentScriptDetails.value.scriptType = 1;
+      if (currentScriptDetails.value.scriptType === undefined) {
+        if ([0, 2].includes(registerAndEditTitle.value)) {
+          currentScriptDetails.value.scriptType = 0;
+        } else {
+          currentScriptDetails.value.scriptType = 1;
+        }
       }
     },
     { deep: true },
   );
-  // 抽屉确认按钮
+  // 抽屉确认按钮回调
   const handleOk = async () => {
     try {
       await scriptFormRef.value?.validate();
@@ -185,16 +187,16 @@
       delete item.parameterRequire;
     });
     try {
-      const a = ref();
+      const editScriptRes = ref<any>();
       // 0,1 编辑  2,3 新增
       if ([0, 1].includes(registerAndEditTitle.value)) {
-        a.value = await UpdateScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
+        editScriptRes.value = await UpdateScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
       } else {
-        a.value = await AddScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
+        editScriptRes.value = await AddScript({ scriptFile: currentScriptDetails.value.fileList[0], scriptJson: JSON.stringify(params) });
       }
-      console.log(a);
-
-      emits('changeDrawerControlData', { dataName: 'scriptEditDrawer', value: false });
+      if (!editScriptRes.value?.code) {
+        emits('changeDrawerControlData', { dataName: 'scriptEditDrawer', value: false });
+      }
       useRun.value();
     } catch (error) {}
   };
