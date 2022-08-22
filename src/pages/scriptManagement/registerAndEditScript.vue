@@ -174,6 +174,7 @@
       await scriptFormRef.value?.validate();
     } catch (error) {
       message.error('数据校验未通过', 1);
+      return null;
     }
     const params = cloneDeep(currentScriptDetails.value);
     delete params.fileList;

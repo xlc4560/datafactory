@@ -75,7 +75,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         '/asset': {
           target: 'http://124.223.17.68:6002',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/script/, ''),
+          // rewrite: path => path.replace(/^\/script/, ''),
         },
       },
     },

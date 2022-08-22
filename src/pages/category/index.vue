@@ -42,7 +42,15 @@
     <a-modal v-model:visible="visible" :title="title" cancel-text="取消" ok-text="确认" :after-close="classifyFormInstance?.resetFields" @ok="handleOk">
       <a-spin :spinning="spinning">
         <a-form v-if="operationType !== 2" ref="classifyFormInstance" :model="classifyFormData">
-          <a-form-item label="分类名称" has-feedback name="classifyName" :rules="[{ required: true, message: '请输入分类名称！' }]">
+          <a-form-item
+            label="分类名称"
+            has-feedback
+            name="classifyName"
+            :rules="[
+              { required: true, message: '请输入分类名称！' },
+              { pattern: /^[^\s]*$/, message: '不能输入空格' },
+            ]"
+          >
             <a-input v-model:value="classifyFormData.classifyName" allow-clear placeholder="请输入分类名称"></a-input>
           </a-form-item>
         </a-form>
