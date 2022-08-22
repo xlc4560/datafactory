@@ -296,8 +296,9 @@
   const deleteItem = (e: any) => {
     console.log(e.key);
     // 删除请求
-    assetDelete(e.key);
-    search();
+    assetDelete(e.key).then(res => {
+      search();
+    });
   };
   // 新增部分
   const visibleAdd = ref<boolean>(false);
