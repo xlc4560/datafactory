@@ -60,7 +60,17 @@
         </a-table>
         <!-- 分页 -->
         <div class="pagination">
-          <a-pagination v-model:current="current1" v-model:page-size="pageSize1" show-quick-jumper :total="total" :show-total="total => `共 ${total} 条数据`" @change="onChange" />
+          <a-pagination
+            v-model:current="current1"
+            v-model:page-size="pageSize1"
+            show-quick-jumper
+            :total="total"
+            :show-total="total => `共 ${total} 条数据`"
+            :page-size-options="['5', '10', '20', '30']"
+            show-size-changer
+            @change="onChange"
+            @showSizeChange="onShowSizeChange"
+          />
         </div>
       </div>
     </div>
@@ -82,6 +92,9 @@
   let current1 = ref<number>(1); //当前页码
   let pageSize1 = ref<number>(5); //每页显示条数
   let total = ref<number>();
+  const onShowSizeChange = (current: number, pageSize: number) => {
+    console.log(current, pageSize);
+  };
 
   //初始检索数据参数对象
   const dataSourceList = reactive<DBType.dataSourceList>({

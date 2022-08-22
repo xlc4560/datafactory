@@ -29,7 +29,7 @@
           <template v-if="column.dataIndex === 'codeId'">
             <a @click="stopwatchDetails(record)">{{ record.codeId }}</a>
           </template>
-          <template v-if="column.dataIndex === 'codeState'">
+          <template v-else-if="column.dataIndex === 'codeState'">
             <span class="isNopublish" :style="{ background: codeState[record.codeState].color }"></span>
             {{ codeState[record.codeState].value }}
           </template>
@@ -40,6 +40,12 @@
             <a-popconfirm title="确认删除?" ok-text="是" cancel-text="否" @confirm="deleteStopwatch(record.codeId)">
               <a-button v-if="record.codeState === 0" type="link">删 除</a-button>
             </a-popconfirm>
+          </template>
+          <template v-else>
+            <a-tooltip placement="topLeft">
+              <template #title>{{ record[column.dataIndex] }}</template>
+              {{ record[column.dataIndex] }}
+            </a-tooltip>
           </template>
         </template>
       </a-table>
