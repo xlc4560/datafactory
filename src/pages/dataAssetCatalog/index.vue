@@ -107,8 +107,6 @@
   //
   import { assetGetList, assetUpdateState, assetDelete, assetGetDetail } from '@/api/dataAssetCatalog/index';
 
-  //测试
-  import test from './test.vue';
   //   分类
   import classification from '@/pages/category/index.vue';
   // 从pinia中引入集中管理的状态
@@ -121,9 +119,7 @@
     formState.categoryCode = fiterCategoryName.value;
     assetSearchList();
   });
-  assetGetDetail('ZC00001').then(res => {
-    console.log(res);
-  });
+  assetGetDetail('ZC00001');
 
   // 封装获取表格列表数据方法
   // console.log(toRaw(formState));

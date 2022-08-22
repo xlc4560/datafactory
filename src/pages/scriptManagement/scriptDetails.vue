@@ -45,21 +45,23 @@
   </a-drawer>
   <a-modal v-model:visible="scriptContentVisible" width="1200px" style="top: 12vh" title="脚本内容">
     <template #footer> </template>
-    <codemirror
-      class="scroll"
-      :model-value="code"
-      :disabled="true"
-      placeholder="Code goes here...---"
-      :style="{ height: '60vh' }"
-      :autofocus="true"
-      :indent-with-tab="true"
-      :tab-size="2"
-      :extensions="extensions"
-      @ready="log('ready', $event)"
-      @change="log('change', $event)"
-      @focus="log('focus', $event)"
-      @blur="log('blur', $event)"
-    />
+    <a-spin :spinning="codemirrorSpinning">
+      <codemirror
+        class="scroll"
+        :model-value="code"
+        :disabled="true"
+        placeholder="Code goes here...---"
+        :style="{ height: '60vh' }"
+        :autofocus="true"
+        :indent-with-tab="true"
+        :tab-size="2"
+        :extensions="extensions"
+        @ready="log('ready', $event)"
+        @change="log('change', $event)"
+        @focus="log('focus', $event)"
+        @blur="log('blur', $event)"
+      />
+    </a-spin>
   </a-modal>
 </template>
 
@@ -72,8 +74,7 @@
   import { oneDark } from '@codemirror/theme-one-dark';
   import { TypeEnum, RequireEnum } from './Enum';
   // 从pinia中引入集中管理的状态
-  import { fiterCategoryName, filterData, useRun, currentScriptDetails } from './scriptHooks';
-  import { message } from 'ant-design-vue';
+  import { currentScriptDetails } from './scriptHooks';
   const props = defineProps({
     scriptDetailsDrawer: {
       type: Boolean,
@@ -81,13 +82,25 @@
     },
   });
   const emits = defineEmits(['changeDrawerControlData']);
+  // 控制脚本内容展示
   const scriptContentVisible = ref<boolean>(false);
+  // 控制脚本内容的加载状态
+  const codemirrorSpinning = ref<boolean>(false);
   const ChangeScriptContentVisible = async (visible: boolean) => {
     scriptContentVisible.value = visible;
+    debugger;
     code.value = '';
     try {
+      codemirrorSpinning.value = true;
       code.value = await GetScriptContent(currentScriptDetails?.value.id as number);
-    } catch (error) {}
+      if (code.value?.code) {
+        code.value = undefined;
+      }
+    } catch (error) {
+    } finally {
+      debugger;
+      codemirrorSpinning.value = false;
+    }
   };
   // 脚本代码
   const code = ref(``);

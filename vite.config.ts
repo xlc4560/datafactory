@@ -43,6 +43,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
         // 接口管理（宋杰龙）
         '/api': {
+          // target: 'http://10.8.21.150:6002',
           target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           // rewrite: path => path.replace(/^\/code/, '/code'),
@@ -54,7 +55,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
         // 分类（宋杰龙）
         '/category': {
-          target: 'http://10.8.21.175:6002',
+          target: 'http://124.223.17.68:6002',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/code/, '/code'),
         },
@@ -67,13 +68,14 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         //脚本管理
         '/scriptInfo': {
           target: 'http://124.223.17.68:6002',
+          // target: 'http://10.8.21.150:6002',
           changeOrigin: true,
         },
         //数据资产管理
         '/asset': {
           target: 'http://124.223.17.68:6002',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/script/, ''),
+          // rewrite: path => path.replace(/^\/script/, ''),
         },
       },
     },

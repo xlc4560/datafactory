@@ -43,7 +43,9 @@
           <template #title>
             <div class="scriptTitle_SxGJ"><strong>返回结果(JSON)</strong></div>
           </template>
-          <JsonViewer class="jsonViewerStyle scroll_apiTest" :value="scriptTestResult" :expand-depth="3" copyable sort theme="dark" @on-key-click="keyClick" />
+          <a-spin :spinning="scriptTestResultSpinning">
+            <JsonViewer class="jsonViewerStyle scroll_apiTest" :value="scriptTestResult" :expand-depth="3" copyable sort theme="dark" @on-key-click="keyClick" />
+          </a-spin>
         </a-card>
       </div>
     </div>
@@ -79,6 +81,8 @@
       default: false,
     },
   });
+  // 控制JSON数据展示组件的数据加载状态
+  const scriptTestResultSpinning = ref<boolean>(false);
   const emits = defineEmits(['changeDrawerControlData']);
   const keyClick = (keyName: string): void => {
     console.log(keyName, '被点击了');
@@ -93,6 +97,7 @@
   // 测试按钮回调
   const scriptTest = async () => {
     try {
+      scriptTestResultSpinning.value = true;
       const arr: {
         parameterName: string;
         parameterValue: string;
@@ -104,7 +109,8 @@
       }
       scriptTestResult.value = await ScriptTest__({ id: currentScriptDetails.value.id as number, parameterList: arr });
     } catch (error) {
-      console.log(error);
+    } finally {
+      scriptTestResultSpinning.value = false;
     }
   };
   // 切换抽屉时动画结束后的回调

@@ -1,7 +1,7 @@
 <template>
   <div class="myTabel_yzDQ">
     <a-form ref="formRef" size="small" :model="dataFlat" name="basic">
-      <a-table :columns="tableColumns" size="small" :data-source="apiInfo[tableDataName]" :pagination="false" :row-key="rowKey" :default-expand-all-rows="true">
+      <a-table :columns="tableColumns" size="small" :data-source="apiInfo[tableDataName]" :default-expand-all-rows="true" :pagination="false" :row-key="rowKey">
         <template #title>
           <div class="paramTitle">
             <span class="titleStyle">{{ headerTitle }}</span>
@@ -22,7 +22,7 @@
           </template>
         </template>
 
-        <template #bodyCell="{ column, record, index }">
+        <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'operation'">
             <template v-if="record.isEdit">
               <a-button type="link" @click="formValidate(record, false)">保存</a-button>
@@ -40,7 +40,7 @@
             <template v-if="record.isEdit && !['默认值', '是否必填'].includes(column.title)">
               <a-form-item
                 has-feedback
-                :name="[index, column.dataIndex]"
+                :name="[0, column.dataIndex]"
                 :rules="[
                   { required: ['参数名称', '参数位置', '数据类型', '是否必填'].includes(column.title), message: '该选项为必填' },
                   { validator: checkChildren, trigger: 'change' },
@@ -54,7 +54,7 @@
               </a-form-item>
             </template>
             <template v-else-if="record.isEdit && ['默认值', '是否必填'].includes(column.title) && ![3, 4].includes(record.parameterType)">
-              <a-form-item has-feedback :name="[index, column.dataIndex]" :rules="[{ required: ['参数名称', '参数位置', '数据类型', '是否必填'].includes(column.title), message: '该选项为必填' }]">
+              <a-form-item has-feedback :name="[0, column.dataIndex]" :rules="[{ required: ['参数名称', '参数位置', '数据类型', '是否必填'].includes(column.title), message: '该选项为必填' }]">
                 <a-input v-if="['默认值'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请输入" />
                 <a-select v-else-if="['是否必填'].includes(column.title)" v-model:value="record[column.dataIndex]" allow-clear placeholder="请选择" @change="selectChange(record)">
                   <a-select-option v-for="item in column.selectOption" :key="item.key">{{ item.label }}</a-select-option>
@@ -62,7 +62,7 @@
               </a-form-item>
             </template>
             <template v-else>
-              <a-tooltip>
+              <a-tooltip placement="topLeft">
                 <template #title>{{ dataComputed(column, record) }}</template>
                 <span style="display: block; overflow: hidden; max-width: 150px; text-overflow: ellipsis; white-space: nowrap">{{ dataComputed(column, record) }}</span>
               </a-tooltip>
@@ -98,10 +98,10 @@
   import { changeIsEdit } from './tableConfig';
   import defineCodeValueVue from './defineCodeValue.vue';
   import codeBindVue from './codeBind.vue';
+  import { generateFlatArr } from './tableHooks';
   // pinia数据
   import { storeToRefs } from 'pinia';
   import useStore from '@/store';
-  import { log } from 'console';
   const { useApiRegisterAndUpdateStore } = useStore();
   const { apiInfo, currentParameter } = storeToRefs(useApiRegisterAndUpdateStore);
   const isRenderUnbindBtn = ref<boolean>(false);
@@ -153,11 +153,13 @@
     (value: inputParameterDataType[]) => {
       dataFlat.value = [];
       generateList(value);
+      // 只存isEdit的数据
+      dataFlat.value = dataFlat.value.filter((df: inputParameterDataType) => df.isEdit);
     },
     { deep: true, immediate: true },
   );
   // 表格row-key配置
-  const rowKey = (record: { parameterId: string }): string => record.parameterId;
+  const rowKey = (record: { id: string }): string => record.id;
   // 处理数据（将指定字段转换成汉字）
   const dataComputed = (column: columnsType, record: inputParameterDataType): string => {
     if (column.dataIndex === 'parameterPosition') {
@@ -190,6 +192,7 @@
   // 触发表单验证的回调(保存时调用)
   const formValidate = async (record: inputParameterDataType, edit: boolean) => {
     try {
+      console.log(apiInfo.value[props.tableDataName].indexOf(record));
       await formRef.value?.validate();
       // 校验成功的回调
       record.isEdit = edit;
@@ -209,6 +212,7 @@
         record.isEdit = edit;
       } else {
         formRef.value?.resetFields();
+        // debugger;
       }
     } catch (error) {
       // 校验失败的错误信息
@@ -216,18 +220,28 @@
         message.warning('请正确填字段!', 1);
       } else {
         formRef.value?.resetFields();
+        const errorValueIndex = Object.keys((error as any).values)[0];
+        if (
+          Object.keys((error as any).values[errorValueIndex]).every(
+            (currentValue: any) => (error as any).values[errorValueIndex][currentValue] === '' || (error as any).values[errorValueIndex][currentValue] === null,
+          )
+        ) {
+          deleteRecord(record, apiInfo.value[props.tableDataName]);
+        }
       }
     }
   };
 
   // 删除
   const deleteRecord = (record: inputParameterDataType, data: inputParameterDataType[]) => {
+    const flatData: inputParameterDataType[] = [];
+    generateFlatArr(data, flatData);
     const parentId = ref<string>('0');
-    const arrP = dataFlat.value
+    console.log(flatData);
+    debugger;
+    parentId.value = flatData.find(element => element.id === record.id)?.parameterPid as string;
+    const arrP = flatData
       .map(flat => {
-        if (record.id === flat.id) {
-          parentId.value = flat.parameterPid as string;
-        }
         if (flat.parameterPid === parentId.value && parentId.value !== '0') {
           return flat.parameterPid;
         }
@@ -324,7 +338,6 @@
   const JsonData = ref<{ jsonData?: string }>({
     jsonData: '',
   });
-
   // 暴露组件实例对象供父组件使用
   defineExpose({
     formRef,
