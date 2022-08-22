@@ -17,7 +17,6 @@
   import { computed } from 'vue';
   const routeMatch = computed<RouteLocationMatched[]>(() => {
     const match = [...useRoute().matched];
-    // match.splice(0, 1);
     return match;
   });
 </script>
@@ -28,7 +27,7 @@
       display: flex;
       flex-direction: column;
       margin: 2vh;
-      min-height: calc(100vh - 90px);
+      min-height: calc(100vh - 140px);
     }
 
     .divAndSectionPublic {
