@@ -26,7 +26,7 @@ export interface AssetAdd {
     assetConfigDescription?: string; //字段描述
     assetConfigName: string; //字段中文名称
     assetConfigNameEn: string; //字段英文名称
-    standardCode: string; //数据标准目录编号
+    standardCode: string | undefined; //数据标准目录编号
     editable?: boolean; // 编辑状态
   }[];
 }
@@ -43,7 +43,7 @@ export interface AssetUpdate {
     assetConfigDescription?: string; //字段描述
     assetConfigName: string; //字段中文名称
     assetConfigNameEn: string; //字段英文名称
-    standardCode: string; //数据标准目录编号
+    standardCode: string | undefined; //数据标准目录编号
     editable?: boolean; // 编辑状态
   }[];
 }

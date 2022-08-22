@@ -47,49 +47,51 @@
           <h3 :style="{ margin: '16px 0' }">字段配置</h3>
           <a-button type="primary" @click="addItem">添加字段</a-button>
         </div>
-        <a-table :columns="columns" :data-source="assetadd.assetConfigs" bordered>
-          <template #bodyCell="{ column, text, record, index }">
-            <template v-if="column.dataIndex === 'assetConfigName' && assetadd.assetConfigs[index].editable">
-              <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigName']" :rules="[{ required: true, message: '必填' }]">
-                <a-input v-model:value="record.assetConfigName"></a-input>
-              </a-form-item>
+        <a-form :model="assetadd">
+          <a-table :columns="columns" :data-source="assetadd.assetConfigs" bordered>
+            <template #bodyCell="{ column, text, record, index }">
+              <template v-if="column.dataIndex === 'assetConfigName' && assetadd.assetConfigs[index].editable">
+                <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigName']" :rules="[{ required: true, message: '必填' }]">
+                  <a-input v-model:value="record.assetConfigName" placeholder="请输入"></a-input>
+                </a-form-item>
+              </template>
+              <template v-else-if="column.dataIndex === 'assetConfigNameEn' && assetadd.assetConfigs[index].editable">
+                <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigNameEn']" :rules="[{ required: true, message: '必填' }]">
+                  <a-input v-model:value="record.assetConfigNameEn" placeholder="请输入"></a-input>
+                </a-form-item>
+              </template>
+              <template v-else-if="column.dataIndex === 'assetConfigDescription' && assetadd.assetConfigs[index].editable">
+                <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigDescription']" :rules="[{ required: true, message: '必填' }]">
+                  <a-input v-model:value="record.assetConfigDescription" placeholder="请输入"></a-input>
+                </a-form-item>
+              </template>
+              <template v-else-if="column.dataIndex === 'standardCode' && assetadd.assetConfigs[index].editable">
+                <a-form-item has-feedback :name="['assetConfigs', index, 'standardCode']" :rules="[{ required: true, message: '必填' }]">
+                  <a-select v-model:value="record.standardCode" :options="options" placeholder="请输入标准编号、标准中英文名称进行检索" allow-clear></a-select>
+                </a-form-item>
+              </template>
+              <template v-else-if="column.dataIndex === 'operation'">
+                <div class="editable-row-operations">
+                  <span v-if="assetadd.assetConfigs[index].editable">
+                    <a @click="save(index)">保存</a>
+                    <a-popconfirm title="确认取消?" @confirm="cancel(index)">
+                      <a class="operation_sep">取消</a>
+                    </a-popconfirm>
+                  </span>
+                  <span v-else>
+                    <a @click="edit(index)">编辑</a>
+                    <a-popconfirm title="确认删除?" @confirm="del(index)">
+                      <a class="operation_sep">删除</a>
+                    </a-popconfirm>
+                  </span>
+                </div>
+              </template>
+              <template v-else>
+                {{ text }}
+              </template>
             </template>
-            <template v-else-if="column.dataIndex === 'assetConfigNameEn' && assetadd.assetConfigs[index].editable">
-              <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigNameEn']" :rules="[{ required: true, message: '必填' }]">
-                <a-input v-model:value="record.assetConfigNameEn"></a-input>
-              </a-form-item>
-            </template>
-            <template v-else-if="column.dataIndex === 'assetConfigDescription' && assetadd.assetConfigs[index].editable">
-              <a-form-item has-feedback :name="['assetConfigs', index, 'assetConfigDescription']" :rules="[{ required: true, message: '必填' }]">
-                <a-input v-model:value="record.assetConfigDescription"></a-input>
-              </a-form-item>
-            </template>
-            <template v-else-if="column.dataIndex === 'standardCode' && assetadd.assetConfigs[index].editable">
-              <a-form-item has-feedback :name="['assetConfigs', index, 'standardCode']" :rules="[{ required: true, message: '必填' }]">
-                <a-select v-model:value="record.standardCode" :options="options"></a-select>
-              </a-form-item>
-            </template>
-            <template v-else-if="column.dataIndex === 'operation'">
-              <div class="editable-row-operations">
-                <span v-if="assetadd.assetConfigs[index].editable">
-                  <a @click="save(index)">保存</a>
-                  <a-popconfirm title="确认取消?" @confirm="cancel(index)">
-                    <a class="operation_sep">取消</a>
-                  </a-popconfirm>
-                </span>
-                <span v-else>
-                  <a @click="edit(index)">编辑</a>
-                  <a-popconfirm title="确认删除?" @confirm="del(index)">
-                    <a class="operation_sep">删除</a>
-                  </a-popconfirm>
-                </span>
-              </div>
-            </template>
-            <template v-else>
-              {{ text }}
-            </template>
-          </template>
-        </a-table>
+          </a-table>
+        </a-form>
       </div>
       <a-divider />
       <div class="buttons">
@@ -132,7 +134,7 @@
       assetConfigDescription?: string; //字段描述
       assetConfigName: string; //字段中文名称
       assetConfigNameEn: string; //字段英文名称
-      standardCode: string; //数据标准目录编号
+      standardCode: string | undefined; //数据标准目录编号
       editable?: boolean; // 编辑状态
     }[];
   }
@@ -334,12 +336,12 @@
       assetConfigDescription: '',
       assetConfigName: '',
       assetConfigNameEn: '',
-      standardCode: '',
+      standardCode: undefined,
       editable: true,
     };
     if (assetadd.assetConfigs.length == 0) {
       assetadd.assetConfigs.push(t);
-    } else if (assetadd.assetConfigs[assetadd.assetConfigs.length - 1].editable == true && assetadd.assetConfigs.length > 1) {
+    } else if (assetadd.assetConfigs[assetadd.assetConfigs.length - 1].editable == true && assetadd.assetConfigs.length >= 1) {
       message.warn('只能同时编辑一行');
     } else {
       assetadd.assetConfigs.push(t);
@@ -379,6 +381,7 @@
   const save = (index: number) => {
     assetadd.assetConfigs[index].editable = false;
   };
+
   const cancel = (index: number) => {
     assetadd.assetConfigs[index].editable = false;
   };
