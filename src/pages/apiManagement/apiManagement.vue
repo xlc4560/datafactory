@@ -268,6 +268,7 @@
       position: absolute;
       width: 16vw;
       height: 100%;
+      // background-color: aquamarine;
       background-color: white;
     }
 

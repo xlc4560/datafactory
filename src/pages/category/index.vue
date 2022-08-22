@@ -258,9 +258,18 @@
       width: 92%;
     }
 
+    .ant-spin-nested-loading {
+      height: calc(100% - 100px);
+
+      .ant-spin-container {
+        height: 100%;
+      }
+    }
+
     .ant-tree {
       overflow: auto;
       width: 100% !important;
+      height: 100%;
       flex: 1;
 
       &::-webkit-scrollbar {
