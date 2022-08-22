@@ -32,6 +32,7 @@ export interface scriptInfoListType {
   inputParameter?: ScriptParameterType[];
   outputParameter?: ScriptParameterType[];
   sourceCode?: number | null;
+  sourceCodeName?: string | null;
   operatorCode?: null;
   isDelete?: number;
   createTime?: string;

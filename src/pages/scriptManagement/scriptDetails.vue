@@ -7,12 +7,18 @@
       <a-descriptions-item label="脚本名称">
         <a @click="ChangeScriptContentVisible(true)">{{ currentScriptDetails?.scriptName }}</a>
       </a-descriptions-item>
-      <a-descriptions-item label="脚本分类">{{ currentScriptDetails?.scriptCategory }}</a-descriptions-item>
-      <a-descriptions-item label="脚本类型">{{ currentScriptDetails?.scriptType ? 'SQL脚本' : 'Python脚本' }}</a-descriptions-item>
-      <a-descriptions-item label="类名">{{ currentScriptDetails?.scriptClass }}</a-descriptions-item>
-      <a-descriptions-item label="函数名">{{ currentScriptDetails?.scriptFunction }}</a-descriptions-item>
-      <a-descriptions-item label="自定义异常">{{}}</a-descriptions-item>
-      <a-descriptions-item label="描述"> {{ currentScriptDetails?.scriptDescription }} </a-descriptions-item>
+      <a-descriptions-item label="脚本分类">
+        <a-tag color="success">{{ currentScriptDetails?.scriptCategoryName }}</a-tag>
+      </a-descriptions-item>
+      <template v-if="currentScriptDetails.scriptType === 1">
+        <a-descriptions-item label="数据源">{{ currentScriptDetails?.sourceCodeName }}</a-descriptions-item>
+      </template>
+      <template v-if="currentScriptDetails.scriptType === 0">
+        <a-descriptions-item label="脚本类型">{{ currentScriptDetails?.scriptType ? 'SQL脚本' : 'Python脚本' }}</a-descriptions-item>
+        <a-descriptions-item label="类名">{{ currentScriptDetails?.scriptClass }}</a-descriptions-item>
+        <a-descriptions-item label="函数名">{{ currentScriptDetails?.scriptFunction }}</a-descriptions-item>
+        <a-descriptions-item label="描述"> {{ currentScriptDetails?.scriptDescription }} </a-descriptions-item>
+      </template>
     </a-descriptions>
     <a-descriptions :column="1">
       <template #title>
@@ -88,7 +94,6 @@
   const codemirrorSpinning = ref<boolean>(false);
   const ChangeScriptContentVisible = async (visible: boolean) => {
     scriptContentVisible.value = visible;
-    debugger;
     code.value = '';
     try {
       codemirrorSpinning.value = true;
@@ -103,7 +108,7 @@
     }
   };
   // 脚本代码
-  const code = ref(``);
+  const code = ref<any>(``);
   const extensions = [javascript(), python(), oneDark];
   const log = console.log;
 </script>
