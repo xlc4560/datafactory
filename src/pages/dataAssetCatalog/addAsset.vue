@@ -151,28 +151,31 @@
 
   // 定义树形结构
   let treedata = ref([]);
-  //求情树形结构数据
-  categoryListTree('数据资产目录分类').then(res => {
-    treedata.value = res;
-    // 树形结构展开方法;
-    function treeToArr(data: any, pid: any = null, res: any) {
-      data.forEach((item: any) => {
-        res.push({ pid: item.parentId, id: item.categoryCode, name: item.name });
-        if (item.children && item.children.length !== 0) {
-          treeToArr(item.children, item.id, res);
-        }
-      });
-      return res;
-    }
-    //暂存展开数组
-    let resArr: any = [];
-    //调用展开树形结构方法
-    treeToArr(treedata.value, 0, resArr);
-    //判断是否有孩子节点
-    for (let i = 0; i < resArr.length; i++) {
+  // 树形结构展开方法;
+  function treeToArr(data: any, pid: any = null, res: any) {
+    data.forEach((item: any) => {
+      res.push({ pid: item.parentId, id: item.categoryCode, name: item.name });
+      if (item.children && item.children.length !== 0) {
+        treeToArr(item.children, item.id, res);
+      }
+    });
+    return res;
+  }
+  function treeToArr1(data: any, pid: any = null, res: any) {
+    data.forEach((item: any) => {
+      res.push({ pid: item.pid, id: item.id, name: item.name });
+      if (item.children && item.children.length !== 0) {
+        treeToArr1(item.children, item.id, res);
+      }
+    });
+    return res;
+  }
+  //判断是否有孩子节点
+  function ischildren(arr: any) {
+    for (let i = 0; i < arr.length; i++) {
       let t = 0;
-      for (let j = i + 1; j < resArr.length; j++) {
-        if (resArr[i].id == resArr[j].pid) {
+      for (let j = i + 1; j < arr.length; j++) {
+        if (arr[i].id == arr[j].pid) {
           t++;
         } else {
         }
@@ -181,30 +184,38 @@
         // console.log('无孩子', resArr[i]);
       } else {
         // console.log('有孩子', resArr[i]);
-        resArr[i].disabled = true;
+        arr[i].disabled = true;
       }
     }
-
-    //数组转回树形结构
-    function convert(list: any) {
-      const res = [];
-      const map = list.reduce((res: any, v: any) => ((res[v.id] = v), (v.children = []), res), {});
-      for (const item of list) {
-        if (item.pid === '0') {
-          res.push(item);
-          continue;
-        }
-        if (item.pid in map) {
-          const parent = map[item.pid];
-          parent.children = parent.children || [];
-          parent.children.push(item);
-        }
+  }
+  //数组转回树形结构
+  function convert(list: any) {
+    const res = [];
+    const map = list.reduce((res: any, v: any) => ((res[v.id] = v), (v.children = []), res), {});
+    for (const item of list) {
+      if (item.pid === '0') {
+        res.push(item);
+        continue;
       }
-      return res;
+      if (item.pid in map) {
+        const parent = map[item.pid];
+        parent.children = parent.children || [];
+        parent.children.push(item);
+      }
     }
+    return res;
+  }
+  //请求树形结构数据
+  categoryListTree('数据资产目录分类').then(res => {
+    treedata.value = res;
+    //暂存展开数组
+    let resArr: any = [];
+    //调用展开树形结构方法
+    treeToArr(treedata.value, 0, resArr);
+    //调用判断是否有孩子节点并禁用方法
+    ischildren(resArr);
     //调用并赋值转换回树形结构方法
     treedata.value = convert(resArr) as any;
-
     let newcategory = reactive([{ value: '' }]);
     //编辑页面获取数据
     if (prop.codeid != 'new') {
@@ -246,6 +257,32 @@
         });
       });
     }
+    // 监听目录数组变化
+    watch(
+      () => assetadd.categoryCodes,
+      newV => {
+        let selected1 = JSON.stringify(newV);
+        let selected2 = JSON.parse(selected1);
+        // 树形结构展开方法并暂存;
+        let resArr1 = ref([]);
+        treeToArr1(treedata.value, 0, resArr1.value);
+        // 调用判断是否具有孩子节点方法
+        ischildren(resArr1.value);
+        // 选中禁用
+        resArr1.value.forEach((i: any) => {
+          selected2.forEach((e: any) => {
+            if (e.value == i.id) {
+              i.disabled = true;
+            }
+          });
+        });
+        //调用转换回树形结构并赋值
+        treedata.value = convert(resArr1.value) as any;
+      },
+      {
+        deep: true,
+      },
+    );
   });
   //请求标准映射数据
   standardAssetConfigAdapt().then(res => {
@@ -282,6 +319,7 @@
   }
 
   // 添加目录
+
   const addSight = () => {
     assetadd.categoryCodes.push({ value: '' });
   };
