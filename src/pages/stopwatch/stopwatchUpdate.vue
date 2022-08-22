@@ -228,12 +228,12 @@
   }
   //   表单class
   .stopwatchUpdate {
+    .ant-table-title {
+      padding: 0 !important;
+    }
+
     & .ant-drawer-content-wrapper {
       .ant-drawer-content {
-        .ant-drawer-body {
-          padding: 0;
-        }
-
         .ant-drawer-footer {
           .btn {
             margin: 0 1vw 0 0;
@@ -251,6 +251,7 @@
         display: flex;
         border-radius: 3px;
         padding: 5px 10px;
+        white-space: nowrap;
         background: rgb(255, 255, 255);
         box-shadow: 0 5px 10px 5px rgb(233, 233, 233);
         line-height: 32px;

@@ -1,5 +1,5 @@
 <template>
-  <a-drawer :visible="drawerVisible" class="custom-class" width="55%" title="接口测试" @close="onClose" @after-visible-change="afterVisibleChange">
+  <a-drawer :visible="drawerVisible" :body-style="{ padding: '0' }" class="custom-class" width="55%" title="接口测试" @close="onClose" @after-visible-change="afterVisibleChange">
     <div class="drawer">
       <div class="paramsDetails scroll_apiTest">
         <a-descriptions :column="1">
@@ -47,8 +47,8 @@
 <script setup lang="ts">
   import type { apiParameter } from './types';
   import * as _ from 'lodash-es';
-  import { JsonViewer } from 'vue3-json-viewer';
   import * as request from '@/api/apiManagement';
+  import { JsonViewer } from 'vue3-json-viewer';
   import 'vue3-json-viewer/dist/index.css';
   // 使用defineEmits创建名称，接受一个数组
   const emit = defineEmits(['onClose']);
@@ -189,10 +189,6 @@
 
   .ant-drawer-content-wrapper {
     .ant-drawer-content {
-      .ant-drawer-body {
-        padding: 0;
-      }
-
       .ant-drawer-footer {
         .btn {
           margin: 0 1vw 0 0;
@@ -216,7 +212,7 @@
         margin: 10px 0 0 0;
 
         .ant-card-body {
-          padding: 0;
+          padding: 0 !important;
         }
       }
     }

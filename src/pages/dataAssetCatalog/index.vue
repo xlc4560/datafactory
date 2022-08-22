@@ -89,9 +89,9 @@
     </template>
   </a-drawer>
   <!-- 新增、编辑 -->
-  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1200" title="数据资产表基础信息" placement="right" @after-visible-change="afterVisibleChange">
+  <a-drawer v-model:visible="visibleAdd" :destroy-on-close="true" :width="1200" title="数据资产表基础信息" placement="right">
     <!-- <AddStandard :codeid="codeid" @visible="svisible2"></AddStandard> -->
-    <addasset :codeid="codeid"></addasset>
+    <addasset :codeid="codeid" :visible-add="visibleAdd" @changevisible="changevisible" @reset="reset"></addasset>
   </a-drawer>
 </template>
 <script setup lang="ts">
@@ -107,8 +107,6 @@
   //
   import { assetGetList, assetUpdateState, assetDelete, assetGetDetail } from '@/api/dataAssetCatalog/index';
 
-  //测试
-  import test from './test.vue';
   //   分类
   import classification from '@/pages/category/index.vue';
   // 从pinia中引入集中管理的状态
@@ -121,9 +119,7 @@
     formState.categoryCode = fiterCategoryName.value;
     assetSearchList();
   });
-  assetGetDetail('ZC00001').then(res => {
-    console.log(res);
-  });
+  assetGetDetail('ZC00001');
 
   // 封装获取表格列表数据方法
   // console.log(toRaw(formState));
@@ -243,7 +239,9 @@
   const onClose = () => {
     visibleDetails.value = false;
   };
-  //   新增、编辑
+  // 新增部分
+  const visibleAdd = ref<boolean>(false);
+  // 编辑、新增
   const codeid = ref('');
   const showDrawerAdd = (x: string) => {
     visibleAdd.value = true;
@@ -251,8 +249,8 @@
     codeid.value = x;
   };
   // 关闭
-  const afterVisibleChange = (bool: boolean) => {
-    console.log('visible', bool);
+  const changevisible = (val: { data: boolean }) => {
+    visibleAdd.value = val.data;
   };
 
   // 发布
@@ -296,11 +294,10 @@
   const deleteItem = (e: any) => {
     console.log(e.key);
     // 删除请求
-    assetDelete(e.key);
-    search();
+    assetDelete(e.key).then(() => {
+      search();
+    });
   };
-  // 新增部分
-  const visibleAdd = ref<boolean>(false);
 </script>
 <style scoped lang="less">
   .apiManagementFather {
