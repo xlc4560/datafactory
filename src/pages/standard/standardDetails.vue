@@ -193,5 +193,11 @@
       display: flex;
       width: 80px;
     }
+
+    span:nth-child(2) {
+      display: block;
+      display: flex;
+      width: 380px;
+    }
   }
 </style>
