@@ -60,7 +60,17 @@
         </a-table>
         <!-- 分页 -->
         <div class="pagination">
-          <a-pagination v-model:current="current1" v-model:page-size="pageSize1" show-quick-jumper :total="total" :show-total="total => `共 ${total} 条数据`" @change="onChange" :page-size-options="['5', '10', '20', '30']" show-size-changer @showSizeChange="onShowSizeChange"/>
+          <a-pagination
+            v-model:current="current1"
+            v-model:page-size="pageSize1"
+            show-quick-jumper
+            :total="total"
+            :show-total="total => `共 ${total} 条数据`"
+            :page-size-options="['5', '10', '20', '30']"
+            show-size-changer
+            @change="onChange"
+            @showSizeChange="onShowSizeChange"
+          />
         </div>
       </div>
     </div>
