@@ -29,7 +29,7 @@
       </a-drawer>
       <!-- 表格 -->
       <div class="antdTable">
-        <a-table :columns="columns" :data-source="data" :pagination="false" @change="sorterChange">
+        <a-table :columns="columns" size="small" :data-source="data" :pagination="false" @change="sorterChange">
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'dataSourceState'">
               <span class="isNopublish" :style="{ background: dataSourceState[record.dataSourceState].color }"></span>

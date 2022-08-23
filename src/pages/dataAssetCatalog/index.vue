@@ -35,7 +35,7 @@
           </a-space>
         </div>
         <!-- 表格组 -->
-        <a-table :columns="columns" :data-source="data" :row-selection="rowSelection" :pagination="false" @change="sorterChange">
+        <a-table :columns="columns" size="small" :data-source="data" :row-selection="rowSelection" :pagination="false" @change="sorterChange">
           <template #bodyCell="{ column, text, record }">
             <template v-if="column.dataIndex === 'assetNameCn'">
               <a @click="showModalDetails(record)">{{ text }}</a>
@@ -306,7 +306,7 @@
 
     .category {
       position: absolute;
-      width: 240px;
+      width: 16vw;
       height: 100%;
       background-color: white;
     }
@@ -317,11 +317,10 @@
     }
     // table盒子
     .tableBox {
-      margin-left: 260px;
+      margin-left: 17vw;
       // 筛选部分相关
       .ApiManagement {
         position: relative;
-        // margin: 0 0 10px;
         overflow: hidden;
         width: 100%;
 
@@ -330,7 +329,7 @@
           flex-flow: row nowrap;
           margin: 20px 0;
           padding: 0 10px;
-          width: 105%;
+          width: 100%;
 
           .formItemWidth {
             flex: 2;
