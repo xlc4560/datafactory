@@ -38,7 +38,7 @@
       <a-input v-model:value="addDataSource.dataSourceUsername" allow-clear></a-input>
     </a-form-item>
     <a-form-item label="密码" name="dataSourcePassword">
-      <a-input v-model:value="addDataSource.dataSourcePassword" type="password" allow-clear></a-input>
+      <a-input-password v-model:value="addDataSource.dataSourcePassword" allow-clear></a-input-password>
     </a-form-item>
     <a-form-item label="数据源描述" name="dataSourceDescription">
       <a-textarea v-model:value="addDataSource.dataSourceDescription"></a-textarea>
