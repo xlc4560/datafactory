@@ -2,17 +2,17 @@
  *   axios二次封装
  */
 import { message as antdMessage } from 'ant-design-vue';
-import type { AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig, AxiosInstance, AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
 // 创建axios实例
-const instance = axios.create({
+const instance: AxiosInstance = axios.create({
   // baseURL: '',
   timeout: 10000,
 });
 // 请求拦截
 instance.interceptors.request.use(
   // 在请求发出前作出相应修改，如：添加token、配置请求头等；
-  config => {
+  (config: AxiosRequestConfig) => {
     const token = localStorage.getItem('token');
     if (token) {
       //  这里面获取的请求头的键(tokenHeader)根据每个后端的习惯封装的名称各不相同
@@ -22,14 +22,14 @@ instance.interceptors.request.use(
     return config;
   },
   // 使用Promise.reject返回请求错误信息
-  error => {
+  (error: AxiosError) => {
     return Promise.reject(error);
   },
 );
 // 响应拦截
 instance.interceptors.response.use(
   // 对响应内容做相应的逻辑处理，如：筛选、过滤等
-  response => {
+  (response: AxiosResponse) => {
     const { code, data, msg } = response.data as { code: number; data: any; msg: string };
     if (code === 100200) {
       if (msg !== '返回成功') {
@@ -41,7 +41,7 @@ instance.interceptors.response.use(
     }
     return data;
   },
-  error => {
+  (error: any) => {
     switch (error?.code) {
       case 'ECONNABORTED':
         antdMessage.error('请求超时', 1);
@@ -53,7 +53,7 @@ instance.interceptors.response.use(
         antdMessage.error('路径错误', 1);
         break;
     }
-    return Promise.reject(error as any);
+    return Promise.reject(error);
   },
 );
 
