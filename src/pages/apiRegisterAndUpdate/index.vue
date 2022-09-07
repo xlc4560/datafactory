@@ -44,7 +44,11 @@
   const { useApiRegisterAndUpdateStore } = useStore();
   const { apiInfo } = storeToRefs(useApiRegisterAndUpdateStore);
   const router = useRouter();
+  console.log(router);
+
   const route = useRoute();
+  console.log(route);
+
   if (route.params.id) {
     (async () => {
       const res = await GetApiDetails(route.params.id as string);

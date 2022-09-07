@@ -92,6 +92,11 @@
         },
       ],
     },
+    {
+      subName: '任务管理',
+      key: '/DataFactory/TaskManagement',
+      icon: 'CodeOutlined',
+    },
   ]);
   //
   watch(

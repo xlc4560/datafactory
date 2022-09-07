@@ -113,5 +113,13 @@ export default {
         },
       ],
     },
+    {
+      path: 'TaskManagement',
+      name: 'TaskManagement',
+      meta: {
+        title: '任务管理',
+      },
+      component: () => import('@/pages/taskManagement/index.vue'),
+    },
   ],
 };
